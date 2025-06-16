@@ -15,5 +15,12 @@
     <orderEntry type="library" name="Gradle: org.springframework.data:spring-data-jpa:3.3.12" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.security:spring-security-crypto:6.3.9" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-context:6.1.20" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.tomcat.embed:tomcat-embed-core:10.1.41" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.security:spring-security-web:6.3.9" level="project" />
+    <orderEntry type="library" name="Gradle: io.jsonwebtoken:jjwt-api:0.11.5" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-autoconfigure:3.3.12" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot:3.3.12" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.security:spring-security-config:6.3.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-beans:6.1.20" level="project" />
   </component>
 </module>
