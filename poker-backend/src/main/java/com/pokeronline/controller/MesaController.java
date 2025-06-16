@@ -1,5 +1,6 @@
 package com.pokeronline.controller;
 
+import com.pokeronline.dto.JugadorEnMesaDTO;
 import com.pokeronline.model.Mesa;
 import com.pokeronline.model.User;
 import com.pokeronline.model.UserMesa;
@@ -23,13 +24,13 @@ public class MesaController {
     private final UserRepository userRepository;
     private final UserMesaRepository userMesaRepository;
 
-    // ✅ Obtener todas las mesas activas
+    // Obtener todas las mesas activas
     @GetMapping
     public ResponseEntity<List<Mesa>> getMesasActivas() {
         return ResponseEntity.ok(mesaRepository.findByActivaTrue());
     }
 
-    // ✅ Crear una nueva mesa
+    // Crear una nueva mesa
     @PostMapping
     public ResponseEntity<Mesa> crearMesa(@RequestParam String nombre, @RequestParam(defaultValue = "6") int maxJugadores) {
         Mesa nuevaMesa = Mesa.builder()
@@ -40,7 +41,7 @@ public class MesaController {
         return ResponseEntity.ok(mesaRepository.save(nuevaMesa));
     }
 
-    // ✅ Unirse a una mesa
+    // Unirse a una mesa
     @PostMapping("/{mesaId}/unirse")
     public ResponseEntity<?> unirseAMesa(@PathVariable Long mesaId, @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
@@ -69,5 +70,24 @@ public class MesaController {
 
         userMesaRepository.save(userMesa);
         return ResponseEntity.ok("Unido correctamente a la mesa");
+    }
+
+    @GetMapping("/{mesaId}/jugadores")
+    public ResponseEntity<?> listarJugadoresDeMesa(@PathVariable Long mesaId) {
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        List<UserMesa> relaciones = userMesaRepository.findByMesa(mesa);
+
+        List<JugadorEnMesaDTO> jugadores = relaciones.stream().map(um ->
+                new JugadorEnMesaDTO(
+                        um.getUser().getId(),
+                        um.getUser().getUsername(),
+                        um.getUser().getAvatarUrl(),
+                        um.getFichasEnMesa()
+                )
+        ).toList();
+
+        return ResponseEntity.ok(jugadores);
     }
 }
