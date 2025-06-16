@@ -11,17 +11,21 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Mesa {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nombre;
-
     private boolean activa;
-
     private int maxJugadores;
 
+    // Cartas comunitarias
+    private String flop1;
+    private String flop2;
+    private String flop3;
+    private String turn;
+    private String river;
+
     @OneToMany(mappedBy = "mesa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<UserMesa> jugadores; // Relación con los jugadores en la mesa
+    private List<UserMesa> jugadores;
 }

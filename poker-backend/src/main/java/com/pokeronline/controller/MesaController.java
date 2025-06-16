@@ -7,6 +7,7 @@ import com.pokeronline.model.UserMesa;
 import com.pokeronline.repository.MesaRepository;
 import com.pokeronline.repository.UserMesaRepository;
 import com.pokeronline.repository.UserRepository;
+import com.pokeronline.service.BarajaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,14 +24,13 @@ public class MesaController {
     private final MesaRepository mesaRepository;
     private final UserRepository userRepository;
     private final UserMesaRepository userMesaRepository;
+    private final BarajaService barajaService;
 
-    // Obtener todas las mesas activas
     @GetMapping
     public ResponseEntity<List<Mesa>> getMesasActivas() {
         return ResponseEntity.ok(mesaRepository.findByActivaTrue());
     }
 
-    // Crear una nueva mesa
     @PostMapping
     public ResponseEntity<Mesa> crearMesa(@RequestParam String nombre, @RequestParam(defaultValue = "6") int maxJugadores) {
         Mesa nuevaMesa = Mesa.builder()
@@ -41,7 +41,6 @@ public class MesaController {
         return ResponseEntity.ok(mesaRepository.save(nuevaMesa));
     }
 
-    // Unirse a una mesa
     @PostMapping("/{mesaId}/unirse")
     public ResponseEntity<?> unirseAMesa(@PathVariable Long mesaId, @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
@@ -64,7 +63,7 @@ public class MesaController {
         UserMesa userMesa = UserMesa.builder()
                 .user(user)
                 .mesa(mesa)
-                .fichasEnMesa(100) // cantidad inicial, por ejemplo
+                .fichasEnMesa(100)
                 .enJuego(true)
                 .build();
 
@@ -89,5 +88,16 @@ public class MesaController {
         ).toList();
 
         return ResponseEntity.ok(jugadores);
+    }
+
+    @PostMapping("/{mesaId}/repartir")
+    public ResponseEntity<?> repartirCartas(@PathVariable Long mesaId) {
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        barajaService.repartirCartas(mesa);
+        mesaRepository.save(mesa);
+
+        return ResponseEntity.ok("Cartas repartidas correctamente");
     }
 }
