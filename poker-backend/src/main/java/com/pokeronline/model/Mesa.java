@@ -19,12 +19,20 @@ public class Mesa {
     private boolean activa;
     private int maxJugadores;
 
+    private int smallBlind;
+    private int bigBlind;
+
     // Cartas comunitarias
     private String flop1;
     private String flop2;
     private String flop3;
     private String turn;
     private String river;
+
+    private int pot;
+
+    @Enumerated(EnumType.STRING)
+    private Fase fase;
 
     @OneToMany(mappedBy = "mesa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UserMesa> jugadores;
