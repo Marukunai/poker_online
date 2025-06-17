@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -171,6 +172,64 @@ public class MesaController {
 
         String resultado = mesaService.finalizarMano(mesa);
         return ResponseEntity.ok(resultado);
+    }
+
+    @PostMapping("/{mesaId}/reconectar")
+    public ResponseEntity<?> reconectar(@PathVariable Long mesaId, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
+
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        UserMesa userMesa = userMesaRepository.findByUserAndMesa(user, mesa)
+                .orElseThrow(() -> new RuntimeException("No estás en esta mesa"));
+
+        userMesa.setConectado(true);
+        userMesaRepository.save(userMesa);
+
+        return ResponseEntity.ok("Reconectado con éxito");
+    }
+
+    @PostMapping("/{mesaId}/abandonar")
+    public ResponseEntity<?> abandonar(@PathVariable Long mesaId, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
+
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        UserMesa userMesa = userMesaRepository.findByUserAndMesa(user, mesa)
+                .orElseThrow(() -> new RuntimeException("No estás en esta mesa"));
+
+        userMesa.setConectado(false);
+        userMesa.setLastSeen(new Date());
+        userMesaRepository.save(userMesa);
+
+        return ResponseEntity.ok("Abandonaste la mesa");
+    }
+
+    @PostMapping("/{mesaId}/keepalive")
+    public ResponseEntity<?> keepAlive(@PathVariable Long mesaId, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
+
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        UserMesa userMesa = userMesaRepository.findByUserAndMesa(user, mesa)
+                .orElseThrow(() -> new RuntimeException("No estás en esta mesa"));
+
+        userMesa.setLastSeen(new Date());
+        userMesaRepository.save(userMesa);
+
+        return ResponseEntity.ok("OK");
     }
 
     @GetMapping("/{mesaId}/estado")

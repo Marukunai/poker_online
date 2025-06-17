@@ -26,6 +26,7 @@ public class MesaService {
     public ResultadoShowdownInterno resolverShowdown(Mesa mesa) {
         List<UserMesa> jugadoresActivos = userMesaRepository.findByMesa(mesa).stream()
                 .filter(UserMesa::isEnJuego)
+                .filter(UserMesa::isConectado)
                 .filter(j -> j.getCarta1() != null && j.getCarta2() != null)
                 .toList();
 
@@ -106,6 +107,7 @@ public class MesaService {
 
     public void iniciarNuevaMano(Mesa mesa) {
         // Reiniciar pot y fase
+        turnoService.cancelarTemporizador(mesa.getId());
         mesa.setPot(0);
         mesa.setFase(Fase.PRE_FLOP);
 

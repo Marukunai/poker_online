@@ -7,6 +7,10 @@ import com.pokeronline.repository.UserMesaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.*;
+
 import java.util.List;
 
 @Service
@@ -46,8 +50,69 @@ public class TurnoService {
     }
 
     public Turno getTurnoActual(Mesa mesa) {
-        return turnoRepository.findByMesaAndActivoTrue(mesa)
+        Turno turno = turnoRepository.findByMesaAndActivoTrue(mesa)
                 .orElseThrow(() -> new RuntimeException("No hay turno activo"));
+
+        UserMesa userMesa = userMesaRepository.findByUserAndMesa(turno.getUser(), mesa)
+                .orElse(null);
+
+        if (userMesa != null) {
+            // 💡 Verificar si ha estado inactivo más de 60s
+            if (userMesa.isConectado() && userMesa.getLastSeen() != null) {
+                long diffMillis = System.currentTimeMillis() - userMesa.getLastSeen().getTime();
+                if (diffMillis > 40000) { // 60 segundos sin señales
+                    userMesa.setConectado(false);
+                    userMesaRepository.save(userMesa);
+
+                    System.out.printf("🔌 Jugador %s se marcó como desconectado por inactividad%n",
+                            userMesa.getUser().getUsername());
+                }
+            }
+
+            // Si sigue estando desconectado → forzar FOLD
+            if (!userMesa.isConectado()) {
+                userMesa.setLastSeen(new Date());
+                userMesaRepository.save(userMesa);
+
+                System.out.printf("⏱️ Jugador %s está desconectado desde %s → FOLD forzado.%n",
+                        userMesa.getUser().getUsername(), userMesa.getLastSeen());
+
+                turno.setAccion(Accion.FOLD);
+                turno.setEliminado(true);
+                turno.setActivo(false);
+                turnoRepository.save(turno);
+
+                avanzarTurno(mesa);
+                return getTurnoActual(mesa); // Buscar siguiente jugador activo
+            }
+        }
+
+        return turno;
+    }
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final Map<Long, ScheduledFuture<?>> tareasProgramadas = new ConcurrentHashMap<>();
+
+    public void iniciarTemporizadorTurno(Mesa mesa) {
+        cancelarTemporizador(mesa.getId());
+
+        Runnable tarea = () -> {
+            try {
+                Turno turno = getTurnoActual(mesa);
+                realizarAccion(mesa, turno.getUser(), Accion.FOLD, 0);
+                System.out.println("Turno forzado: FOLD por timeout.");
+            } catch (Exception e) {
+                System.err.println("Error forzando FOLD automático: " + e.getMessage());
+            }
+        };
+
+        ScheduledFuture<?> tareaProgramada = scheduler.schedule(tarea, 30, TimeUnit.SECONDS);
+        tareasProgramadas.put(mesa.getId(), tareaProgramada);
+    }
+
+    public void cancelarTemporizador(Long mesaId) {
+        ScheduledFuture<?> tarea = tareasProgramadas.remove(mesaId);
+        if (tarea != null) tarea.cancel(true);
     }
 
     public void avanzarTurno(Mesa mesa) {
@@ -60,7 +125,8 @@ public class TurnoService {
 
                 for (int j = 1; j < turnos.size(); j++) {
                     int siguiente = (i + j) % turnos.size();
-                    if (!turnos.get(siguiente).isEliminado()) {
+                    UserMesa userMesa = userMesaRepository.findByUserAndMesa(turnos.get(siguiente).getUser(), mesa).orElse(null);
+                    if (!turnos.get(siguiente).isEliminado() && userMesa != null && userMesa.isConectado()) {
                         turnos.get(siguiente).setActivo(true);
                         turnoRepository.save(turnos.get(siguiente));
                         return;
@@ -68,6 +134,7 @@ public class TurnoService {
                 }
             }
         }
+        iniciarTemporizadorTurno(mesa);
     }
 
     public void avanzarFase(Mesa mesa) {
@@ -94,6 +161,7 @@ public class TurnoService {
     }
 
     public void realizarAccion(Mesa mesa, User user, Accion accion, int cantidad) {
+        cancelarTemporizador(mesa.getId());
         Turno turno = turnoRepository.findByMesaAndUser(mesa, user)
                 .orElseThrow(() -> new RuntimeException("Turno no encontrado para este jugador"));
 

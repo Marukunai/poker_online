@@ -3,6 +3,8 @@ package com.pokeronline.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -31,4 +33,9 @@ public class UserMesa {
 
     @Enumerated(EnumType.STRING)
     private Posicion posicion;
+
+    private boolean conectado;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastSeen;
 }

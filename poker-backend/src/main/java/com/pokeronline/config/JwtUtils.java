@@ -13,9 +13,10 @@ import java.util.function.Function;
 public class JwtUtils {
 
     private final String jwtSecret = "secretKey123"; // Puedes cambiarlo por algo más robusto
-    private final long expirationMs = 86400000; // 24 horas
 
     public String generateToken(User user) {
+        // 24 horas
+        long expirationMs = 86400000;
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .claim("role", user.getRole().name())
