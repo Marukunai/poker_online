@@ -1,15 +1,13 @@
 package com.pokeronline.controller;
 
-import com.pokeronline.dto.JugadorEnMesaDTO;
-import com.pokeronline.model.ManoEvaluada;
-import com.pokeronline.model.Mesa;
-import com.pokeronline.model.User;
-import com.pokeronline.model.UserMesa;
+import com.pokeronline.dto.*;
+import com.pokeronline.model.*;
 import com.pokeronline.repository.MesaRepository;
 import com.pokeronline.repository.UserMesaRepository;
 import com.pokeronline.repository.UserRepository;
 import com.pokeronline.service.BarajaService;
 import com.pokeronline.service.EvaluadorManoService;
+import com.pokeronline.service.MesaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +26,7 @@ public class MesaController {
     private final UserRepository userRepository;
     private final UserMesaRepository userMesaRepository;
     private final BarajaService barajaService;
+    private final MesaService mesaService;
 
     @GetMapping
     public ResponseEntity<List<Mesa>> getMesasActivas() {
@@ -114,5 +113,100 @@ public class MesaController {
         ManoEvaluada ganador = evaluadorManoService.determinarGanador(jugadores, mesa);
 
         return ResponseEntity.ok(ganador);
+    }
+
+    @PostMapping("/{mesaId}/resolver-showdown")
+    public ResponseEntity<?> resolverShowdown(@PathVariable Long mesaId) {
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        if (mesa.getFase() != Fase.SHOWDOWN) {
+            return ResponseEntity.badRequest().body("La partida aún no ha llegado a la fase de SHOWDOWN");
+        }
+
+        // Nuevo resultado
+        ResultadoShowdownInterno resultado = mesaService.resolverShowdown(mesa);
+
+        List<UserMesa> relaciones = userMesaRepository.findByMesa(mesa);
+        List<JugadorEnMesaDTO> jugadoresDTO = relaciones.stream()
+                .map(um -> new JugadorEnMesaDTO(
+                        um.getUser().getId(),
+                        um.getUser().getUsername(),
+                        um.getUser().getAvatarUrl(),
+                        um.getFichasEnMesa()
+                )).toList();
+
+        List<JugadorEnMesaDTO> ganadoresDTO = relaciones.stream()
+                .filter(um -> resultado.getGanadores().contains(um.getUser()))
+                .map(um -> new JugadorEnMesaDTO(
+                        um.getUser().getId(),
+                        um.getUser().getUsername(),
+                        um.getUser().getAvatarUrl(),
+                        um.getFichasEnMesa()
+                )).toList();
+
+        ResultadoShowdownDTO response = new ResultadoShowdownDTO(
+                ganadoresDTO,
+                jugadoresDTO,
+                resultado.getTipoManoGanadora() != null ? resultado.getTipoManoGanadora().name() : null,
+                resultado.getCartasGanadoras()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{mesaId}/nueva-mano")
+    public ResponseEntity<?> nuevaMano(@PathVariable Long mesaId) {
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        mesaService.iniciarNuevaMano(mesa);
+        return ResponseEntity.ok("Nueva mano iniciada");
+    }
+
+    @PostMapping("/{mesaId}/finalizar-mano")
+    public ResponseEntity<?> finalizarMano(@PathVariable Long mesaId) {
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        String resultado = mesaService.finalizarMano(mesa);
+        return ResponseEntity.ok(resultado);
+    }
+
+    @GetMapping("/{mesaId}/estado")
+    public ResponseEntity<?> estadoMesa(@PathVariable Long mesaId) {
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        List<String> comunitarias = switch (mesa.getFase()) {
+            case PRE_FLOP -> List.of();
+            case FLOP -> List.of(mesa.getFlop1(), mesa.getFlop2(), mesa.getFlop3());
+            case TURN -> List.of(mesa.getFlop1(), mesa.getFlop2(), mesa.getFlop3(), mesa.getTurn());
+            case RIVER, SHOWDOWN -> List.of(mesa.getFlop1(), mesa.getFlop2(), mesa.getFlop3(), mesa.getTurn(), mesa.getRiver());
+        };
+
+        List<UserMesa> relaciones = userMesaRepository.findByMesa(mesa);
+        List<JugadorMesaCompletoDTO> jugadores = relaciones.stream().map(um ->
+                new JugadorMesaCompletoDTO(
+                        um.getUser().getId(),
+                        um.getUser().getUsername(),
+                        um.getUser().getAvatarUrl(),
+                        um.getFichasEnMesa(),
+                        um.getCarta1(),
+                        um.getCarta2()
+                )
+        ).toList();
+
+        MesaEstadoDTO dto = new MesaEstadoDTO(
+                mesa.getId(),
+                mesa.getNombre(),
+                mesa.isActiva(),
+                mesa.getFase(),
+                mesa.getPot(),
+                comunitarias,
+                jugadores
+        );
+
+        return ResponseEntity.ok(dto);
     }
 }

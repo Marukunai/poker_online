@@ -28,9 +28,8 @@ public class BarajaService {
         for (UserMesa jugador : jugadores) {
             Carta c1 = baraja.poll();
             Carta c2 = baraja.poll();
-            assert c1 != null;
+            if (c1 == null || c2 == null) throw new RuntimeException("No hay suficientes cartas");
             jugador.setCarta1(c1.toString());
-            assert c2 != null;
             jugador.setCarta2(c2.toString());
             userMesaRepository.save(jugador);
         }
@@ -51,5 +50,25 @@ public class BarajaService {
         Deque<Carta> baraja = barajasPorMesa.get(mesa.getId());
         if (baraja == null || baraja.isEmpty()) throw new RuntimeException("Baraja no inicializada o vacía");
         return baraja.poll().toString();
+    }
+
+    public void reiniciarBaraja(Mesa mesa) {
+        inicializarBarajaParaMesa(mesa);
+    }
+
+    // Metodo para limpiar cartas comunitarias y de jugadores
+    public void reiniciarCartasMesa(Mesa mesa) {
+        mesa.setFlop1(null);
+        mesa.setFlop2(null);
+        mesa.setFlop3(null);
+        mesa.setTurn(null);
+        mesa.setRiver(null);
+
+        List<UserMesa> jugadores = userMesaRepository.findByMesa(mesa);
+        for (UserMesa jugador : jugadores) {
+            jugador.setCarta1(null);
+            jugador.setCarta2(null);
+            userMesaRepository.save(jugador);
+        }
     }
 }

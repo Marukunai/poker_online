@@ -35,6 +35,9 @@ public class TurnoService {
                     .eliminado(false)
                     .build();
             turnoRepository.save(turno);
+
+            jugadores.get(i).setTotalApostado(0);
+            userMesaRepository.save(jugadores.get(i));
         }
 
         mesa.setPot(0);
@@ -98,6 +101,9 @@ public class TurnoService {
             throw new RuntimeException("No es tu turno");
         }
 
+        UserMesa userMesa = userMesaRepository.findByUserAndMesa(user, mesa)
+                .orElseThrow(() -> new RuntimeException("UserMesa no encontrado"));
+
         int apuestaMaxima = turnoRepository.findByMesaOrderByOrdenTurno(mesa).stream()
                 .mapToInt(Turno::getApuesta)
                 .max().orElse(0);
@@ -110,13 +116,16 @@ public class TurnoService {
                 if (cantidad <= apuestaMaxima) {
                     throw new RuntimeException("Debes apostar más que la apuesta actual para hacer raise");
                 }
+                int incremento = cantidad - turno.getApuesta();
                 turno.setApuesta(cantidad);
-                mesa.setPot(mesa.getPot() + cantidad);
+                userMesa.setTotalApostado(userMesa.getTotalApostado() + incremento);
+                mesa.setPot(mesa.getPot() + incremento);
             }
             case CALL -> {
                 int diferencia = apuestaMaxima - turno.getApuesta();
                 if (diferencia > 0) {
                     turno.setApuesta(apuestaMaxima);
+                    userMesa.setTotalApostado(userMesa.getTotalApostado() + diferencia);
                     mesa.setPot(mesa.getPot() + diferencia);
                 }
             }
@@ -127,13 +136,16 @@ public class TurnoService {
                 turno.setApuesta(0);
             }
             case ALL_IN -> {
+                int incremento = cantidad - turno.getApuesta();
                 turno.setApuesta(cantidad);
-                mesa.setPot(mesa.getPot() + cantidad);
+                userMesa.setTotalApostado(userMesa.getTotalApostado() + incremento);
+                mesa.setPot(mesa.getPot() + incremento);
             }
         }
 
         turno.setActivo(false);
         turnoRepository.save(turno);
+        userMesaRepository.save(userMesa);
         mesaRepository.save(mesa);
 
         avanzarTurno(mesa);

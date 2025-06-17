@@ -97,6 +97,49 @@ public class EvaluadorManoService {
         return new ManoEvaluada(user, ManoTipo.CARTA_ALTA, cincoCartas, 1);
     }
 
+    private List<String> getComunitarias(Mesa mesa) {
+        return List.of(
+                mesa.getFlop1(),
+                mesa.getFlop2(),
+                mesa.getFlop3(),
+                mesa.getTurn(),
+                mesa.getRiver()
+        );
+    }
+
+    public List<ManoEvaluada> repartirBote(List<UserMesa> jugadores, Mesa mesa) {
+        List<ManoEvaluada> evaluaciones = jugadores.stream()
+                .map(j -> evaluarMano(j.getUser(), List.of(j.getCarta1(), j.getCarta2()), getComunitarias(mesa)))
+                .toList();
+
+        // Buscar mejor puntuación
+        int maxFuerza = evaluaciones.stream()
+                .mapToInt(ManoEvaluada::getFuerza)
+                .max()
+                .orElse(0);
+
+        // Filtrar ganadores
+        List<ManoEvaluada> ganadores = evaluaciones.stream()
+                .filter(m -> m.getFuerza() == maxFuerza)
+                .toList();
+
+        int potTotal = mesa.getPot();
+        int premioPorJugador = potTotal / ganadores.size();
+
+        for (ManoEvaluada ganador : ganadores) {
+            UserMesa userMesa = jugadores.stream()
+                    .filter(j -> j.getUser().getId().equals(ganador.getUser().getId()))
+                    .findFirst()
+                    .orElseThrow();
+
+            userMesa.setFichasEnMesa(userMesa.getFichasEnMesa() + premioPorJugador);
+        }
+
+        mesa.setPot(0); // Reiniciar pot
+
+        return ganadores;
+    }
+
     // Valores a las figuras
     private int valorANumero(String valor) {
         return switch (valor) {

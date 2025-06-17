@@ -1,19 +1,15 @@
 package com.pokeronline.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
+public class JugadorMesaCompletoDTO {
     private Long id;
     private String username;
-    private String email;
     private String avatarUrl;
-    private int fichas;
-    private int partidasGanadas;
+    private int fichasEnMesa;
+    private String carta1;
+    private String carta2;
 }

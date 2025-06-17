@@ -27,6 +27,8 @@ public class UserMesa {
     private String carta1;
     private String carta2;
 
+    private int totalApostado;
+
     @Enumerated(EnumType.STRING)
     private Posicion posicion;
 }
