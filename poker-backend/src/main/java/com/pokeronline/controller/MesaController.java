@@ -1,6 +1,7 @@
 package com.pokeronline.controller;
 
 import com.pokeronline.dto.JugadorEnMesaDTO;
+import com.pokeronline.model.ManoEvaluada;
 import com.pokeronline.model.Mesa;
 import com.pokeronline.model.User;
 import com.pokeronline.model.UserMesa;
@@ -8,6 +9,7 @@ import com.pokeronline.repository.MesaRepository;
 import com.pokeronline.repository.UserMesaRepository;
 import com.pokeronline.repository.UserRepository;
 import com.pokeronline.service.BarajaService;
+import com.pokeronline.service.EvaluadorManoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MesaController {
 
+    private final EvaluadorManoService evaluadorManoService;
     private final MesaRepository mesaRepository;
     private final UserRepository userRepository;
     private final UserMesaRepository userMesaRepository;
@@ -99,5 +102,17 @@ public class MesaController {
         mesaRepository.save(mesa);
 
         return ResponseEntity.ok("Cartas repartidas correctamente");
+    }
+
+    @GetMapping("/{mesaId}/ganador")
+    public ResponseEntity<?> obtenerGanador(@PathVariable Long mesaId) {
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        List<UserMesa> jugadores = userMesaRepository.findByMesa(mesa);
+
+        ManoEvaluada ganador = evaluadorManoService.determinarGanador(jugadores, mesa);
+
+        return ResponseEntity.ok(ganador);
     }
 }
