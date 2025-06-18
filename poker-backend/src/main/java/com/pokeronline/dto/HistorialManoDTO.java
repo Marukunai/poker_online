@@ -1,14 +1,14 @@
 package com.pokeronline.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class HistorialManoDTO {
     private Date fecha;
     private int fichasGanadas;

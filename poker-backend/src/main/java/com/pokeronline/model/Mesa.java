@@ -10,6 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Mesa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
