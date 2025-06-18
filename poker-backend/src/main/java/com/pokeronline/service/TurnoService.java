@@ -1,9 +1,11 @@
 package com.pokeronline.service;
 
 import com.pokeronline.model.*;
+import com.pokeronline.repository.AccionPartidaRepository;
 import com.pokeronline.repository.MesaRepository;
 import com.pokeronline.repository.TurnoRepository;
 import com.pokeronline.repository.UserMesaRepository;
+import com.pokeronline.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TurnoService {
+
+    private final WebSocketService webSocketService;
+    private final AccionPartidaRepository accionPartidaRepository;
     private final BarajaService barajaService;
     private final TurnoRepository turnoRepository;
     private final UserMesaRepository userMesaRepository;
@@ -115,6 +120,62 @@ public class TurnoService {
         if (tarea != null) tarea.cancel(true);
     }
 
+    private boolean esFinDeRonda(Mesa mesa) {
+        List<Turno> turnos = turnoRepository.findByMesaOrderByOrdenTurno(mesa).stream()
+                .filter(t -> !t.isEliminado())
+                .toList();
+
+        int apuestaMaxima = turnos.stream()
+                .mapToInt(Turno::getApuesta)
+                .max().orElse(0);
+
+        Turno ultimoRaise = turnos.stream()
+                .filter(t -> t.getAccion() == Accion.RAISE || t.getAccion() == Accion.ALL_IN)
+                .reduce((first, second) -> second) // obtener el último raise
+                .orElse(null);
+
+        if (ultimoRaise == null) {
+            // Nadie ha subido, la ronda termina si todos hicieron CHECK
+            return turnos.stream().allMatch(t ->
+                    t.getAccion() == Accion.CHECK || t.getAccion() == Accion.FOLD
+            );
+        }
+
+        int indiceUltimoRaise = turnos.indexOf(ultimoRaise);
+
+        // Deben actuar todos después del último raise
+        for (int i = indiceUltimoRaise + 1; i < turnos.size(); i++) {
+            Turno t = turnos.get(i);
+            if (t.getAccion() == null || t.getApuesta() < apuestaMaxima) return false;
+        }
+
+        // Y también antes del raise si ya dio la vuelta
+        for (int i = 0; i < indiceUltimoRaise; i++) {
+            Turno t = turnos.get(i);
+            if (t.getAccion() == null || t.getApuesta() < apuestaMaxima) return false;
+        }
+
+        return true;
+    }
+
+    private void inicializarNuevaRonda(Mesa mesa) {
+        List<Turno> turnos = turnoRepository.findByMesaOrderByOrdenTurno(mesa).stream()
+                .filter(t -> !t.isEliminado())
+                .toList();
+
+        for (Turno turno : turnos) {
+            turno.setAccion(null);
+            turno.setActivo(false);
+            turnoRepository.save(turno);
+        }
+
+        if (!turnos.isEmpty()) {
+            turnos.get(0).setActivo(true);
+            turnoRepository.save(turnos.get(0));
+            iniciarTemporizadorTurno(mesa);
+        }
+    }
+
     public void avanzarTurno(Mesa mesa) {
         List<Turno> turnos = turnoRepository.findByMesaOrderByOrdenTurno(mesa);
 
@@ -126,14 +187,19 @@ public class TurnoService {
                 for (int j = 1; j < turnos.size(); j++) {
                     int siguiente = (i + j) % turnos.size();
                     UserMesa userMesa = userMesaRepository.findByUserAndMesa(turnos.get(siguiente).getUser(), mesa).orElse(null);
-                    if (!turnos.get(siguiente).isEliminado() && userMesa != null && userMesa.isConectado()) {
+                    if (!turnos.get(siguiente).isEliminado() && userMesa != null && userMesa.isConectado() && userMesa.getFichasEnMesa() > 0) {
                         turnos.get(siguiente).setActivo(true);
                         turnoRepository.save(turnos.get(siguiente));
+
+                        webSocketService.enviarMensajeMesa(mesa.getId(), "turno", Map.of(
+                                "jugador", turnos.get(siguiente).getUser().getUsername()
+                        ));
                         return;
                     }
                 }
             }
         }
+
         iniciarTemporizadorTurno(mesa);
     }
 
@@ -158,6 +224,13 @@ public class TurnoService {
             case SHOWDOWN -> throw new RuntimeException("La partida ya ha terminado");
         }
         mesaRepository.save(mesa);
+        webSocketService.enviarMensajeMesa(mesa.getId(), "fase", Map.of(
+                "fase", mesa.getFase().name(),
+                "cartas", List.of(
+                        mesa.getFlop1(), mesa.getFlop2(), mesa.getFlop3(),
+                        mesa.getTurn(), mesa.getRiver()
+                )
+        ));
     }
 
     public void realizarAccion(Mesa mesa, User user, Accion accion, int cantidad) {
@@ -181,18 +254,50 @@ public class TurnoService {
         switch (accion) {
             case FOLD -> turno.setEliminado(true);
             case RAISE -> {
+                int incremento = cantidad - turno.getApuesta();
+
                 if (cantidad <= apuestaMaxima) {
                     throw new RuntimeException("Debes apostar más que la apuesta actual para hacer raise");
                 }
-                int incremento = cantidad - turno.getApuesta();
+
+                // Calcular la última subida válida (mínimo raise)
+                List<Turno> turnos = turnoRepository.findByMesaOrderByOrdenTurno(mesa);
+                List<Integer> raises = turnos.stream()
+                        .filter(t -> t.getAccion() == Accion.RAISE || t.getAccion() == Accion.ALL_IN)
+                        .map(Turno::getApuesta)
+                        .toList();
+
+                int ultimoIncremento = 0;
+                if (raises.size() >= 2) {
+                    int last = raises.get(raises.size() - 1);
+                    int previous = raises.get(raises.size() - 2);
+                    ultimoIncremento = last - previous;
+                } else if (raises.size() == 1) {
+                    ultimoIncremento = raises.get(0); // Primera subida desde las ciegas
+                }
+
+                if (incremento < ultimoIncremento) {
+                    throw new RuntimeException("La subida mínima debe ser al menos de " + ultimoIncremento + " fichas");
+                }
+
+                if (userMesa.getFichasEnMesa() < incremento) {
+                    throw new RuntimeException("No tienes suficientes fichas para hacer raise");
+                }
+
                 turno.setApuesta(cantidad);
+                userMesa.setFichasEnMesa(userMesa.getFichasEnMesa() - incremento);
                 userMesa.setTotalApostado(userMesa.getTotalApostado() + incremento);
                 mesa.setPot(mesa.getPot() + incremento);
             }
             case CALL -> {
                 int diferencia = apuestaMaxima - turno.getApuesta();
+                if (userMesa.getFichasEnMesa() < diferencia) {
+                    throw new RuntimeException("No tienes suficientes fichas para hacer call");
+                }
+
                 if (diferencia > 0) {
                     turno.setApuesta(apuestaMaxima);
+                    userMesa.setFichasEnMesa(userMesa.getFichasEnMesa() - diferencia);
                     userMesa.setTotalApostado(userMesa.getTotalApostado() + diferencia);
                     mesa.setPot(mesa.getPot() + diferencia);
                 }
@@ -204,10 +309,17 @@ public class TurnoService {
                 turno.setApuesta(0);
             }
             case ALL_IN -> {
-                int incremento = cantidad - turno.getApuesta();
-                turno.setApuesta(cantidad);
+                if (userMesa.getFichasEnMesa() < 1) {
+                    throw new RuntimeException("Debes tener al menos 1 ficha para hacer All-In");
+                }
+
+                int incremento = userMesa.getFichasEnMesa(); // Va con lo que tiene
+                int nuevoTotal = turno.getApuesta() + incremento;
+
+                turno.setApuesta(nuevoTotal);
                 userMesa.setTotalApostado(userMesa.getTotalApostado() + incremento);
                 mesa.setPot(mesa.getPot() + incremento);
+                userMesa.setFichasEnMesa(0); // Ya no puede volver a actuar
             }
         }
 
@@ -216,6 +328,27 @@ public class TurnoService {
         userMesaRepository.save(userMesa);
         mesaRepository.save(mesa);
 
-        avanzarTurno(mesa);
+        accionPartidaRepository.save(AccionPartida.builder()
+                .mesa(mesa)
+                .user(user)
+                .accion(accion)
+                .cantidad(cantidad)
+                .timestamp(new Date())
+                .build());
+
+        webSocketService.enviarMensajeMesa(mesa.getId(), "accion", Map.of(
+                "jugador", user.getUsername(),
+                "accion", accion.name(),
+                "cantidad", cantidad
+        ));
+
+        // Verificar si la ronda está completa
+        if (esFinDeRonda(mesa)) {
+            System.out.println("Fin de ronda detectado. Avanzando a la siguiente fase...");
+            avanzarFase(mesa);
+            inicializarNuevaRonda(mesa); // Para activar nuevos turnos
+        } else {
+            avanzarTurno(mesa);
+        }
     }
 }

@@ -2,19 +2,21 @@ package com.pokeronline.service;
 
 import com.pokeronline.dto.ResultadoShowdownInterno;
 import com.pokeronline.model.*;
-import com.pokeronline.repository.MesaRepository;
-import com.pokeronline.repository.TurnoRepository;
-import com.pokeronline.repository.UserMesaRepository;
-import com.pokeronline.repository.UserRepository;
+import com.pokeronline.repository.*;
+import com.pokeronline.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MesaService {
 
+    private final WebSocketService webSocketService;
+    private final HistorialManoRepository historialManoRepository;
     private final UserRepository userRepository;
     private final TurnoRepository turnoRepository;
     private final TurnoService turnoService;
@@ -23,6 +25,7 @@ public class MesaService {
     private final UserMesaRepository userMesaRepository;
     private final EvaluadorManoService evaluadorManoService;
 
+    @Autowired
     public ResultadoShowdownInterno resolverShowdown(Mesa mesa) {
         List<UserMesa> jugadoresActivos = userMesaRepository.findByMesa(mesa).stream()
                 .filter(UserMesa::isEnJuego)
@@ -83,12 +86,29 @@ public class MesaService {
                 jm.setFichasEnMesa(jm.getFichasEnMesa() + premioPorJugador);
                 userMesaRepository.save(jm);
 
-                // 👇 Aumentar partidas ganadas
+                // Aumentar partidas ganadas
                 User u = jm.getUser();
                 u.setPartidasGanadas(u.getPartidasGanadas() + 1);
                 userRepository.save(u);
 
                 ganadoresFinales.add(u);
+
+                // Aquí guardamos el historial de mano ganadora
+                HistorialMano historial = HistorialMano.builder()
+                        .jugador(u)
+                        .mesa(mesa)
+                        .cartasGanadoras(String.join(",", g.getCartasGanadoras()))
+                        .tipoManoGanadora(String.valueOf(g.getTipo()))
+                        .fecha(new Date())
+                        .fichasGanadas(premioPorJugador)
+                        .contraJugadores(
+                                participantes.stream()
+                                        .filter(p -> !p.getUser().getId().equals(u.getId()))
+                                        .map(p -> p.getUser().getUsername())
+                                        .collect(Collectors.joining(", "))
+                        )
+                        .build();
+                historialManoRepository.save(historial);
             }
 
             potRestante -= sidePot;
@@ -97,10 +117,18 @@ public class MesaService {
             }
 
             ordenados.removeIf(j -> apuestas.get(j) == 0);
+
+
         }
 
         mesa.setPot(0);
         mesaRepository.save(mesa);
+
+        webSocketService.enviarMensajeMesa(mesa.getId(), "showdown", Map.of(
+                "ganadores", ganadoresFinales.stream().map(User::getUsername).toList(),
+                "tipo", tipoGanador != null ? tipoGanador.name() : "NINGUNO",
+                "cartas", cartasGanadoras
+        ));
 
         return new ResultadoShowdownInterno(ganadoresFinales, tipoGanador, cartasGanadoras);
     }

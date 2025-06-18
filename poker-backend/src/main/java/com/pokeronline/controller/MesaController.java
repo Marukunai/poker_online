@@ -2,6 +2,7 @@ package com.pokeronline.controller;
 
 import com.pokeronline.dto.*;
 import com.pokeronline.model.*;
+import com.pokeronline.repository.AccionPartidaRepository;
 import com.pokeronline.repository.MesaRepository;
 import com.pokeronline.repository.UserMesaRepository;
 import com.pokeronline.repository.UserRepository;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MesaController {
 
+    private final AccionPartidaRepository accionPartidaRepository;
     private final EvaluadorManoService evaluadorManoService;
     private final MesaRepository mesaRepository;
     private final UserRepository userRepository;
@@ -267,5 +269,14 @@ public class MesaController {
         );
 
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/{mesaId}/acciones")
+    public ResponseEntity<?> verAccionesDePartida(@PathVariable Long mesaId) {
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        List<AccionPartida> acciones = accionPartidaRepository.findByMesaOrderByTimestampAsc(mesa);
+        return ResponseEntity.ok(acciones);
     }
 }

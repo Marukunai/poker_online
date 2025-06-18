@@ -1,7 +1,10 @@
 package com.pokeronline.controller;
 
+import com.pokeronline.dto.HistorialManoDTO;
 import com.pokeronline.dto.UserDTO;
+import com.pokeronline.model.HistorialMano;
 import com.pokeronline.model.User;
+import com.pokeronline.repository.HistorialManoRepository;
 import com.pokeronline.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -18,6 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final HistorialManoRepository historialManoRepository;
     private final UserRepository userRepository;
 
     @GetMapping("/profile")
@@ -54,5 +58,25 @@ public class UserController {
         ).toList();
 
         return ResponseEntity.ok(ranking);
+    }
+
+    @GetMapping("/historial")
+    public ResponseEntity<?> historialPartidas(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
+
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        List<HistorialMano> historial = historialManoRepository.findByJugadorOrderByFechaDesc(user);
+
+        List<HistorialManoDTO> dtoList = historial.stream().map(mano -> HistorialManoDTO.builder()
+                .fecha(mano.getFecha())
+                .fichasGanadas(mano.getFichasGanadas())
+                .cartasGanadoras(mano.getCartasGanadoras())
+                .contraJugadores(mano.getContraJugadores())
+                .tipoManoGanadora(mano.getTipoManoGanadora())
+                .build()).toList();
+
+        return ResponseEntity.ok(dtoList);
     }
 }
