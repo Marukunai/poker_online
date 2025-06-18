@@ -28,6 +28,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(nullable = false)
+    @Builder.Default
     private int partidasGanadas = 0;
 }
