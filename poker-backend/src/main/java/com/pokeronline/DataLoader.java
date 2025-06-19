@@ -22,6 +22,11 @@ public class DataLoader {
 
     @PostConstruct
     public void init() {
+        if (userRepository.findByEmail("alice@email.com").isPresent()) {
+            System.out.println("Los datos ya existen. No se volverán a insertar.");
+            return;
+        }
+
         // Crear usuarios
         User u1 = User.builder()
                 .username("alice")
@@ -59,8 +64,11 @@ public class DataLoader {
         Mesa mesa = Mesa.builder()
                 .nombre("Mesa de Prueba")
                 .activa(true)
+                .smallBlind(5)
+                .bigBlind(10)
                 .fase(Fase.PRE_FLOP)
                 .pot(0)
+                .maxJugadores(6)
                 .build();
         mesaRepository.save(mesa);
 

@@ -2,9 +2,9 @@ package com.pokeronline.config;
 
 import com.pokeronline.model.User;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
@@ -12,11 +12,11 @@ import java.util.function.Function;
 @Component
 public class JwtUtils {
 
-    private final String jwtSecret = "secretKey123"; // cambiar por otra en caso de quererla proteger
+    // Clave secreta segura de 64 bytes para HS512
+    private static final String SECRET_KEY = "3cTt2$!eJsd7Ua1XgA5VneKyz2NmYPqkH64rQwTdkP#JLK9bYt8F9@RzW6zYlM8L";
 
     private Key getSigningKey() {
-        byte[] keyBytes = jwtSecret.getBytes();
-        return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS512.getJcaName());
+        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
     public String generateToken(User user) {

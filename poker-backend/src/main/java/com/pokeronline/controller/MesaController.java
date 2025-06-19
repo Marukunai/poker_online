@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/mesas")
@@ -56,24 +57,57 @@ public class MesaController {
         Mesa mesa = mesaRepository.findById(mesaId)
                 .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
 
-        if (userMesaRepository.findByUserAndMesa(user, mesa).isPresent()) {
-            return ResponseEntity.badRequest().body("Ya estás en esta mesa");
+        // Si ya está en otra(s) mesa(s) activa(s), lo desconectamos
+        List<UserMesa> mesasActivas = userMesaRepository.findByUser(user).stream()
+                .filter(um -> um.getMesa().isActiva() && um.isConectado())
+                .toList();
+
+        boolean fueDesconectadoDeOtraMesa = false;
+
+        for (UserMesa um : mesasActivas) {
+            um.setConectado(false);
+            um.setLastSeen(new Date());
+            userMesaRepository.save(um);
+            fueDesconectadoDeOtraMesa = true;
         }
 
+        // Comprobamos que haya espacio en la nueva mesa
         long jugadoresActuales = userMesaRepository.findByMesa(mesa).size();
         if (jugadoresActuales >= mesa.getMaxJugadores()) {
             return ResponseEntity.badRequest().body("La mesa está llena");
         }
 
+        Optional<UserMesa> relacionExistente = userMesaRepository.findByUserAndMesa(user, mesa);
+        if (relacionExistente.isPresent()) {
+            UserMesa um = relacionExistente.get();
+            if (um.isConectado()) {
+                return ResponseEntity.badRequest().body("Ya estás en esta mesa");
+            } else {
+                // Reactivar jugador si estaba desconectado
+                um.setConectado(true);
+                um.setLastSeen(null); // opcional, limpiar última desconexión
+                userMesaRepository.save(um);
+                return ResponseEntity.ok("Te has reconectado a la mesa");
+            }
+        }
+
+
+        // Creamos la nueva relación
         UserMesa userMesa = UserMesa.builder()
                 .user(user)
                 .mesa(mesa)
                 .fichasEnMesa(100)
                 .enJuego(true)
+                .conectado(true)
                 .build();
 
         userMesaRepository.save(userMesa);
-        return ResponseEntity.ok("Unido correctamente a la mesa");
+
+        String mensaje = fueDesconectadoDeOtraMesa
+                ? "Te desconectamos de otra(s) mesa(s) activa(s) y te unimos correctamente a esta mesa."
+                : "Unido correctamente a la mesa.";
+
+        return ResponseEntity.ok(mensaje);
     }
 
     @GetMapping("/{mesaId}/jugadores")
@@ -278,5 +312,23 @@ public class MesaController {
 
         List<AccionPartida> acciones = accionPartidaRepository.findByMesaOrderByTimestampAsc(mesa);
         return ResponseEntity.ok(acciones);
+    }
+
+    @PostMapping("/{mesaId}/salir")
+    public ResponseEntity<?> salirDeMesa(@PathVariable Long mesaId, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
+
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        UserMesa userMesa = userMesaRepository.findByUserAndMesa(user, mesa)
+                .orElseThrow(() -> new RuntimeException("No estás en esta mesa"));
+
+        userMesaRepository.delete(userMesa);
+
+        return ResponseEntity.ok("Saliste definitivamente de la mesa");
     }
 }

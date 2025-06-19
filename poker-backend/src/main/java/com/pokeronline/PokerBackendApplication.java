@@ -1,4 +1,4 @@
-package com.pokeronline.poker_backend;
+package com.pokeronline;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

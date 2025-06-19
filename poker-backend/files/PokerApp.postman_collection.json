@@ -1,0 +1,277 @@
+{
+	"info": {
+		"_postman_id": "23e20060-f4d3-4898-99de-2943362aa00d",
+		"name": "PokerApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "40466533"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "🔐 Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"maruku@email.com\",\r\n  \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "👤 Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"maruku\",\r\n  \"email\": \"maruku@email.com\",\r\n  \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/auth/register"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "👤 Obtener Perfil",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\tBearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDMzOTc2OSwiZXhwIjoxNzUwNDI2MTY5fQ.VqKK8xQTW5lxiCi_lSAP2x-E3TRiONnp0N04LqHFMXLepOyAGEN57MLvZ_w9uXYaUzOtD3XxRb2Q7TvK0LU72w",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/user/profile"
+					},
+					"response": []
+				},
+				{
+					"name": "🏆 Ranking de Usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDMzOTc2OSwiZXhwIjoxNzUwNDI2MTY5fQ.VqKK8xQTW5lxiCi_lSAP2x-E3TRiONnp0N04LqHFMXLepOyAGEN57MLvZ_w9uXYaUzOtD3XxRb2Q7TvK0LU72w",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/user/ranking"
+					},
+					"response": []
+				},
+				{
+					"name": "📜 Historial de Partidas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDMzOTc2OSwiZXhwIjoxNzUwNDI2MTY5fQ.VqKK8xQTW5lxiCi_lSAP2x-E3TRiONnp0N04LqHFMXLepOyAGEN57MLvZ_w9uXYaUzOtD3XxRb2Q7TvK0LU72w",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/user/historial"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Mesa",
+			"item": [
+				{
+					"name": "📋 Listar Mesas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDM0MjIwOSwiZXhwIjoxNzUwNDI4NjA5fQ.P8GNNGhqno_tpdJOZW8hUXrELaf-sIY2wVUj0LEfOMs6rAxDy46iK9DkXwNd3mO0hM84vQrqP3PLCfEPgsfcJg",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas"
+					},
+					"response": []
+				},
+				{
+					"name": "➕ Crear Mesa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDM0MjgyMiwiZXhwIjoxNzUwNDI5MjIyfQ.lkX1mbg7sSoJR8h-YApElYXBasPiuzp25aN-ofKP3CR0Qy9WAijaFfgj5uO2GvSqjds97eQ5UdOfeEpnuHkfrA",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/mesas?nombre=Mesa%20de%20Prueba&maxJugadores=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"mesas"
+							],
+							"query": [
+								{
+									"key": "nombre",
+									"value": "Mesa%20de%20Prueba"
+								},
+								{
+									"key": "maxJugadores",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "👥 Unirse a Mesa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTAzNDU0MzgsImV4cCI6MTc1MDQzMTgzOH0.PptiU9lr6w1SESntjpzc3v8RUBdOh5QzTgxf7x8mHeMOqLU6alQatVG2IyHs6bc3h0mRERWTa7tNa_e0KSP67w",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/2/unirse"
+					},
+					"response": []
+				},
+				{
+					"name": "🛜 Abandonar",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTAzNDU0MzgsImV4cCI6MTc1MDQzMTgzOH0.PptiU9lr6w1SESntjpzc3v8RUBdOh5QzTgxf7x8mHeMOqLU6alQatVG2IyHs6bc3h0mRERWTa7tNa_e0KSP67w",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/2/abandonar"
+					},
+					"response": []
+				},
+				{
+					"name": "🧍 Ver jugadores",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDM0MjgyMiwiZXhwIjoxNzUwNDI5MjIyfQ.lkX1mbg7sSoJR8h-YApElYXBasPiuzp25aN-ofKP3CR0Qy9WAijaFfgj5uO2GvSqjds97eQ5UdOfeEpnuHkfrA",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/2/jugadores"
+					},
+					"response": []
+				},
+				{
+					"name": "🚪 Salir",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTAzNDU0MzgsImV4cCI6MTc1MDQzMTgzOH0.PptiU9lr6w1SESntjpzc3v8RUBdOh5QzTgxf7x8mHeMOqLU6alQatVG2IyHs6bc3h0mRERWTa7tNa_e0KSP67w",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/1/salir"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Partida",
+			"item": [
+				{
+					"name": "▶️ Iniciar Ronda",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/api/partida/start"
+					},
+					"response": []
+				},
+				{
+					"name": "🃏 Jugar Turno",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/api/partida/turno"
+					},
+					"response": []
+				},
+				{
+					"name": "📤 Retirarse",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "http://localhost:8080/api/partida/fold"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -25,7 +25,6 @@ public class MesaService {
     private final UserMesaRepository userMesaRepository;
     private final EvaluadorManoService evaluadorManoService;
 
-    @Autowired
     public ResultadoShowdownInterno resolverShowdown(Mesa mesa) {
         List<UserMesa> jugadoresActivos = userMesaRepository.findByMesa(mesa).stream()
                 .filter(UserMesa::isEnJuego)

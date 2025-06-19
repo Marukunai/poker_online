@@ -1,5 +1,6 @@
 package com.pokeronline.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class UserMesa {
     private User user;
 
     @ManyToOne
+    @JsonIgnore
     private Mesa mesa;
 
     private int fichasEnMesa;
