@@ -4,6 +4,7 @@ import com.pokeronline.dto.ResultadoShowdownInterno;
 import com.pokeronline.model.*;
 import com.pokeronline.repository.*;
 import com.pokeronline.websocket.WebSocketService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,6 @@ public class MesaService {
                     .filter(e -> e.getFuerza() == mejorFuerza)
                     .toList();
 
-            // Guardamos el primer tipo de mano ganadora para mostrar
             if (tipoGanador == null && !ganadores.isEmpty()) {
                 tipoGanador = ganadores.get(0).getTipo();
                 cartasGanadoras = ganadores.get(0).getCartasGanadoras();
@@ -85,14 +85,12 @@ public class MesaService {
                 jm.setFichasEnMesa(jm.getFichasEnMesa() + premioPorJugador);
                 userMesaRepository.save(jm);
 
-                // Aumentar partidas ganadas
                 User u = jm.getUser();
                 u.setPartidasGanadas(u.getPartidasGanadas() + 1);
                 userRepository.save(u);
 
                 ganadoresFinales.add(u);
 
-                // Aquí guardamos el historial de mano ganadora
                 HistorialMano historial = HistorialMano.builder()
                         .jugador(u)
                         .mesa(mesa)
@@ -111,13 +109,14 @@ public class MesaService {
             }
 
             potRestante -= sidePot;
-            for (UserMesa jm : apuestas.keySet()) {
+
+            // iterar sobre copia de claves
+            List<UserMesa> claves = new ArrayList<>(apuestas.keySet());
+            for (UserMesa jm : claves) {
                 apuestas.compute(jm, (k, anterior) -> Math.max(0, anterior != null ? anterior - cantidadMinima : 0));
             }
 
             ordenados.removeIf(j -> apuestas.get(j) == 0);
-
-
         }
 
         mesa.setPot(0);
@@ -132,6 +131,7 @@ public class MesaService {
         return new ResultadoShowdownInterno(ganadoresFinales, tipoGanador, cartasGanadoras);
     }
 
+    @Transactional
     public void iniciarNuevaMano(Mesa mesa) {
         // Reiniciar pot y fase
         turnoService.cancelarTemporizador(mesa.getId());
@@ -153,7 +153,7 @@ public class MesaService {
         turnoRepository.deleteAllByMesa(mesa);
         turnoService.inicializarTurnos(mesa);
     }
-
+    @Transactional
     public String finalizarMano(Mesa mesa) {
         List<UserMesa> jugadoresConFichas = userMesaRepository.findByMesa(mesa).stream()
                 .filter(j -> j.getFichasEnMesa() > 0)

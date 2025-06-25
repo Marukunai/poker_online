@@ -66,7 +66,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "\tBearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDMzOTc2OSwiZXhwIjoxNzUwNDI2MTY5fQ.VqKK8xQTW5lxiCi_lSAP2x-E3TRiONnp0N04LqHFMXLepOyAGEN57MLvZ_w9uXYaUzOtD3XxRb2Q7TvK0LU72w",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
 								"type": "text"
 							}
 						],
@@ -90,7 +90,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDMzOTc2OSwiZXhwIjoxNzUwNDI2MTY5fQ.VqKK8xQTW5lxiCi_lSAP2x-E3TRiONnp0N04LqHFMXLepOyAGEN57MLvZ_w9uXYaUzOtD3XxRb2Q7TvK0LU72w",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
 								"type": "text"
 							}
 						],
@@ -105,7 +105,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDMzOTc2OSwiZXhwIjoxNzUwNDI2MTY5fQ.VqKK8xQTW5lxiCi_lSAP2x-E3TRiONnp0N04LqHFMXLepOyAGEN57MLvZ_w9uXYaUzOtD3XxRb2Q7TvK0LU72w",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
 								"type": "text"
 							}
 						],
@@ -125,7 +125,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDM0MjIwOSwiZXhwIjoxNzUwNDI4NjA5fQ.P8GNNGhqno_tpdJOZW8hUXrELaf-sIY2wVUj0LEfOMs6rAxDy46iK9DkXwNd3mO0hM84vQrqP3PLCfEPgsfcJg",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
 								"type": "text"
 							}
 						],
@@ -140,32 +140,36 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDM0MjgyMiwiZXhwIjoxNzUwNDI5MjIyfQ.lkX1mbg7sSoJR8h-YApElYXBasPiuzp25aN-ofKP3CR0Qy9WAijaFfgj5uO2GvSqjds97eQ5UdOfeEpnuHkfrA",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "http://localhost:8080/api/mesas?nombre=Mesa%20de%20Prueba&maxJugadores=5",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"mesas"
-							],
-							"query": [
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
 								{
 									"key": "nombre",
-									"value": "Mesa%20de%20Prueba"
+									"value": "Mesa de Prueba 3",
+									"type": "text"
 								},
 								{
 									"key": "maxJugadores",
-									"value": "5"
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "smallBlind",
+									"value": "50",
+									"type": "text"
+								},
+								{
+									"key": "bigBlind",
+									"value": "100",
+									"type": "text"
 								}
 							]
-						}
+						},
+						"url": "http://localhost:8080/api/mesas"
 					},
 					"response": []
 				},
@@ -176,11 +180,31 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTAzNDU0MzgsImV4cCI6MTc1MDQzMTgzOH0.PptiU9lr6w1SESntjpzc3v8RUBdOh5QzTgxf7x8mHeMOqLU6alQatVG2IyHs6bc3h0mRERWTa7tNa_e0KSP67w",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/2/unirse"
+						"url": "http://localhost:8080/api/mesas/1/unirse"
+					},
+					"response": []
+				},
+				{
+					"name": "❌ Salir",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/1/salir"
 					},
 					"response": []
 				},
@@ -196,11 +220,11 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTAzNDU0MzgsImV4cCI6MTc1MDQzMTgzOH0.PptiU9lr6w1SESntjpzc3v8RUBdOh5QzTgxf7x8mHeMOqLU6alQatVG2IyHs6bc3h0mRERWTa7tNa_e0KSP67w",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/2/abandonar"
+						"url": "http://localhost:8080/api/mesas/1/abandonar"
 					},
 					"response": []
 				},
@@ -211,16 +235,90 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDM0MjgyMiwiZXhwIjoxNzUwNDI5MjIyfQ.lkX1mbg7sSoJR8h-YApElYXBasPiuzp25aN-ofKP3CR0Qy9WAijaFfgj5uO2GvSqjds97eQ5UdOfeEpnuHkfrA",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/2/jugadores"
+						"url": "http://localhost:8080/api/mesas/1/jugadores"
 					},
 					"response": []
 				},
 				{
-					"name": "🚪 Salir",
+					"name": "♻️ Reconectar",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": "http://localhost:8080/api/mesas/1/reconectar"
+					},
+					"response": []
+				},
+				{
+					"name": "🫀 Refrescar",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/1/keepalive"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Juego",
+			"item": [
+				{
+					"name": "🃏 Repartir",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/1/repartir"
+					},
+					"response": []
+				},
+				{
+					"name": "▶️ Nueva Mano",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/1/nueva-mano"
+					},
+					"response": []
+				},
+				{
+					"name": "⏹ Finalizar Mano",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -231,43 +329,81 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTAzNDU0MzgsImV4cCI6MTc1MDQzMTgzOH0.PptiU9lr6w1SESntjpzc3v8RUBdOh5QzTgxf7x8mHeMOqLU6alQatVG2IyHs6bc3h0mRERWTa7tNa_e0KSP67w",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/salir"
+						"url": "http://localhost:8080/api/mesas/1/finalizar-mano"
+					},
+					"response": []
+				},
+				{
+					"name": "👑 Resolver Showdown",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/1/resolver-showdown"
+					},
+					"response": []
+				},
+				{
+					"name": "🏆 Ganador",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/1/ganador"
 					},
 					"response": []
 				}
 			]
 		},
 		{
-			"name": "Partida",
+			"name": "Info",
 			"item": [
 				{
-					"name": "▶️ Iniciar Ronda",
+					"name": "🧠 Estado",
 					"request": {
-						"method": "POST",
-						"header": [],
-						"url": "http://localhost:8080/api/partida/start"
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/1/estado"
 					},
 					"response": []
 				},
 				{
-					"name": "🃏 Jugar Turno",
+					"name": "📜 Acciones",
 					"request": {
-						"method": "POST",
-						"header": [],
-						"url": "http://localhost:8080/api/partida/turno"
-					},
-					"response": []
-				},
-				{
-					"name": "📤 Retirarse",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": "http://localhost:8080/api/partida/fold"
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/1/acciones"
 					},
 					"response": []
 				}

@@ -15,9 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/mesas")
@@ -38,11 +36,13 @@ public class MesaController {
     }
 
     @PostMapping
-    public ResponseEntity<Mesa> crearMesa(@RequestParam String nombre, @RequestParam(defaultValue = "6") int maxJugadores) {
+    public ResponseEntity<Mesa> crearMesa(@RequestParam String nombre, @RequestParam(defaultValue = "6") int maxJugadores, @RequestParam(defaultValue = "5") int smallBlind, @RequestParam(defaultValue = "10") int bigBlind) {
         Mesa nuevaMesa = Mesa.builder()
                 .nombre(nombre)
                 .activa(true)
                 .maxJugadores(maxJugadores)
+                .smallBlind(smallBlind)
+                .bigBlind(bigBlind)
                 .build();
         return ResponseEntity.ok(mesaRepository.save(nuevaMesa));
     }
@@ -146,6 +146,10 @@ public class MesaController {
                 .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
 
         List<UserMesa> jugadores = userMesaRepository.findByMesa(mesa);
+
+        if (mesa.getFase() != Fase.SHOWDOWN) {
+            return ResponseEntity.badRequest().body("La partida no está en SHOWDOWN");
+        }
 
         ManoEvaluada ganador = evaluadorManoService.determinarGanador(jugadores, mesa);
 
@@ -303,6 +307,33 @@ public class MesaController {
         );
 
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/{mesaId}/comunitarias")
+    public ResponseEntity<?> obtenerCartasVisibles(@PathVariable Long mesaId) {
+        Mesa mesa = mesaRepository.findById(mesaId)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
+
+        if (mesa.getFase() == Fase.PRE_FLOP) return ResponseEntity.status(405).body("No hay cartas para mostrar");
+
+        List<String> visibles = new ArrayList<>();
+
+        if (mesa.getFase() == Fase.FLOP || mesa.getFase() == Fase.TURN || mesa.getFase() == Fase.RIVER || mesa.getFase() == Fase.SHOWDOWN) {
+            visibles.add(mesa.getFlop1());
+            visibles.add(mesa.getFlop2());
+            visibles.add(mesa.getFlop3());
+        }
+        if (mesa.getFase() == Fase.TURN || mesa.getFase() == Fase.RIVER || mesa.getFase() == Fase.SHOWDOWN) {
+            visibles.add(mesa.getTurn());
+        }
+        if (mesa.getFase() == Fase.RIVER || mesa.getFase() == Fase.SHOWDOWN) {
+            visibles.add(mesa.getRiver());
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "fase", mesa.getFase(),
+                "comunitariasVisibles", visibles
+        ));
     }
 
     @GetMapping("/{mesaId}/acciones")

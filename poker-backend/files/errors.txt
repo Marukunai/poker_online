@@ -1,0 +1,5 @@
+endpoint http://localhost:8080/api/mesas/1/reconectar (403 forbidden) (ya funcional)
+endpoint http://localhost:8080/api/mesas/1/finalizar-mano (403 forbidden) (ya funcional)
+endpoint http://localhost:8080/api/mesas/1/ganador (403 forbidden) (ya funcional)
+endpoint http://localhost:8080/api/mesas/1/resolver-showdown (403 forbidden) (ya funcional)
+endpoint http://localhost:8080/api/mesas/1/comunitarias (405 Method Not Allowed) (no muestra cartas en pre_flop)
