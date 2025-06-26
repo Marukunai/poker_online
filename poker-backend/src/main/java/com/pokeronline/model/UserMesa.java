@@ -42,4 +42,10 @@ public class UserMesa {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastSeen;
+
+    // Fichas que el usuario tenía al unirse a la mesa (sirve para restaurar o estadísticas)
+    private int fichasIniciales;
+
+    // Fichas que el usuario aún tiene disponibles para seguir apostando (sin incluir ya apostado)
+    private int fichasDisponibles;
 }

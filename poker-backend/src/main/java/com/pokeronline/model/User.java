@@ -23,7 +23,7 @@ public class User {
 
     private String avatarUrl; // Ruta de la imagen del perfil
 
-    private int fichas; // Fichas disponibles para apostar
+    private int fichas; // Fichas totales del usuario fuera de cualquier mesa. Se actualiza cuando gana o pierde fichas en una partida.
 
     @Enumerated(EnumType.STRING)
     private Role role;

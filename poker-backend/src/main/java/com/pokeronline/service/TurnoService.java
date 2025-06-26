@@ -6,9 +6,11 @@ import com.pokeronline.repository.MesaRepository;
 import com.pokeronline.repository.TurnoRepository;
 import com.pokeronline.repository.UserMesaRepository;
 import com.pokeronline.websocket.WebSocketService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -26,6 +28,7 @@ public class TurnoService {
     private final UserMesaRepository userMesaRepository;
     private final MesaRepository mesaRepository;
 
+    @Transactional
     public void inicializarTurnos(Mesa mesa) {
         turnoRepository.deleteAllByMesa(mesa);
 
@@ -62,14 +65,14 @@ public class TurnoService {
                 .orElse(null);
 
         if (userMesa != null) {
-            // 💡 Verificar si ha estado inactivo más de 60s
+            // 💡 Verificar si ha estado inactivo más de 120s
             if (userMesa.isConectado() && userMesa.getLastSeen() != null) {
                 long diffMillis = System.currentTimeMillis() - userMesa.getLastSeen().getTime();
-                if (diffMillis > 40000) { // 60 segundos sin señales
+                if (diffMillis > 120000) { // 120 segundos sin señales
                     userMesa.setConectado(false);
                     userMesaRepository.save(userMesa);
 
-                    System.out.printf("🔌 Jugador %s se marcó como desconectado por inactividad%n",
+                    System.out.printf("Jugador %s se marcó como desconectado por inactividad%n",
                             userMesa.getUser().getUsername());
                 }
             }
@@ -111,7 +114,7 @@ public class TurnoService {
             }
         };
 
-        ScheduledFuture<?> tareaProgramada = scheduler.schedule(tarea, 30, TimeUnit.SECONDS);
+        ScheduledFuture<?> tareaProgramada = scheduler.schedule(tarea, 60, TimeUnit.SECONDS);
         tareasProgramadas.put(mesa.getId(), tareaProgramada);
     }
 
@@ -179,27 +182,43 @@ public class TurnoService {
     public void avanzarTurno(Mesa mesa) {
         List<Turno> turnos = turnoRepository.findByMesaOrderByOrdenTurno(mesa);
 
+        int indiceActual = -1;
         for (int i = 0; i < turnos.size(); i++) {
             if (turnos.get(i).isActivo()) {
                 turnos.get(i).setActivo(false);
                 turnoRepository.save(turnos.get(i));
-
-                for (int j = 1; j < turnos.size(); j++) {
-                    int siguiente = (i + j) % turnos.size();
-                    UserMesa userMesa = userMesaRepository.findByUserAndMesa(turnos.get(siguiente).getUser(), mesa).orElse(null);
-                    if (!turnos.get(siguiente).isEliminado() && userMesa != null && userMesa.isConectado() && userMesa.getFichasEnMesa() > 0) {
-                        turnos.get(siguiente).setActivo(true);
-                        turnoRepository.save(turnos.get(siguiente));
-
-                        webSocketService.enviarMensajeMesa(mesa.getId(), "turno", Map.of(
-                                "jugador", turnos.get(siguiente).getUser().getUsername()
-                        ));
-                        return;
-                    }
+                indiceActual = i;
+                break;
+            }
+        }
+        if (indiceActual == -1) {
+            // Buscar el último turno con acción no nula
+            for (int i = turnos.size() - 1; i >= 0; i--) {
+                if (turnos.get(i).getAccion() != null) {
+                    indiceActual = i;
+                    break;
                 }
             }
         }
+        if (indiceActual == -1) {
+            System.err.println("No se pudo encontrar el índice del turno actual.");
+            return;
+        }
 
+        for (int j = 1; j < turnos.size(); j++) {
+            int siguiente = (indiceActual + j) % turnos.size();
+            UserMesa userMesa = userMesaRepository.findByUserAndMesa(turnos.get(siguiente).getUser(), mesa).orElse(null);
+            if (!turnos.get(siguiente).isEliminado() && userMesa != null && userMesa.isConectado() && userMesa.getFichasEnMesa() > 0) {
+                turnos.get(siguiente).setActivo(true);
+                turnoRepository.save(turnos.get(siguiente));
+
+                webSocketService.enviarMensajeMesa(mesa.getId(), "turno", Map.of(
+                        "jugador", turnos.get(siguiente).getUser().getUsername()
+                ));
+                iniciarTemporizadorTurno(mesa); // Iniciar el nuevo turno
+                return;
+            }
+        }
         iniciarTemporizadorTurno(mesa);
     }
 
@@ -223,13 +242,20 @@ public class TurnoService {
             case RIVER -> mesa.setFase(Fase.SHOWDOWN);
             case SHOWDOWN -> throw new RuntimeException("La partida ya ha terminado");
         }
+
         mesaRepository.save(mesa);
+
+        // Construcción segura de lista sin nulls
+        List<String> cartas = new ArrayList<>();
+        if (mesa.getFlop1() != null) cartas.add(mesa.getFlop1());
+        if (mesa.getFlop2() != null) cartas.add(mesa.getFlop2());
+        if (mesa.getFlop3() != null) cartas.add(mesa.getFlop3());
+        if (mesa.getTurn() != null)  cartas.add(mesa.getTurn());
+        if (mesa.getRiver() != null) cartas.add(mesa.getRiver());
+
         webSocketService.enviarMensajeMesa(mesa.getId(), "fase", Map.of(
                 "fase", mesa.getFase().name(),
-                "cartas", List.of(
-                        mesa.getFlop1(), mesa.getFlop2(), mesa.getFlop3(),
-                        mesa.getTurn(), mesa.getRiver()
-                )
+                "cartas", cartas
         ));
     }
 

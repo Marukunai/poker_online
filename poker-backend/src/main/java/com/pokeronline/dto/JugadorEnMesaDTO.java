@@ -10,4 +10,5 @@ public class JugadorEnMesaDTO {
     private String username;
     private String avatarUrl;
     private int fichasEnMesa;
+    private int fichasTotales;
 }

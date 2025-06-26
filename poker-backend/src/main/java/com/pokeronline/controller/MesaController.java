@@ -91,12 +91,21 @@ public class MesaController {
             }
         }
 
+        // Verificar fichas mínimas necesarias: al menos 2 × bigBlind
+        int fichasRequeridas = mesa.getBigBlind() * 2;
+        if (user.getFichas() < fichasRequeridas) {
+            return ResponseEntity.badRequest().body("Necesitas al menos " + fichasRequeridas + " fichas para unirte a esta mesa.");
+        }
+
+        // Restar fichas al jugador global y asignar a la mesa
+        user.setFichas(user.getFichas() - fichasRequeridas);
+        userRepository.save(user);
 
         // Creamos la nueva relación
         UserMesa userMesa = UserMesa.builder()
                 .user(user)
                 .mesa(mesa)
-                .fichasEnMesa(100)
+                .fichasEnMesa(fichasRequeridas)
                 .enJuego(true)
                 .conectado(true)
                 .build();
@@ -122,7 +131,8 @@ public class MesaController {
                         um.getUser().getId(),
                         um.getUser().getUsername(),
                         um.getUser().getAvatarUrl(),
-                        um.getFichasEnMesa()
+                        um.getFichasEnMesa(),
+                        um.getUser().getFichas()
                 )
         ).toList();
 
@@ -174,7 +184,8 @@ public class MesaController {
                         um.getUser().getId(),
                         um.getUser().getUsername(),
                         um.getUser().getAvatarUrl(),
-                        um.getFichasEnMesa()
+                        um.getFichasEnMesa(),
+                        um.getUser().getFichas()
                 )).toList();
 
         List<JugadorEnMesaDTO> ganadoresDTO = relaciones.stream()
@@ -183,7 +194,8 @@ public class MesaController {
                         um.getUser().getId(),
                         um.getUser().getUsername(),
                         um.getUser().getAvatarUrl(),
-                        um.getFichasEnMesa()
+                        um.getFichasEnMesa(),
+                        um.getUser().getFichas()
                 )).toList();
 
         ResultadoShowdownDTO response = new ResultadoShowdownDTO(
@@ -291,6 +303,7 @@ public class MesaController {
                         um.getUser().getUsername(),
                         um.getUser().getAvatarUrl(),
                         um.getFichasEnMesa(),
+                        um.getUser().getFichas(),
                         um.getCarta1(),
                         um.getCarta2()
                 )
@@ -358,8 +371,13 @@ public class MesaController {
         UserMesa userMesa = userMesaRepository.findByUserAndMesa(user, mesa)
                 .orElseThrow(() -> new RuntimeException("No estás en esta mesa"));
 
+        int fichasEnMesa = userMesa.getFichasEnMesa();
+        user.setFichas(user.getFichas() + fichasEnMesa);
+        userRepository.save(user);
+
         userMesaRepository.delete(userMesa);
 
-        return ResponseEntity.ok("Saliste definitivamente de la mesa");
+        return ResponseEntity.ok("Saliste definitivamente de la mesa y recuperaste tus "
+                + fichasEnMesa + " fichas. Se han añadido a tu cuenta total de usuario.");
     }
 }

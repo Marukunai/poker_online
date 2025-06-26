@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"maruku@email.com\",\r\n  \"password\": \"123456\"\r\n}",
+							"raw": "{\r\n  \"email\": \"charlie@email.com\",\r\n  \"password\": \"123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -66,7 +66,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA5MjgxMjYsImV4cCI6MTc1MTAxNDUyNn0.aeIP7Jd6knhgvQ_QdO14Uf6A4igr6EVQa-PdwVeSTJ7yTX_soFJb-BPcixB0qlQ29uk712sdpyT5u4Hvgq5-mA",
 								"type": "text"
 							}
 						],
@@ -90,7 +90,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA5MjgxMjYsImV4cCI6MTc1MTAxNDUyNn0.aeIP7Jd6knhgvQ_QdO14Uf6A4igr6EVQa-PdwVeSTJ7yTX_soFJb-BPcixB0qlQ29uk712sdpyT5u4Hvgq5-mA",
 								"type": "text"
 							}
 						],
@@ -105,7 +105,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA5MjMzNDAsImV4cCI6MTc1MTAwOTc0MH0.Du8eqt2wk2S6SsafiiFstYn_guDA5lqHjnio0rThge_7JW9jqL5MVtbWSPsQFzi94zFWgi1tz6YbHSEDaY_upA",
 								"type": "text"
 							}
 						],
@@ -200,7 +200,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA5MjMzNDAsImV4cCI6MTc1MTAwOTc0MH0.Du8eqt2wk2S6SsafiiFstYn_guDA5lqHjnio0rThge_7JW9jqL5MVtbWSPsQFzi94zFWgi1tz6YbHSEDaY_upA",
 								"type": "text"
 							}
 						],
@@ -318,6 +318,21 @@
 					"response": []
 				},
 				{
+					"name": "🃘 Cartas Comunitarias",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDkzNjEzNiwiZXhwIjoxNzUxMDIyNTM2fQ.hfDbZxjneJ0nxOQ0FKc-PEysKA9ShTy_--hI_4Bk587IBG10-ox9MykDyv4KOn5ek1bv-dTrKWyJ_WE_0_WZHA",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesas/1/comunitarias"
+					},
+					"response": []
+				},
+				{
 					"name": "⏹ Finalizar Mano",
 					"request": {
 						"method": "POST",
@@ -369,6 +384,111 @@
 							}
 						],
 						"url": "http://localhost:8080/api/mesas/1/ganador"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Turnos",
+			"item": [
+				{
+					"name": "🔄 Iniciar turno",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJib2JAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA5MzYxNTIsImV4cCI6MTc1MTAyMjU1Mn0.be5ybPzPsSJJM4s34sDpFoMsbP3-5ZoDuMX2tIzyzcsCtwrv-4taUbb7jCyiKQSPokAtcn-XueHxCYoGvt2wag",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/turnos/iniciar/1"
+					},
+					"response": []
+				},
+				{
+					"name": "👁️ Ver turno actual",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDkzNjEzNiwiZXhwIjoxNzUxMDIyNTM2fQ.hfDbZxjneJ0nxOQ0FKc-PEysKA9ShTy_--hI_4Bk587IBG10-ox9MykDyv4KOn5ek1bv-dTrKWyJ_WE_0_WZHA",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/turnos/actual/1"
+					},
+					"response": []
+				},
+				{
+					"name": "⏩ Avanzar turno",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA5MjgxMjYsImV4cCI6MTc1MTAxNDUyNn0.aeIP7Jd6knhgvQ_QdO14Uf6A4igr6EVQa-PdwVeSTJ7yTX_soFJb-BPcixB0qlQ29uk712sdpyT5u4Hvgq5-mA",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/turnos/avanzar/1"
+					},
+					"response": []
+				},
+				{
+					"name": "🃏 Realizar acción",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjaGFybGllQGVtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzUwOTM2MTYzLCJleHAiOjE3NTEwMjI1NjN9.LPVRAMIjTZQnp1x5m3F1hGgpEqS0zhLwdgOywCHgKWGUTDcQ6uxEGmTVfRLaNM4BTkGSnvFcQAZtOA_v7vJA7Q",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "accion",
+									"value": "CALL",
+									"type": "text"
+								},
+								{
+									"key": "cantidad",
+									"value": "50",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:8080/api/turnos/accion/1"
+					},
+					"response": []
+				},
+				{
+					"name": "🔄 Avanzar a la siguiente fase",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDkzNjEzNiwiZXhwIjoxNzUxMDIyNTM2fQ.hfDbZxjneJ0nxOQ0FKc-PEysKA9ShTy_--hI_4Bk587IBG10-ox9MykDyv4KOn5ek1bv-dTrKWyJ_WE_0_WZHA",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/turnos/fase/1/siguiente"
 					},
 					"response": []
 				}

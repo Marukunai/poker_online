@@ -10,6 +10,7 @@ public class JugadorMesaCompletoDTO {
     private String username;
     private String avatarUrl;
     private int fichasEnMesa;
+    private int fichasTotales;
     private String carta1;
     private String carta2;
 }
