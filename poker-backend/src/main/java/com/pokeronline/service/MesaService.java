@@ -6,7 +6,6 @@ import com.pokeronline.repository.*;
 import com.pokeronline.websocket.WebSocketService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -151,6 +150,7 @@ public class MesaService {
 
         mesaRepository.save(mesa);
         turnoRepository.deleteAllByMesa(mesa);
+        asignarPosicionesYAplicarCiegas(mesa);
         turnoService.inicializarTurnos(mesa);
     }
     @Transactional
@@ -167,5 +167,50 @@ public class MesaService {
 
         iniciarNuevaMano(mesa);
         return "Nueva mano iniciada.";
+    }
+
+    public void asignarPosicionesYAplicarCiegas(Mesa mesa) {
+        List<UserMesa> jugadores = new ArrayList<>(userMesaRepository.findByMesa(mesa).stream()
+                .filter(UserMesa::isEnJuego)
+                .toList());
+
+        if (jugadores.size() < 2) {
+            throw new RuntimeException("Se necesitan al menos 2 jugadores para asignar posiciones.");
+        }
+
+        // Puedes rotar jugadores según la mano anterior, por ahora aleatorio
+        Collections.shuffle(jugadores);
+
+        int smallBlind = mesa.getSmallBlind();
+        int bigBlind = mesa.getBigBlind();
+
+        for (int i = 0; i < jugadores.size(); i++) {
+            UserMesa jm = jugadores.get(i);
+
+            if (i == 0) {
+                jm.setPosicion(Posicion.DEALER);
+            } else if (i == 1) {
+                jm.setPosicion(Posicion.SMALL_BLIND);
+                aplicarCiega(jm, smallBlind, mesa);
+            } else if (i == 2) {
+                jm.setPosicion(Posicion.BIG_BLIND);
+                aplicarCiega(jm, bigBlind, mesa);
+            } else {
+                jm.setPosicion(Posicion.JUGADOR);
+            }
+
+            userMesaRepository.save(jm);
+        }
+
+        mesaRepository.save(mesa);
+    }
+
+    private void aplicarCiega(UserMesa jm, int cantidad, Mesa mesa) {
+        int fichas = jm.getFichasEnMesa();
+        int apuesta = Math.min(cantidad, fichas); // All-in si no llega
+
+        jm.setFichasEnMesa(fichas - apuesta);
+        jm.setTotalApostado(jm.getTotalApostado() + apuesta);
+        mesa.setPot(mesa.getPot() + apuesta);
     }
 }

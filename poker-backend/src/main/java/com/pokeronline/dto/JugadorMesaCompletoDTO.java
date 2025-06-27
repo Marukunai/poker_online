@@ -1,5 +1,6 @@
 package com.pokeronline.dto;
 
+import com.pokeronline.model.Posicion;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,4 +14,5 @@ public class JugadorMesaCompletoDTO {
     private int fichasTotales;
     private String carta1;
     private String carta2;
+    private Posicion posicion;
 }

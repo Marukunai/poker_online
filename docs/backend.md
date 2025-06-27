@@ -2,7 +2,7 @@
 
 ## 🏠 Introducción
 
-Este proyecto representa el backend de una aplicación web y móvil de póker en línea, diseñado como proyecto final de grado. El objetivo es ofrecer una experiencia de póker realista y multijugador, con autenticación segura, gestión de partidas, apuestas, lógica de juego, y una futura interfaz frontend.
+Este proyecto representa el backend de una aplicación web y móvil de póker en línea, diseñado como proyecto de autoaprendizaje y desarrollo. El objetivo es ofrecer una experiencia de póker realista y multijugador, con autenticación segura, gestión de partidas, apuestas, lógica de juego, y una futura interfaz frontend.
 
 ---
 
@@ -10,25 +10,27 @@ Este proyecto representa el backend de una aplicación web y móvil de póker en
 
 ```
 /poker-online
-├── backend/               # Proyecto Spring Boot (Java)
-│   ├── controller/        # Controladores REST
-│   ├── service/           # Lógica de negocio
-│   ├── model/             # Entidades JPA (User, Mesa, Turno...)
-│   ├── dto/               # Objetos de transferencia de datos
-│   ├── repository/        # Repositorios JPA
-│   ├── config/            # Seguridad JWT y configuraciones
-│   ├── PokerOnlineApp.java# Clase principal
+├── backend/                           # Proyecto Spring Boot (Java)
+│   ├── controller/                    # Controladores REST
+│   ├── service/                       # Lógica de negocio
+│   ├── model/                         # Entidades JPA (User, Mesa, Turno...)
+│   ├── dto/                           # Objetos de transferencia de datos
+│   ├── repository/                    # Repositorios JPA
+│   ├── config/                        # Seguridad JWT y configuraciones
+│   ├── PokerBackendApplication.java   # Clase principal
 │   └── ...
-├── docs/                  # Documentación Markdown (GitHub Pages)
-│   └── backend.md       # Esta documentación
-└── frontend/              # (Futuro) Frontend React/Flutter
+├── docs/                              # Documentación Markdown (GitHub Pages)
+│   ├── index.md           
+│   ├── backend.md                     # Esta documentación
+│   └── frontend.md                    # Documentación para el frontend (aún no implementado)
+└── frontend/                          # (Futuro) Frontend React/Flutter
 ```
 
 ---
 
 ## 🎯 Tecnologías utilizadas
 
-* **Java 21** + Spring Boot 3
+* **Java 17** + Spring Boot 3
 * **JWT** para autenticación segura
 * **Hibernate/JPA** para persistencia
 * **MySQL** como base de datos
@@ -170,11 +172,13 @@ Eventos enviados desde servidor a mesa:
 * DB externa: PlanetScale o Amazon RDS
 * Variables de entorno para `JWT_SECRET`, `DB_URL`, etc.
 
+Actualmente, se utiliza una BD personal para pruebas. Una vez esté el proyecto terminado, se probará de trasladarlo a una BD global para hosting.
+
 ---
 
 ## 📚 Créditos y colaboración
 
-Este proyecto ha sido desarrollado por \[Tu Nombre] como trabajo de final de grado.
+Este proyecto ha sido desarrollado por \[Marc Martín].
 
 > Si deseas colaborar o extender la lógica, puedes abrir un `Pull Request` o contactar vía GitHub Issues.
 

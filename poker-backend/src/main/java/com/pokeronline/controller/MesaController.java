@@ -1,6 +1,7 @@
 package com.pokeronline.controller;
 
 import com.pokeronline.dto.*;
+import com.pokeronline.exception.UnauthorizedException;
 import com.pokeronline.model.*;
 import com.pokeronline.repository.AccionPartidaRepository;
 import com.pokeronline.repository.MesaRepository;
@@ -49,7 +50,7 @@ public class MesaController {
 
     @PostMapping("/{mesaId}/unirse")
     public ResponseEntity<?> unirseAMesa(@PathVariable Long mesaId, @AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
+        if (userDetails == null) throw new UnauthorizedException("Debes iniciar sesión");
 
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -132,7 +133,8 @@ public class MesaController {
                         um.getUser().getUsername(),
                         um.getUser().getAvatarUrl(),
                         um.getFichasEnMesa(),
-                        um.getUser().getFichas()
+                        um.getFichasDisponibles(),
+                        um.getPosicion()
                 )
         ).toList();
 
@@ -185,7 +187,8 @@ public class MesaController {
                         um.getUser().getUsername(),
                         um.getUser().getAvatarUrl(),
                         um.getFichasEnMesa(),
-                        um.getUser().getFichas()
+                        um.getUser().getFichas(),
+                        um.getPosicion()
                 )).toList();
 
         List<JugadorEnMesaDTO> ganadoresDTO = relaciones.stream()
@@ -195,7 +198,8 @@ public class MesaController {
                         um.getUser().getUsername(),
                         um.getUser().getAvatarUrl(),
                         um.getFichasEnMesa(),
-                        um.getUser().getFichas()
+                        um.getUser().getFichas(),
+                        um.getPosicion()
                 )).toList();
 
         ResultadoShowdownDTO response = new ResultadoShowdownDTO(
@@ -228,7 +232,7 @@ public class MesaController {
 
     @PostMapping("/{mesaId}/reconectar")
     public ResponseEntity<?> reconectar(@PathVariable Long mesaId, @AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
+        if (userDetails == null) throw new UnauthorizedException("Debes iniciar sesión");
 
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -247,7 +251,7 @@ public class MesaController {
 
     @PostMapping("/{mesaId}/abandonar")
     public ResponseEntity<?> abandonar(@PathVariable Long mesaId, @AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
+        if (userDetails == null) throw new UnauthorizedException("Debes iniciar sesión");
 
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -267,7 +271,7 @@ public class MesaController {
 
     @PostMapping("/{mesaId}/keepalive")
     public ResponseEntity<?> keepAlive(@PathVariable Long mesaId, @AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
+        if (userDetails == null) throw new UnauthorizedException("Debes iniciar sesión");
 
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -305,7 +309,8 @@ public class MesaController {
                         um.getFichasEnMesa(),
                         um.getUser().getFichas(),
                         um.getCarta1(),
-                        um.getCarta2()
+                        um.getCarta2(),
+                        um.getPosicion()
                 )
         ).toList();
 
@@ -360,7 +365,7 @@ public class MesaController {
 
     @PostMapping("/{mesaId}/salir")
     public ResponseEntity<?> salirDeMesa(@PathVariable Long mesaId, @AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
+        if (userDetails == null) throw new UnauthorizedException("Debes iniciar sesión");
 
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));

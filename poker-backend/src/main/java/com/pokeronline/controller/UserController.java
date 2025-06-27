@@ -2,6 +2,7 @@ package com.pokeronline.controller;
 
 import com.pokeronline.dto.HistorialManoDTO;
 import com.pokeronline.dto.UserDTO;
+import com.pokeronline.exception.UnauthorizedException;
 import com.pokeronline.model.HistorialMano;
 import com.pokeronline.model.User;
 import com.pokeronline.repository.HistorialManoRepository;
@@ -26,7 +27,7 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
+        if (userDetails == null) throw new UnauthorizedException("Debes iniciar sesión");
 
         Optional<User> userOpt = userRepository.findByEmail(userDetails.getUsername());
         if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
@@ -62,7 +63,7 @@ public class UserController {
 
     @GetMapping("/historial")
     public ResponseEntity<?> historialPartidas(@AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails == null) return ResponseEntity.status(401).body("No autenticado");
+        if (userDetails == null) throw new UnauthorizedException("Debes iniciar sesión");
 
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
