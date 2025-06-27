@@ -39,6 +39,89 @@ Este proyecto representa el backend de una aplicación web y móvil de póker en
 
 ---
 
+# Inicio de aplicativo
+
+Antes de poder usar la aplicación, primero debemos asegurarnos de tener una base de datos como la que definimos en [application.properties](https://github.com/Marukunai/poker_online/blob/b7ef2a663bd3bd4e3464f558dc1fbf55f85a7347/poker-backend/src/main/resources/application.properties).
+
+Si no la tienes creada, puedes ejecutarla desde el mismo archivo [docker-compose.yml](), o bien:
+
+## 1. 🐬 Iniciar la base de datos MySQL
+
+Debes tener un contenedor Docker corriendo con MySQL (versión 8.0) y con la configuración adecuada (nombre de base de datos, usuario, contraseña).
+
+Puedes usar el siguiente comando si no tienes uno creado:
+
+```bash
+docker run --name mysql_poker -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=poker -e MYSQL_USER=user -e MYSQL_PASSWORD=pass -p 3306:3306 -d mysql:8.0
+```
+
+Acto seguido, y una vez la BD quede bien iniciada (comprobaremos que tenemos un contenedor creado llamado mysql_poker) usando los siguientes comandos:
+
+```bash
+docker ps #para comprobar que está creado
+```
+
+Debería salir algo así:
+
+```commandline
+CONTAINER ID   IMAGE       COMMAND                  CREATED          STATUS          PORTS                               NAMES
+............   mysql:8.0   "docker-entrypoint.s…"   .. minutes ago   Up .. minutes   0.0.0.0:3306->3306/tcp, 33060/tcp   mysql_poker
+```
+
+## 2. ⚙️ Configurar el proyecto backend
+
+Requisitos previos:
+
+- Tener instalado Java 17+
+- Tener instalado Gradle o usar el wrapper (./gradlew)
+- Tener un IDE (recomendado: IntelliJ IDEA, VSCode o Eclipse)
+
+### Clonar el repositorio
+
+```bash
+git clone https://github.com/Marukunai/poker_online.git
+cd poker_online/poker-backend
+```
+
+Verificar el archivo [application.properties](https://github.com/Marukunai/poker_online/blob/b7ef2a663bd3bd4e3464f558dc1fbf55f85a7347/poker-backend/src/main/resources/application.properties).
+
+Asegúrate de que coincide con la configuración de tu base de datos:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/pokerdb
+spring.datasource.username=user
+spring.datasource.password=jupiter*
+spring.jpa.hibernate.ddl-auto=update
+```
+
+## 3. 🚀 Ejecutar el backend
+
+- Opción A: Desde línea de comandos
+   
+```bash
+./gradlew bootRun
+```
+
+- Opción B: Desde IntelliJ / Eclipse:
+
+   Importa el proyecto como proyecto Gradle.
+
+   Asegúrate de que se descarguen las dependencias (build.gradle).
+
+   Ejecuta la clase [PokerBackendApplication.java](https://github.com/Marukunai/poker_online/blob/d871505914e044997bb40eae389340226ac6049c/poker-backend/src/main/java/com/pokeronline/PokerBackendApplication.java).
+
+## 4. 📦 Probar que está funcionando
+
+Abre tu navegador y accede a:
+
+```bash
+http://localhost:8080/api/mesas
+```
+
+Deberías ver una lista de mesas (o un array vacío si no hay mesas creadas aún).
+
+También puedes probar con Postman usando las rutas documentadas en el backend.
+
 ## 🔑 Autenticación JWT
 
 Los usuarios se autentican mediante login con correo y contraseña, obteniendo un token JWT. Este token se adjunta en las peticiones posteriores como:
