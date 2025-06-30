@@ -170,22 +170,40 @@ public class MesaService {
     }
 
     public void asignarPosicionesYAplicarCiegas(Mesa mesa) {
-        List<UserMesa> jugadores = new ArrayList<>(userMesaRepository.findByMesa(mesa).stream()
+        List<UserMesa> jugadores = userMesaRepository.findByMesa(mesa).stream()
                 .filter(UserMesa::isEnJuego)
-                .toList());
+                .sorted(Comparator.comparing(um -> um.getUser().getId()))
+                .toList();
 
         if (jugadores.size() < 2) {
             throw new RuntimeException("Se necesitan al menos 2 jugadores para asignar posiciones.");
         }
 
-        // Puedes rotar jugadores según la mano anterior, por ahora aleatorio
-        Collections.shuffle(jugadores);
+        // Encontrar el dealer anterior
+        int indexDealer = -1;
+        for (int i = 0; i < jugadores.size(); i++) {
+            if (jugadores.get(i).getPosicion() == Posicion.DEALER) {
+                indexDealer = i;
+                break;
+            }
+        }
+
+        List<UserMesa> ordenados;
+        if (indexDealer != -1) {
+            // Iniciar desde el siguiente al dealer
+            ordenados = new ArrayList<>();
+            for (int i = 1; i <= jugadores.size(); i++) {
+                ordenados.add(jugadores.get((indexDealer + i) % jugadores.size()));
+            }
+        } else {
+            ordenados = new ArrayList<>(jugadores);
+        }
 
         int smallBlind = mesa.getSmallBlind();
         int bigBlind = mesa.getBigBlind();
 
-        for (int i = 0; i < jugadores.size(); i++) {
-            UserMesa jm = jugadores.get(i);
+        for (int i = 0; i < ordenados.size(); i++) {
+            UserMesa jm = ordenados.get(i);
 
             if (i == 0) {
                 jm.setPosicion(Posicion.DEALER);

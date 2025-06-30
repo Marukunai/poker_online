@@ -32,29 +32,64 @@ public class TurnoService {
     public void inicializarTurnos(Mesa mesa) {
         turnoRepository.deleteAllByMesa(mesa);
 
-        List<UserMesa> jugadores = userMesaRepository.findByMesa(mesa).stream()
+        List<UserMesa> jugadoresEnJuego = userMesaRepository.findByMesa(mesa).stream()
                 .filter(UserMesa::isEnJuego)
                 .toList();
 
-        for (int i = 0; i < jugadores.size(); i++) {
+        // Buscar índice del jugador que está justo después del BIG_BLIND
+        int indexInicio;
+
+        if (jugadoresEnJuego.size() == 2) {
+            // En partidas heads-up (2 jugadores), Small Blind es el dealer y empieza él
+            indexInicio = jugadoresEnJuego.indexOf(
+                    jugadoresEnJuego.stream()
+                            .filter(j -> j.getPosicion() == Posicion.SMALL_BLIND)
+                            .findFirst()
+                            .orElse(jugadoresEnJuego.get(0))
+            );
+        } else {
+            // Más de 2 jugadores: empieza el que está a la izquierda del Big Blind
+            int indexBB = jugadoresEnJuego.indexOf(
+                    jugadoresEnJuego.stream()
+                            .filter(j -> j.getPosicion() == Posicion.BIG_BLIND)
+                            .findFirst()
+                            .orElse(jugadoresEnJuego.get(0))
+            );
+            indexInicio = (indexBB + 1) % jugadoresEnJuego.size();
+        }
+
+        // Rotamos la lista desde el jugador que debe empezar
+        List<UserMesa> ordenTurnos = new ArrayList<>();
+        for (int i = 0; i < jugadoresEnJuego.size(); i++) {
+            ordenTurnos.add(jugadoresEnJuego.get((indexInicio + i) % jugadoresEnJuego.size()));
+        }
+
+        // Crear turnos
+        for (int i = 0; i < ordenTurnos.size(); i++) {
+            UserMesa jm = ordenTurnos.get(i);
+
             Turno turno = Turno.builder()
                     .mesa(mesa)
-                    .user(jugadores.get(i).getUser())
+                    .user(jm.getUser())
                     .accion(null)
                     .apuesta(0)
                     .ordenTurno(i)
-                    .activo(i == 0)
+                    .activo(i == 0) // Solo el primero está activo
                     .eliminado(false)
                     .build();
+
             turnoRepository.save(turno);
 
-            jugadores.get(i).setTotalApostado(0);
-            userMesaRepository.save(jugadores.get(i));
+            jm.setTotalApostado(0); // Reiniciamos su apuesta total
+            userMesaRepository.save(jm);
         }
 
-        mesa.setPot(0);
+        mesa.setPot(mesa.getPot()); // Ya tiene las ciegas aplicadas
         mesa.setFase(Fase.PRE_FLOP);
         mesaRepository.save(mesa);
+
+        // Activamos temporizador del primer turno
+        iniciarTemporizadorTurno(mesa);
     }
 
     public Turno getTurnoActual(Mesa mesa) {
