@@ -88,6 +88,11 @@ public class TurnoService {
         mesa.setFase(Fase.PRE_FLOP);
         mesaRepository.save(mesa);
 
+        // Notificar al frontend quién tiene el turno
+        turnoRepository.findByMesaAndActivoTrue(mesa).ifPresent(turnoActivo -> webSocketService.enviarMensajeMesa(mesa.getId(), "turno", Map.of(
+                "jugador", turnoActivo.getUser().getUsername()
+        )));
+
         // Activamos temporizador del primer turno
         iniciarTemporizadorTurno(mesa);
     }

@@ -377,12 +377,25 @@ public class MesaController {
                 .orElseThrow(() -> new RuntimeException("No estás en esta mesa"));
 
         int fichasEnMesa = userMesa.getFichasEnMesa();
-        user.setFichas(user.getFichas() + fichasEnMesa);
-        userRepository.save(user);
+
+        if (!mesa.isFichasTemporales() && !user.isEsIA()) {
+            user.setFichas(user.getFichas() + fichasEnMesa);
+            userRepository.save(user);
+        }
 
         userMesaRepository.delete(userMesa);
 
-        return ResponseEntity.ok("Saliste definitivamente de la mesa y recuperaste tus "
-                + fichasEnMesa + " fichas. Se han añadido a tu cuenta total de usuario.");
+        String mensaje = mesa.isFichasTemporales()
+                ? "Saliste de una mesa privada. Las fichas eran temporales, no se suman a tu cuenta."
+                : "Saliste definitivamente de la mesa y recuperaste tus " + fichasEnMesa + " fichas. " +
+                "Se han añadido a tu cuenta de usuario";
+
+        return ResponseEntity.ok(mensaje);
+    }
+
+    @GetMapping("/listar")
+    public List<Mesa> listarMesas(@RequestParam(required = false) Boolean privada) {
+        if (privada == null) return mesaRepository.findAll();
+        return mesaRepository.findByPrivada(privada);
     }
 }

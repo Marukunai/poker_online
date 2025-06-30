@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -28,98 +30,72 @@ public class DataLoader {
         }
 
         // Crear usuarios
-        User u1 = User.builder()
-                .username("alice")
-                .email("alice@email.com")
-                .password(passwordEncoder.encode("123"))
-                .avatarUrl(null)
-                .fichas(2000)
-                .role(Role.USER)
-                .partidasGanadas(0)
-                .build();
+        User alice = crearUsuario("alice", "alice@email.com", 5000);
+        User bob = crearUsuario("bob", "bob@email.com", 8000);
+        User charlie = crearUsuario("charlie", "charlie@email.com", 15000);
+        User dan = crearUsuario("dan", "dan@email.com", 3000);
+        User eve = crearUsuario("eve", "eve@email.com", 10000);
+        User frank = crearUsuario("frank", "frank@email.com", 20000);
 
-        User u2 = User.builder()
-                .username("bob")
-                .email("bob@email.com")
-                .password(passwordEncoder.encode("123"))
-                .avatarUrl(null)
-                .fichas(2000)
-                .role(Role.USER)
-                .partidasGanadas(0)
-                .build();
-
-        User u3 = User.builder()
-                .username("charlie")
-                .email("charlie@email.com")
-                .password(passwordEncoder.encode("123"))
-                .avatarUrl(null)
-                .fichas(2000)
-                .role(Role.USER)
-                .partidasGanadas(0)
-                .build();
-
-        User u4 = User.builder()
-                .username("dan")
-                .email("dan@email.com")
-                .password(passwordEncoder.encode("123"))
-                .avatarUrl(null)
-                .fichas(2000)
-                .role(Role.USER)
-                .partidasGanadas(0)
-                .build();
-
-        userRepository.saveAll(List.of(u1, u2, u3, u4));
+        userRepository.saveAll(List.of(alice, bob, charlie, dan, eve, frank));
 
         // Crear mesas
-        Mesa mesa1 = Mesa.builder()
-                .nombre("Mesa de Prueba")
+        Mesa mesaBasica = crearMesa("Mesa Básica", 5, 10, 6);
+        Mesa mesaIntermedia = crearMesa("Mesa Intermedia", 25, 50, 6);
+        Mesa mesaAvanzada = crearMesa("Mesa High Rollers", 100, 200, 8);
+
+        mesaRepository.saveAll(List.of(mesaBasica, mesaIntermedia, mesaAvanzada));
+
+        // Añadir jugadores a las mesas
+        userMesaRepository.saveAll(Arrays.asList(
+                vincularUsuarioMesa(alice, mesaBasica, 1000),
+                vincularUsuarioMesa(bob, mesaBasica, 1000),
+                vincularUsuarioMesa(charlie, mesaBasica, 1000),
+
+                vincularUsuarioMesa(dan, mesaIntermedia, 3000),
+                vincularUsuarioMesa(eve, mesaIntermedia, 3000),
+
+                vincularUsuarioMesa(frank, mesaAvanzada, 5000)
+        ));
+
+        System.out.println("Usuarios, mesas y relaciones cargados exitosamente.");
+    }
+
+    private User crearUsuario(String username, String email, int fichas) {
+        return User.builder()
+                .username(username)
+                .email(email)
+                .password(passwordEncoder.encode("123"))
+                .avatarUrl(null)
+                .fichas(fichas)
+                .role(Role.USER)
+                .partidasGanadas(0)
+                .esIA(false)
+                .build();
+    }
+
+    private Mesa crearMesa(String nombre, int sb, int bb, int max) {
+        return Mesa.builder()
+                .nombre(nombre)
                 .activa(true)
-                .smallBlind(5)
-                .bigBlind(10)
+                .smallBlind(sb)
+                .bigBlind(bb)
                 .fase(Fase.PRE_FLOP)
                 .pot(0)
-                .maxJugadores(6)
+                .maxJugadores(max)
                 .build();
+    }
 
-        Mesa mesa2 = Mesa.builder()
-                .nombre("Mesa Pro")
-                .activa(true)
-                .smallBlind(25)
-                .bigBlind(50)
-                .fase(Fase.PRE_FLOP)
-                .pot(0)
-                .maxJugadores(6)
+    private UserMesa vincularUsuarioMesa(User user, Mesa mesa, int fichas) {
+        return UserMesa.builder()
+                .user(user)
+                .mesa(mesa)
+                .fichasEnMesa(fichas)
+                .fichasDisponibles(fichas)
+                .fichasIniciales(fichas)
+                .enJuego(true)
+                .conectado(true)
+                .lastSeen(new Date())
                 .build();
-
-        mesaRepository.saveAll(List.of(mesa1, mesa2));
-
-        // Vincular jugadores a la mesa1
-        UserMesa um1 = UserMesa.builder()
-                .user(u1).mesa(mesa1)
-                .fichasEnMesa(500)
-                .fichasDisponibles(500)
-                .fichasIniciales(500)
-                .enJuego(true).conectado(true)
-                .build();
-
-        UserMesa um2 = UserMesa.builder()
-                .user(u2).mesa(mesa1)
-                .fichasEnMesa(500)
-                .fichasDisponibles(500)
-                .fichasIniciales(500)
-                .enJuego(true).conectado(true)
-                .build();
-
-        UserMesa um3 = UserMesa.builder()
-                .user(u3).mesa(mesa1)
-                .fichasEnMesa(500)
-                .fichasDisponibles(500)
-                .fichasIniciales(500)
-                .enJuego(true).conectado(true)
-                .build();
-
-        userMesaRepository.saveAll(List.of(um1, um2, um3));
-
-        System.out.println("Usuarios, mesas y relaciones creados correctamente.");
     }
 }

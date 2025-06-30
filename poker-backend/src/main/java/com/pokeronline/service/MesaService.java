@@ -86,6 +86,12 @@ public class MesaService {
 
                 User u = jm.getUser();
                 u.setPartidasGanadas(u.getPartidasGanadas() + 1);
+
+                // Solo sumar fichas reales si la mesa NO es temporal
+                if (!mesa.isFichasTemporales() && !u.isEsIA()) {
+                    u.setFichas(u.getFichas() + premioPorJugador);
+                }
+
                 userRepository.save(u);
 
                 ganadoresFinales.add(u);

@@ -214,6 +214,114 @@ POST /api/turnos/fase/{mesaId}/siguiente
 
 ---
 
+## 🚀 Nuevas funcionalidades implementadas
+
+### 🧠 Jugadores controlados por IA (bots)
+
+Se ha añadido soporte para añadir bots en partidas privadas:
+
+- Los bots se representan como `User` con `esIA = true`.
+- Se crean dinámicamente con nombres únicos como `CPU-32`.
+- Sólo pueden añadirse en mesas privadas.
+- Ignorados al calcular fichas globales (`User.fichas`).
+
+```java
+User bot = User.builder()
+  .email("cpu...@bot.com")
+  .username("CPU-XX")
+  .esIA(true)
+  .build();
+```
+
+### 🔒 Mesas privadas
+
+Ahora es posible crear mesas privadas con:
+
+- Código de acceso personalizado (para invitar amigos).
+- Fichas **temporales**, no afectando el saldo global del usuario.
+- Soporte para hasta 8 jugadores.
+
+#### Endpoints:
+
+```http
+POST /api/mesas/privadas/crear
+```
+
+Parámetros: nombre, maxJugadores, código, fichasTemporales, smallBlind, bigBlind
+
+```http
+POST /api/mesas/privadas/unirse
+```
+
+Parámetros: email, códigoAcceso, fichasSolicitadas
+
+```http
+POST /api/mesas/privadas/{codigo}/add-bot
+```
+
+Añade un bot a la mesa privada.
+
+### ⚠️ Reglas de fichas temporales
+
+- Máximo: 10 millones por jugador.
+- No se guardan en `User.fichas`.
+- Se eliminan al salir de la mesa.
+
+---
+
+## 🔄 Mejoras internas
+
+- Se impide unirse a varias mesas a la vez (se desconecta de la anterior).
+- `DataLoader` más completo con 6 usuarios, 3 mesas realistas, fichas variadas.
+- IA ignorada en lógica de ranking, fichas, pot.
+- Control reforzado en uniones a mesa (si ya está unido, no lo vuelve a hacer).
+
+---
+
+## 📦 Pruebas y depuración
+
+Los endpoints nuevos pueden probarse vía Postman:
+
+- Crear mesa privada.
+- Unirse con fichas temporales.
+- Añadir CPU bots.
+- Validar que no afecta al saldo global.
+
+---
+
+## 🏆 Próximas funcionalidades
+
+- [ ] Reloj de turnos visual (UI)
+- [ ] Modo espectador (join sin jugar)
+- [ ] Sistema de chat in-game
+- [ ] Clasificación de jugadores (ranking, torneos)
+- [ ] IA con decisiones de juego (fold, call, raise)
+
+---
+
+## 🧪 Testing sugerido
+
+- Crear mesa privada con contraseña.
+- Añadir 1–2 jugadores reales.
+- Añadir bots.
+- Iniciar partida y observar comportamiento.
+- Verificar que el `User.fichas` no cambia tras salir.
+
+---
+
+## 🧾 Notas finales
+
+Estas funcionalidades buscan permitir un entorno de juego más flexible y justo entre amigos o entornos cerrados, sin comprometer la economía interna del sistema.
+
+Puedes consultar la evolución de esta lógica dentro del paquete `service/`, especialmente en:
+
+- `MesaPrivadaService`
+- `UserMesaService`
+- `MesaService`
+- `TurnoService`
+
+---
+
 ## 🪧 Tareas futuras (Backend)
 
 * [ ] Rotación de roles por ronda
@@ -261,7 +369,7 @@ Actualmente, se utiliza una BD personal para pruebas. Una vez esté el proyecto 
 
 ## 📚 Créditos y colaboración
 
-Este proyecto ha sido desarrollado por \[Marc Martín].
+Este proyecto ha sido desarrollado por [**Marc Martín**](https://x.com/marukunai_03).
 
 > Si deseas colaborar o extender la lógica, puedes abrir un `Pull Request` o contactar vía GitHub Issues.
 

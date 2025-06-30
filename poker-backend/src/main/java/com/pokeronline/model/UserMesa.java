@@ -48,4 +48,6 @@ public class UserMesa {
 
     // Fichas que el usuario aún tiene disponibles para seguir apostando (sin incluir ya apostado)
     private int fichasDisponibles;
+
+    private Integer fichasTemporalesAsignadas;
 }

@@ -30,4 +30,7 @@ public class User {
 
     @Builder.Default
     private int partidasGanadas = 0;
+
+    @Column(nullable = false)
+    private boolean esIA = false;
 }

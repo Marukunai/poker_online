@@ -38,4 +38,10 @@ public class Mesa {
 
     @OneToMany(mappedBy = "mesa", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UserMesa> jugadores;
+
+    private Boolean privada;
+    private String codigoAcceso;
+
+    private boolean fichasTemporales;
+
 }
