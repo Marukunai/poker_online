@@ -1,5 +1,6 @@
 package com.pokeronline.service;
 
+import com.pokeronline.bot.BotService;
 import com.pokeronline.model.*;
 import com.pokeronline.repository.AccionPartidaRepository;
 import com.pokeronline.repository.MesaRepository;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TurnoService {
 
+    private final BotService botService;
     private final WebSocketService webSocketService;
     private final AccionPartidaRepository accionPartidaRepository;
     private final BarajaService barajaService;
@@ -232,7 +234,6 @@ public class TurnoService {
             }
         }
         if (indiceActual == -1) {
-            // Buscar el último turno con acción no nula
             for (int i = turnos.size() - 1; i >= 0; i--) {
                 if (turnos.get(i).getAccion() != null) {
                     indiceActual = i;
@@ -249,13 +250,19 @@ public class TurnoService {
             int siguiente = (indiceActual + j) % turnos.size();
             UserMesa userMesa = userMesaRepository.findByUserAndMesa(turnos.get(siguiente).getUser(), mesa).orElse(null);
             if (!turnos.get(siguiente).isEliminado() && userMesa != null && userMesa.isConectado() && userMesa.getFichasEnMesa() > 0) {
-                turnos.get(siguiente).setActivo(true);
-                turnoRepository.save(turnos.get(siguiente));
+                Turno nuevoTurno = turnos.get(siguiente);
+                nuevoTurno.setActivo(true);
+                turnoRepository.save(nuevoTurno);
 
                 webSocketService.enviarMensajeMesa(mesa.getId(), "turno", Map.of(
-                        "jugador", turnos.get(siguiente).getUser().getUsername()
+                        "jugador", nuevoTurno.getUser().getUsername()
                 ));
-                iniciarTemporizadorTurno(mesa); // Iniciar el nuevo turno
+
+                iniciarTemporizadorTurno(mesa);
+
+                if (nuevoTurno.getUser().isEsIA()) {
+                    botService.ejecutarTurnoBotConRetraso(mesa, nuevoTurno.getUser());
+                }
                 return;
             }
         }
@@ -416,5 +423,12 @@ public class TurnoService {
         } else {
             avanzarTurno(mesa);
         }
+    }
+
+    public int getApuestaMaxima(Mesa mesa) {
+        return turnoRepository.findByMesaOrderByOrdenTurno(mesa).stream()
+                .mapToInt(Turno::getApuesta)
+                .max()
+                .orElse(0);
     }
 }
