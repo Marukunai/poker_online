@@ -1,75 +1,67 @@
 package com.pokeronline.bot;
 
 import com.pokeronline.model.*;
-import com.pokeronline.repository.TurnoRepository;
+import com.pokeronline.service.EvaluadorManoService;
 import com.pokeronline.repository.UserMesaRepository;
-import com.pokeronline.service.TurnoService;
+import com.pokeronline.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Stream;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BotService {
 
-    private final TurnoService turnoService;
+    private final WebSocketService webSocketService;
+    private final EvaluadorManoService evaluadorManoService;
     private final UserMesaRepository userMesaRepository;
-    private final TurnoRepository turnoRepository;
+    private final BotEngineService botEngineService;
 
     public void ejecutarTurnoBotConRetraso(Mesa mesa, User bot) {
         new Thread(() -> {
             try {
-                int delay = ThreadLocalRandom.current().nextInt(10, 16); // 10–15 segundos
+                int delay = ThreadLocalRandom.current().nextInt(10, 16);
                 Thread.sleep(delay * 1000L);
-
-                Optional<Turno> turnoOpt = turnoRepository.findByMesaAndUser(mesa, bot);
-                if (turnoOpt.isEmpty()) return;
-
-                Turno turno = turnoOpt.get();
-                if (!turno.isActivo()) return;
-
-                Accion accion = decidirAccion(turno);
-                int cantidad = calcularCantidad(turno, accion);
-
-                turnoService.realizarAccion(mesa, bot, accion, cantidad);
-
+                realizarAccionBot(mesa, bot);
             } catch (InterruptedException e) {
-                System.err.println("Error en el delay del bot: " + e.getMessage());
+                log.warn("Bot {} interrumpido en mesa {}", bot.getUsername(), mesa.getId(), e);
                 Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                System.err.println("Error ejecutando turno del bot: " + e.getMessage());
             }
         }).start();
     }
 
-    private Accion decidirAccion(Turno turno) {
-        // Lógica básica: el bot hace CHECK si puede, CALL si hay apuestas, y a veces RAISE
-        int decision = ThreadLocalRandom.current().nextInt(100);
-        int apuestaMaxima = turnoService.getApuestaMaxima(turno.getMesa());
+    public void realizarAccionBot(Mesa mesa, User bot) {
+        UserMesa userMesa = userMesaRepository.findByUserAndMesa(bot, mesa).orElseThrow();
 
-        if (apuestaMaxima == 0) {
-            if (decision < 70) return Accion.CHECK;
-            else return Accion.RAISE;
-        } else {
-            if (decision < 60) return Accion.CALL;
-            else if (decision < 85) return Accion.FOLD;
-            else return Accion.RAISE;
-        }
+        List<String> cartasJugador = List.of(userMesa.getCarta1(), userMesa.getCarta2());
+        List<String> comunitarias = Stream.of(
+                mesa.getFlop1(), mesa.getFlop2(), mesa.getFlop3(),
+                mesa.getTurn(), mesa.getRiver()
+        ).filter(Objects::nonNull).toList();
+
+        ManoEvaluada mano = evaluadorManoService.evaluarMano(bot, cartasJugador, comunitarias);
+
+        int apuestaMaxima = botEngineService.getApuestaMaxima(mesa);
+        BotDecisionEngine.Decision decision = BotDecisionEngine.decidirAccion(bot, userMesa, mesa, mano, apuestaMaxima);
+
+        botEngineService.ejecutarAccionBot(mesa, bot, decision.accion(), decision.cantidad());
+
+        String frase = fraseChatSegunAccion(bot, decision.accion());
+        webSocketService.enviarMensajeMesa(mesa.getId(), "chat", Map.of(
+                "jugador", bot.getUsername(),
+                "mensaje", frase
+        ));
     }
 
-    private int calcularCantidad(Turno turno, Accion accion) {
-        User user = turno.getUser();
-        Mesa mesa = turno.getMesa();
-        UserMesa userMesa = userMesaRepository.findByUserAndMesa(user, mesa).orElse(null);
-
-        if (userMesa == null) return 0;
-
-        return switch (accion) {
-            case RAISE -> Math.min(userMesa.getFichasEnMesa(), 100); // Raise fijo por ahora
-            case ALL_IN -> userMesa.getFichasEnMesa();
-            default -> 0;
-        };
+    public static String fraseChatSegunAccion(User user, Accion accion) {
+        return FrasesBotChat.obtenerFrase(user, accion);
     }
 }

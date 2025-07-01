@@ -1,5 +1,6 @@
 package com.pokeronline.service;
 
+import com.pokeronline.bot.BotEngineService;
 import com.pokeronline.bot.BotService;
 import com.pokeronline.model.*;
 import com.pokeronline.repository.AccionPartidaRepository;
@@ -8,7 +9,7 @@ import com.pokeronline.repository.TurnoRepository;
 import com.pokeronline.repository.UserMesaRepository;
 import com.pokeronline.websocket.WebSocketService;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,8 +20,7 @@ import java.util.concurrent.*;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-public class TurnoService {
+public class TurnoService implements BotEngineService {
 
     private final BotService botService;
     private final WebSocketService webSocketService;
@@ -29,6 +29,24 @@ public class TurnoService {
     private final TurnoRepository turnoRepository;
     private final UserMesaRepository userMesaRepository;
     private final MesaRepository mesaRepository;
+
+    public TurnoService(
+            @Lazy BotService botService,
+            WebSocketService webSocketService,
+            AccionPartidaRepository accionPartidaRepository,
+            BarajaService barajaService,
+            TurnoRepository turnoRepository,
+            UserMesaRepository userMesaRepository,
+            MesaRepository mesaRepository
+    ) {
+        this.botService = botService;
+        this.webSocketService = webSocketService;
+        this.accionPartidaRepository = accionPartidaRepository;
+        this.barajaService = barajaService;
+        this.turnoRepository = turnoRepository;
+        this.userMesaRepository = userMesaRepository;
+        this.mesaRepository = mesaRepository;
+    }
 
     @Transactional
     public void inicializarTurnos(Mesa mesa) {
@@ -261,6 +279,9 @@ public class TurnoService {
                 iniciarTemporizadorTurno(mesa);
 
                 if (nuevoTurno.getUser().isEsIA()) {
+                    webSocketService.enviarMensajeMesa(mesa.getId(), "bot_actuando", Map.of(
+                            "jugador", nuevoTurno.getUser().getUsername()
+                    ));
                     botService.ejecutarTurnoBotConRetraso(mesa, nuevoTurno.getUser());
                 }
                 return;
@@ -425,10 +446,16 @@ public class TurnoService {
         }
     }
 
+    @Override
     public int getApuestaMaxima(Mesa mesa) {
         return turnoRepository.findByMesaOrderByOrdenTurno(mesa).stream()
                 .mapToInt(Turno::getApuesta)
                 .max()
                 .orElse(0);
+    }
+
+    @Override
+    public void ejecutarAccionBot(Mesa mesa, User bot, Accion accion, int cantidad) {
+        realizarAccion(mesa, bot, accion, cantidad);
     }
 }

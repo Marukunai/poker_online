@@ -80,7 +80,6 @@ Requisitos previos:
 
 ```bash
 git clone https://github.com/Marukunai/poker_online.git
-cd poker_online/poker-backend
 ```
 
 Verificar el archivo [application.properties](https://github.com/Marukunai/poker_online/blob/b7ef2a663bd3bd4e3464f558dc1fbf55f85a7347/poker-backend/src/main/resources/application.properties).
@@ -99,6 +98,7 @@ spring.jpa.hibernate.ddl-auto=update
 - Opción A: Desde línea de comandos
    
 ```bash
+cd poker_online/poker-backend
 ./gradlew bootRun
 ```
 
@@ -225,14 +225,6 @@ Se ha añadido soporte para añadir bots en partidas privadas:
 - Sólo pueden añadirse en mesas privadas.
 - Ignorados al calcular fichas globales (`User.fichas`).
 
-```java
-User bot = User.builder()
-  .email("cpu...@bot.com")
-  .username("CPU-XX")
-  .esIA(true)
-  .build();
-```
-
 ### 🔒 Mesas privadas
 
 Ahora es posible crear mesas privadas con:
@@ -275,6 +267,77 @@ Añade un bot a la mesa privada.
 - `DataLoader` más completo con 6 usuarios, 3 mesas realistas, fichas variadas.
 - IA ignorada en lógica de ranking, fichas, pot.
 - Control reforzado en uniones a mesa (si ya está unido, no lo vuelve a hacer).
+
+---
+
+## 🧠 Jugadores controlados por IA (bots)
+
+Los bots ahora tienen un comportamiento avanzado y realista, incluyendo decisiones estratégicas, estilo de juego, y simulación de chat.
+
+### 🔧 Características principales
+
+- Representados como objetos `User` con `esIA = true`.
+- Solo pueden añadirse a **mesas privadas**.
+- Actúan automáticamente cuando les llega el turno, con un **retardo de 10-15 segundos** simulando "pensamiento".
+
+```java
+User bot = User.builder()
+  .email("cpu...@bot.com")
+  .username("CPU-XX")
+  .esIA(true)
+  .nivelBot(DificultadBot.NORMAL) // FACIL, NORMAL, DIFICIL
+  .estiloBot(EstiloBot.AGRESIVO)  // AGRESIVO, CONSERVADOR, LOOSE, TIGHT, DEFAULT
+  .build();
+```
+
+### 🎚️ Dificultad y estilo de juego
+
+Los bots toman decisiones en base a su nivel de dificultad (`FACIL`, `NORMAL`, `DIFICIL`) y su estilo (`AGRESIVO`, `CONSERVADOR`, `LOOSE`, `TIGHT`, `DEFAULT`):
+
+| Nivel     | Bluff | Slowplay | Evaluación contextual        |
+|-----------|-------|----------|------------------------------|
+| FACIL     | ❌    | ❌       | Decisiones simples           |
+| NORMAL    | ⚠️     | ❌       | Usa draws y conectadas       |
+| DIFICIL   | ✅    | ✅       | Analiza fuerza + faroles     |
+
+| Estilo       | Agresividad | Comportamiento                        |
+|--------------|-------------|--------------------------------------|
+| AGRESIVO     | Alto (1.4x) | Muchos raise y all-in                |
+| CONSERVADOR  | Bajo (0.7x) | Cauto, se retira con facilidad       |
+| LOOSE        | Medio (1.2x)| Juega muchas manos                   |
+| TIGHT        | Medio (0.8x)| Solo juega manos fuertes             |
+| DEFAULT      | 1.0x        | Equilibrado                          |
+
+Los bots ajustan sus decisiones con una mezcla de:
+
+- **Fuerza de la mano evaluada**
+- **Conectividad y suited**
+- **Flush/Straight draw**
+- **Probabilidad de bluff o slowplay según dificultad**
+
+### 💬 Frases simuladas por WebSocket
+
+Cada vez que un bot actúa, puede enviar una frase simulada en el chat, según su acción y estilo:
+
+```json
+{
+  "jugador": "CPU-42",
+  "mensaje": "¡A ver si aguantas esta!"
+}
+```
+
+Estas frases se gestionan mediante el enum `FrasesBotChat.java`.
+
+---
+
+### 📛 Lógica de control y reglas
+
+- Solo el **creador de la mesa** puede añadir bots.
+- El número de bots se limita por el `maxJugadores` de la mesa.
+    - Si hay 6 plazas y ya hay 4 humanos, sólo se pueden añadir 2 bots.
+    - Si un humano se une y la mesa está llena, se elimina automáticamente un bot.
+- Los bots **no afectan** el saldo global (`User.fichas`) y usan **fichas temporales** (`UserMesa.fichasEnMesa`).
+- Bots eliminados si abandonan mesa o se reemplazan por humanos.
 
 ---
 

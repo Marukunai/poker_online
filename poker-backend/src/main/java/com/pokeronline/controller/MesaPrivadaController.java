@@ -1,5 +1,6 @@
 package com.pokeronline.controller;
 
+import com.pokeronline.bot.DificultadBot;
 import com.pokeronline.model.Mesa;
 import com.pokeronline.service.MesaPrivadaService;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,9 @@ public class MesaPrivadaController {
 
     @PostMapping("/agregar-bot")
     public String agregarBot(@RequestParam String codigoAcceso,
-                             @RequestParam int fichasIniciales) {
-        mesaPrivadaService.addBotAMesaPrivada(codigoAcceso, fichasIniciales);
+                             @RequestParam int fichasIniciales,
+                             @RequestParam(defaultValue = "1") DificultadBot nivelDificultad) {
+        mesaPrivadaService.addBotAMesaPrivada(codigoAcceso, fichasIniciales, nivelDificultad);
         return "Bot agregado a la mesa privada.";
     }
 }

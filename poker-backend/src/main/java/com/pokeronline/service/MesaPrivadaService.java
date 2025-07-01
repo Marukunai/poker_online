@@ -1,9 +1,7 @@
 package com.pokeronline.service;
 
-import com.pokeronline.model.Fase;
-import com.pokeronline.model.Mesa;
-import com.pokeronline.model.User;
-import com.pokeronline.model.UserMesa;
+import com.pokeronline.bot.DificultadBot;
+import com.pokeronline.model.*;
 import com.pokeronline.repository.MesaRepository;
 import com.pokeronline.repository.UserMesaRepository;
 import com.pokeronline.repository.UserRepository;
@@ -93,18 +91,29 @@ public class MesaPrivadaService {
         return "Unido correctamente a la mesa privada";
     }
 
-    public void addBotAMesaPrivada(String codigoAcceso, int fichasIniciales) {
+    public void addBotAMesaPrivada(String codigoAcceso, int fichasIniciales, DificultadBot dificultad) {
         Mesa mesa = mesaRepository.findByCodigoAcceso(codigoAcceso)
                 .orElseThrow(() -> new RuntimeException("Mesa privada no encontrada"));
 
+        long numeroBots = userMesaRepository.findByMesa(mesa).stream()
+                .filter(j -> j.getUser().isEsIA())
+                .count();
+
+        String nombreBot = "CPU-" + (numeroBots + 1);
         String emailBot = "cpu" + UUID.randomUUID() + "@bot.com";
+
         User bot = User.builder()
                 .email(emailBot)
-                .username("CPU-" + (int)(Math.random() * 100))
+                .username(nombreBot)
                 .fichas(0)
                 .esIA(true)
+                .nivelBot(dificultad != null ? dificultad : DificultadBot.FACIL)
+                .estiloBot(EstiloBot.CONSERVADOR)
                 .build();
-        userRepository.save(bot);
+
+        if (!bot.isEsIA() && bot.getNivelBot() != null) {
+            throw new IllegalArgumentException("Solo los bots pueden tener un nivel de dificultad.");
+        }
 
         UserMesa userMesa = UserMesa.builder()
                 .user(bot)
@@ -115,6 +124,8 @@ public class MesaPrivadaService {
                 .conectado(true)
                 .enJuego(true)
                 .build();
+
+        userRepository.save(bot);
         userMesaRepository.save(userMesa);
     }
 }

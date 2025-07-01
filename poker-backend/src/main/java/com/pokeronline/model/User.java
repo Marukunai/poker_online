@@ -1,5 +1,6 @@
 package com.pokeronline.model;
 
+import com.pokeronline.bot.DificultadBot;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,15 @@ public class User {
     @Builder.Default
     private int partidasGanadas = 0;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean esIA = false;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private DificultadBot nivelBot = DificultadBot.FACIL;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private EstiloBot estiloBot = EstiloBot.DEFAULT;  // Nuevo campo en la entidad User
 }
