@@ -6,6 +6,7 @@ import com.pokeronline.model.Mesa;
 import com.pokeronline.model.User;
 import com.pokeronline.repository.EspectadorMesaRepository;
 import com.pokeronline.repository.MesaRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +31,10 @@ public class EspectadorMesaService {
                     .fechaEntrada(new Date())
                     .build();
             espectadorMesaRepository.save(espectador);
-        }
+        } else throw new RuntimeException("Ya estás unido a la mesa");
     }
 
+    @Transactional
     public void salirDeEspectador(Long mesaId, User user) {
         Mesa mesa = mesaRepository.findById(mesaId)
                 .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));

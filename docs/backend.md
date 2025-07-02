@@ -414,16 +414,127 @@ Puedes consultar la evolución de esta lógica dentro del paquete `service/`, es
 
 ---
 
-## 🪧 Tareas futuras (Backend)
+## 👁️ Modo espectador
 
-* [ ] Estadísticas por jugador:
-  - % de manos ganadas. 
-  - Veces que hizo bluff. 
-  - Veces que fue all-in. 
-  - Fichas ganadas totales.
-  
-* [ ] Modo Espectador
-* [ ] Torneos o partidas clasificatorias (ranking)
+- Usuarios pueden observar partidas sin participar
+- No ven cartas privadas
+- Observan pot, apuestas, acciones, chat
+
+### Endpoints
+
+```
+POST   /api/mesa/espectadores/{mesaId}/unirse
+DELETE /api/mesa/espectadores/{mesaId}/salir
+GET    /api/mesa/espectadores/{mesaId}
+GET    /api/mesa/espectadores/{mesaId}/datos
+```
+
+---
+
+## 🧾 Registro de acciones e historial
+
+- Cada acción (check, raise, fold...) se guarda (`AccionPartida`)
+- Cada showdown se registra por jugador (`HistorialMano`):
+  - Cartas privadas
+  - Mano final
+  - Fase
+  - Fichas ganadas
+  - Timestamp
+
+Permite reconstruir o analizar partidas completas.
+
+---
+
+## 📊 Estadísticas por jugador
+
+Actualizadas automáticamente:
+
+- `manosJugadas`
+- `manosGanadas`
+- `vecesAllIn`
+- `fichasGanadasHistoricas`
+- `vecesHizoBluff`
+
+Disponible en el perfil del usuario.
+
+---
+
+## 🏆 Torneos (WPT-style)
+
+Sistema completo de torneos:
+
+- Buy-in configurable
+- Premio total
+- Eliminación directa o ranking
+- Fichas iniciales por jugador
+- Rondas (mesa inicial, semifinales, final)
+
+### Entidades principales
+
+```
+Torneo
+ParticipanteTorneo
+TorneoMesa
+```
+
+### Endpoints disponibles
+
+```
+POST   /api/torneos                          → crear torneo
+GET    /api/torneos                          → listar
+GET    /api/torneos/{id}                   → detalles
+DELETE /api/torneos/{id}                   → eliminar
+POST   /api/torneos/{id}/inscribirse       → usuario se inscribe
+GET    /api/torneos/{id}/ranking           → ranking actual
+GET    /api/torneos/{id}/participantes     → listado completo
+GET    /api/torneos/{id}/datos             → mis datos
+DELETE /api/torneos/{id}                   → marcar eliminado
+```
+
+### Lógica del torneo
+
+- Participante tiene `fichasActuales`, `eliminado`, `puntos`
+- Ranking según puntos (sumables)
+- Cada mesa pertenece a un torneo y una ronda
+- Premios futuros según ranking o supervivencia
+
+---
+
+## 🧪 Pruebas (Postman)
+
+- Crear torneo
+- Inscribirse (token necesario)
+- Añadir participantes
+- Ver ranking
+- Ver historial
+- Añadir bots
+- Unirse como espectador
+
+---
+
+## ✅ Funcionalidades completadas
+
+- ✅ Poker multijugador completo
+- ✅ Evaluación de manos con desempates
+- ✅ Reparto proporcional de pot (side pots)
+- ✅ IA realista: bots con bluff, slowplay, estrategia
+- ✅ Chat simulado por bots
+- ✅ Mesas privadas con fichas temporales
+- ✅ Modo espectador completo
+- ✅ Registro de historial y acciones
+- ✅ Estadísticas por jugador
+- ✅ Sistema de torneos básico
+
+---
+
+## 🛠️ Futuras mejoras
+
+- [ ] Rondas automáticas en torneos
+- [ ] Reparto de premios por ranking
+- [ ] Avance automático entre fases de torneo
+- [ ] Integración UI con estadísticas
+- [ ] Perfil público de jugador con ranking
+- [ ] Sala de espera en torneos
 
 ---
 
@@ -473,3 +584,10 @@ Este proyecto ha sido desarrollado por [**Marc Martín**](https://x.com/marukuna
 ## 🔖 Licencia
 
 MIT License. Libre uso con crédito al autor original.
+
+----
+
+
+## 📅 Última actualización
+
+2025-07-02 18:01:00
