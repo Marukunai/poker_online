@@ -46,6 +46,8 @@ public class UserController {
                 .vecesAllIn(user.getVecesAllIn())
                 .fichasGanadasHistoricas(user.getFichasGanadasHistoricas())
                 .vecesHizoBluff(user.getVecesHizoBluff())
+                .nivelBot(user.isEsIA() ? user.getNivelBot() : null)
+                .estiloBot(user.isEsIA() ? user.getEstiloBot() : null)
                 .build();
 
         return ResponseEntity.ok(dto);

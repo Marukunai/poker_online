@@ -29,7 +29,6 @@ public class DataLoader {
             return;
         }
 
-        // Crear usuarios
         User alice = crearUsuario("alice", "alice@email.com", 5000);
         User bob = crearUsuario("bob", "bob@email.com", 8000);
         User charlie = crearUsuario("charlie", "charlie@email.com", 15000);
@@ -71,6 +70,8 @@ public class DataLoader {
                 .role(Role.USER)
                 .partidasGanadas(0)
                 .esIA(false)
+                .nivelBot(null)
+                .estiloBot(null)
                 .build();
     }
 

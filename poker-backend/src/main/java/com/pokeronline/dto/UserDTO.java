@@ -1,5 +1,7 @@
 package com.pokeronline.dto;
 
+import com.pokeronline.bot.DificultadBot;
+import com.pokeronline.model.EstiloBot;
 import lombok.*;
 
 @Data
@@ -20,4 +22,6 @@ public class UserDTO {
     private int vecesAllIn;
     private int fichasGanadasHistoricas;
     private int vecesHizoBluff;
+    private DificultadBot nivelBot;
+    private EstiloBot estiloBot;
 }

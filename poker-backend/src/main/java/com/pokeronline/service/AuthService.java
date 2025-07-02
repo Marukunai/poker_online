@@ -27,9 +27,12 @@ public class AuthService {
                 .username(dto.getUsername())
                 .email(dto.getEmail())
                 .password(passwordEncoder.encode(dto.getPassword()))
-                .fichas(1000) // saldo inicial
+                .fichas(1000)
                 .avatarUrl(null)
                 .role(Role.USER)
+                .esIA(false)
+                .nivelBot(null)
+                .estiloBot(null)
                 .build();
 
         userRepository.save(user);

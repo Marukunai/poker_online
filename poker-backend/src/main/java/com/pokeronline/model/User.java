@@ -22,9 +22,9 @@ public class User {
 
     private String password;
 
-    private String avatarUrl; // Ruta de la imagen del perfil
+    private String avatarUrl;
 
-    private int fichas; // Fichas totales del usuario fuera de cualquier mesa. Se actualiza cuando gana o pierde fichas en una partida.
+    private int fichas;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -32,17 +32,15 @@ public class User {
     @Builder.Default
     private int partidasGanadas = 0;
 
-    @Builder.Default
     @Column(nullable = false)
+    @Builder.Default
     private boolean esIA = false;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private DificultadBot nivelBot = DificultadBot.FACIL;
+    private DificultadBot nivelBot;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private EstiloBot estiloBot = EstiloBot.DEFAULT;  // Nuevo campo en la entidad User
+    private EstiloBot estiloBot;
 
     @Builder.Default
     private int manosJugadas = 0;
