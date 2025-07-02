@@ -15,4 +15,9 @@ public class UserDTO {
     private String avatarUrl;
     private int fichas;
     private int partidasGanadas;
+    private int manosJugadas;
+    private int manosGanadas;
+    private int vecesAllIn;
+    private int fichasGanadasHistoricas;
+    private int vecesHizoBluff;
 }

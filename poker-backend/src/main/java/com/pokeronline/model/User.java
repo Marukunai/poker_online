@@ -43,4 +43,19 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private EstiloBot estiloBot = EstiloBot.DEFAULT;  // Nuevo campo en la entidad User
+
+    @Builder.Default
+    private int manosJugadas = 0;
+
+    @Builder.Default
+    private int manosGanadas = 0;
+
+    @Builder.Default
+    private int vecesAllIn = 0;
+
+    @Builder.Default
+    private int fichasGanadasHistoricas = 0;
+
+    @Builder.Default
+    private int vecesHizoBluff = 0;
 }

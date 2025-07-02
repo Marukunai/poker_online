@@ -10,8 +10,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
-@Setter
 public class HistorialMano {
 
     @Id
@@ -28,9 +26,17 @@ public class HistorialMano {
 
     private int fichasGanadas;
 
+    private boolean empate;
+
+    private String tipoManoGanadora;
+
+    private String cartasJugador;
+    private String cartasComunitarias;
+
     private String cartasGanadoras;
 
     private String contraJugadores;
 
-    private String tipoManoGanadora;
+    @Enumerated(EnumType.STRING)
+    private Fase faseFinal;
 }

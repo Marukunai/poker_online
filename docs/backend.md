@@ -383,15 +383,47 @@ Puedes consultar la evolución de esta lógica dentro del paquete `service/`, es
 - `MesaService`
 - `TurnoService`
 
+--- 
+
+## FUNCIONALIDADES YA IMPLEMENTADAS
+
+- ✔️ Lógica completa de poker por rondas: Pre-flop, Flop, Turn, River.
+
+- ✔️ Evaluación real de manos (EvaluadorManoService) incluyendo desempates.
+
+- ✔️ Reparto proporcional de bote (incluyendo empates).
+
+- ✔️ Bots con IA realista:
+  - Dificultades (FÁCIL, NORMAL, DIFÍCIL).
+  - Estilos de juego (AGRESIVO, CONSERVADOR, LOOSE, TIGHT, DEFAULT). 
+  - Bluff, slowplay, chat simulado.
+
+- ✔️ Lógica de decisiones de bot según mano, fase y contexto.
+
+- ✔️ Chat del bot vía WebSocket (FrasesBotChat, integración en BotService).
+
+- ✔️ Restricciones en número de bots (y reemplazo si mesa llena).
+
+- ✔️ Registro de acciones (AccionPartida).
+
+- ✔️ Control de fichas globales vs. fichas en mesa.
+
+- ✔️ WebSocket en todas las acciones relevantes.
+
+- ✔️ Control total de las partidas privadas: acceso, uniones, bots, fichas temporales.
+
 ---
 
 ## 🪧 Tareas futuras (Backend)
 
-* [ ] Rotación de roles por ronda
-* [ ] Reingreso a mesas en curso (si se reconecta)
-* [ ] Lógica de reloj de turnos más realista
-* [ ] Soporte a partidas privadas
-* [ ] Modo espectador
+* [ ] Estadísticas por jugador:
+  - % de manos ganadas. 
+  - Veces que hizo bluff. 
+  - Veces que fue all-in. 
+  - Fichas ganadas totales.
+  
+* [ ] Modo Espectador
+* [ ] Torneos o partidas clasificatorias (ranking)
 
 ---
 

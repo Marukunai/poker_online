@@ -13,6 +13,8 @@ public class HistorialManoDTO {
     private Date fecha;
     private int fichasGanadas;
     private String cartasGanadoras;
+    private String cartasJugador;
     private String contraJugadores;
     private String tipoManoGanadora;
+    private String faseFinal;
 }

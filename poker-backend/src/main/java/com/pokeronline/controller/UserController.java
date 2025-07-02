@@ -34,12 +34,19 @@ public class UserController {
 
         User user = userOpt.get();
 
-        UserDTO dto = new UserDTO();
-        dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
-        dto.setEmail(user.getEmail());
-        dto.setAvatarUrl(user.getAvatarUrl());
-        dto.setFichas(user.getFichas());
+        UserDTO dto = UserDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .avatarUrl(user.getAvatarUrl())
+                .fichas(user.getFichas())
+                .partidasGanadas(user.getPartidasGanadas())
+                .manosJugadas(user.getManosJugadas())
+                .manosGanadas(user.getManosGanadas())
+                .vecesAllIn(user.getVecesAllIn())
+                .fichasGanadasHistoricas(user.getFichasGanadasHistoricas())
+                .vecesHizoBluff(user.getVecesHizoBluff())
+                .build();
 
         return ResponseEntity.ok(dto);
     }
@@ -55,6 +62,11 @@ public class UserController {
                 .avatarUrl(user.getAvatarUrl())
                 .fichas(user.getFichas())
                 .partidasGanadas(user.getPartidasGanadas())
+                .manosJugadas(user.getManosJugadas())
+                .manosGanadas(user.getManosGanadas())
+                .vecesAllIn(user.getVecesAllIn())
+                .fichasGanadasHistoricas(user.getFichasGanadasHistoricas())
+                .vecesHizoBluff(user.getVecesHizoBluff())
                 .build()
         ).toList();
 
@@ -74,8 +86,10 @@ public class UserController {
                 .fecha(mano.getFecha())
                 .fichasGanadas(mano.getFichasGanadas())
                 .cartasGanadoras(mano.getCartasGanadoras())
+                .cartasJugador(mano.getCartasJugador())
                 .contraJugadores(mano.getContraJugadores())
                 .tipoManoGanadora(mano.getTipoManoGanadora())
+                .faseFinal(String.valueOf(mano.getFaseFinal()))
                 .build()).toList();
 
         return ResponseEntity.ok(dtoList);

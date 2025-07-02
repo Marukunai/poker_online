@@ -71,9 +71,4 @@ public class BarajaService {
             userMesaRepository.save(jugador);
         }
     }
-
-    public boolean tieneBaraja(Mesa mesa) {
-        Deque<Carta> baraja = barajasPorMesa.get(mesa.getId());
-        return baraja != null && !baraja.isEmpty();
-    }
 }

@@ -3,10 +3,7 @@ package com.pokeronline.service;
 import com.pokeronline.bot.BotEngineService;
 import com.pokeronline.bot.BotService;
 import com.pokeronline.model.*;
-import com.pokeronline.repository.AccionPartidaRepository;
-import com.pokeronline.repository.MesaRepository;
-import com.pokeronline.repository.TurnoRepository;
-import com.pokeronline.repository.UserMesaRepository;
+import com.pokeronline.repository.*;
 import com.pokeronline.websocket.WebSocketService;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
@@ -28,6 +25,7 @@ public class TurnoService implements BotEngineService {
     private final BarajaService barajaService;
     private final TurnoRepository turnoRepository;
     private final UserMesaRepository userMesaRepository;
+    private final UserRepository userRepository;
     private final MesaRepository mesaRepository;
 
     public TurnoService(
@@ -37,6 +35,7 @@ public class TurnoService implements BotEngineService {
             BarajaService barajaService,
             TurnoRepository turnoRepository,
             UserMesaRepository userMesaRepository,
+            UserRepository userRepository,
             MesaRepository mesaRepository
     ) {
         this.botService = botService;
@@ -45,6 +44,7 @@ public class TurnoService implements BotEngineService {
         this.barajaService = barajaService;
         this.turnoRepository = turnoRepository;
         this.userMesaRepository = userMesaRepository;
+        this.userRepository = userRepository;
         this.mesaRepository = mesaRepository;
     }
 
@@ -347,6 +347,7 @@ public class TurnoService implements BotEngineService {
 
         switch (accion) {
             case FOLD -> turno.setEliminado(true);
+
             case RAISE -> {
                 int incremento = cantidad - turno.getApuesta();
 
@@ -354,7 +355,7 @@ public class TurnoService implements BotEngineService {
                     throw new RuntimeException("Debes apostar más que la apuesta actual para hacer raise");
                 }
 
-                // Calcular la última subida válida (mínimo raise)
+                // Validar subida mínima
                 List<Turno> turnos = turnoRepository.findByMesaOrderByOrdenTurno(mesa);
                 List<Integer> raises = turnos.stream()
                         .filter(t -> t.getAccion() == Accion.RAISE || t.getAccion() == Accion.ALL_IN)
@@ -382,7 +383,16 @@ public class TurnoService implements BotEngineService {
                 userMesa.setFichasEnMesa(userMesa.getFichasEnMesa() - incremento);
                 userMesa.setTotalApostado(userMesa.getTotalApostado() + incremento);
                 mesa.setPot(mesa.getPot() + incremento);
+
+                // 💡 Considerar bluff si raise fuerte en fase temprana
+                if (mesa.getFase() == Fase.PRE_FLOP || mesa.getFase() == Fase.FLOP) {
+                    if (incremento >= mesa.getBigBlind() * 3) {
+                        user.setVecesHizoBluff(user.getVecesHizoBluff() + 1);
+                        userRepository.save(user); // Persistimos la estadística
+                    }
+                }
             }
+
             case CALL -> {
                 int diferencia = apuestaMaxima - turno.getApuesta();
                 if (userMesa.getFichasEnMesa() < diferencia) {
@@ -396,24 +406,29 @@ public class TurnoService implements BotEngineService {
                     mesa.setPot(mesa.getPot() + diferencia);
                 }
             }
+
             case CHECK -> {
                 if (apuestaMaxima > 0) {
                     throw new RuntimeException("No puedes hacer check si hay apuestas en la mesa");
                 }
                 turno.setApuesta(0);
             }
+
             case ALL_IN -> {
                 if (userMesa.getFichasEnMesa() < 1) {
                     throw new RuntimeException("Debes tener al menos 1 ficha para hacer All-In");
                 }
 
-                int incremento = userMesa.getFichasEnMesa(); // Va con lo que tiene
+                int incremento = userMesa.getFichasEnMesa();
                 int nuevoTotal = turno.getApuesta() + incremento;
 
                 turno.setApuesta(nuevoTotal);
                 userMesa.setTotalApostado(userMesa.getTotalApostado() + incremento);
                 mesa.setPot(mesa.getPot() + incremento);
-                userMesa.setFichasEnMesa(0); // Ya no puede volver a actuar
+                userMesa.setFichasEnMesa(0);
+
+                user.setVecesAllIn(user.getVecesAllIn() + 1);
+                userRepository.save(user); // Persistimos la estadística
             }
         }
 
@@ -436,11 +451,11 @@ public class TurnoService implements BotEngineService {
                 "cantidad", cantidad
         ));
 
-        // Verificar si la ronda está completa
+        // Verificar si termina ronda
         if (esFinDeRonda(mesa)) {
             System.out.println("Fin de ronda detectado. Avanzando a la siguiente fase...");
             avanzarFase(mesa);
-            inicializarNuevaRonda(mesa); // Para activar nuevos turnos
+            inicializarNuevaRonda(mesa);
         } else {
             avanzarTurno(mesa);
         }

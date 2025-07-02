@@ -153,19 +153,18 @@ public class MesaController {
     }
 
     @GetMapping("/{mesaId}/ganador")
-    public ResponseEntity<?> obtenerGanador(@PathVariable Long mesaId) {
+    public ResponseEntity<?> obtenerGanadores(@PathVariable Long mesaId) {
         Mesa mesa = mesaRepository.findById(mesaId)
                 .orElseThrow(() -> new RuntimeException("Mesa no encontrada"));
-
-        List<UserMesa> jugadores = userMesaRepository.findByMesa(mesa);
 
         if (mesa.getFase() != Fase.SHOWDOWN) {
             return ResponseEntity.badRequest().body("La partida no está en SHOWDOWN");
         }
 
-        ManoEvaluada ganador = evaluadorManoService.determinarGanador(jugadores, mesa);
+        List<UserMesa> jugadores = userMesaRepository.findByMesa(mesa);
+        List<ManoEvaluada> ganadores = evaluadorManoService.repartirBote(jugadores, mesa);
 
-        return ResponseEntity.ok(ganador);
+        return ResponseEntity.ok(ganadores);
     }
 
     @PostMapping("/{mesaId}/resolver-showdown")

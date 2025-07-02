@@ -30,31 +30,6 @@ public class EvaluadorManoService {
         return mejor;
     }
 
-    public ManoEvaluada determinarGanador(List<UserMesa> jugadores, Mesa mesa) {
-        List<ManoEvaluada> evaluaciones = new ArrayList<>();
-
-        List<String> comunitarias = List.of(
-                mesa.getFlop1(),
-                mesa.getFlop2(),
-                mesa.getFlop3(),
-                mesa.getTurn(),
-                mesa.getRiver()
-        );
-
-        for (UserMesa jm : jugadores) {
-            if (!jm.isEnJuego()) continue;
-
-            List<String> cartasJugador = List.of(jm.getCarta1(), jm.getCarta2());
-
-            ManoEvaluada evaluada = evaluarMano(jm.getUser(), cartasJugador, comunitarias);
-            evaluaciones.add(evaluada);
-        }
-
-        return evaluaciones.stream()
-                .max(Comparator.comparingInt(ManoEvaluada::getFuerza))
-                .orElseThrow(() -> new RuntimeException("No hay manos para comparar"));
-    }
-
     private List<List<String>> generarCombinacionesDeCinco(List<String> cartas) {
         List<List<String>> combinaciones = new ArrayList<>();
         combinar(cartas, 0, new ArrayList<>(), combinaciones);
@@ -97,30 +72,31 @@ public class EvaluadorManoService {
         return new ManoEvaluada(user, ManoTipo.CARTA_ALTA, cincoCartas, 1);
     }
 
-    private List<String> getComunitarias(Mesa mesa) {
-        return List.of(
-                mesa.getFlop1(),
-                mesa.getFlop2(),
-                mesa.getFlop3(),
-                mesa.getTurn(),
-                mesa.getRiver()
-        );
-    }
-
     public List<ManoEvaluada> repartirBote(List<UserMesa> jugadores, Mesa mesa) {
-        List<ManoEvaluada> evaluaciones = jugadores.stream()
-                .map(j -> evaluarMano(j.getUser(), List.of(j.getCarta1(), j.getCarta2()), getComunitarias(mesa)))
-                .toList();
+        List<String> comunitarias = List.of(
+                mesa.getFlop1(), mesa.getFlop2(), mesa.getFlop3(),
+                mesa.getTurn(), mesa.getRiver()
+        );
 
-        // Buscar mejor puntuación
-        int maxFuerza = evaluaciones.stream()
-                .mapToInt(ManoEvaluada::getFuerza)
-                .max()
-                .orElse(0);
+        // Evaluar todas las manos
+        List<ManoEvaluada> evaluaciones = new ArrayList<>(jugadores.stream()
+                .filter(UserMesa::isEnJuego)
+                .map(j -> evaluarMano(j.getUser(), List.of(j.getCarta1(), j.getCarta2()), comunitarias))
+                .toList());
 
-        // Filtrar ganadores
+        // Ordenar por fuerza y luego por desempate
+        evaluaciones.sort((a, b) -> {
+            if (b.getFuerza() != a.getFuerza()) {
+                return Integer.compare(b.getFuerza(), a.getFuerza());
+            }
+            return desempatarManos(b.getCartasGanadoras(), a.getCartasGanadoras());
+        });
+
+        ManoEvaluada mejorMano = evaluaciones.get(0);
+
+        // Filtrar ganadores exactos
         List<ManoEvaluada> ganadores = evaluaciones.stream()
-                .filter(m -> m.getFuerza() == maxFuerza)
+                .filter(m -> m.getFuerza() == mejorMano.getFuerza() && desempatarManos(m.getCartasGanadoras(), mejorMano.getCartasGanadoras()) == 0)
                 .toList();
 
         int potTotal = mesa.getPot();
@@ -135,9 +111,39 @@ public class EvaluadorManoService {
             userMesa.setFichasEnMesa(userMesa.getFichasEnMesa() + premioPorJugador);
         }
 
-        mesa.setPot(0); // Reiniciar pot
+        mesa.setPot(0); // Reset pot
 
         return ganadores;
+    }
+
+    private int desempatarManos(List<String> a, List<String> b) {
+        List<Integer> valoresA = a.stream()
+                .map(this::valorNumerico)
+                .sorted(Comparator.reverseOrder())
+                .toList();
+
+        List<Integer> valoresB = b.stream()
+                .map(this::valorNumerico)
+                .sorted(Comparator.reverseOrder())
+                .toList();
+
+        for (int i = 0; i < Math.min(valoresA.size(), valoresB.size()); i++) {
+            int cmp = Integer.compare(valoresA.get(i), valoresB.get(i));
+            if (cmp != 0) return cmp;
+        }
+
+        return 0; // empate exacto
+    }
+
+    private int valorNumerico(String carta) {
+        String valor = carta.substring(0, carta.length() - 1);
+        return switch (valor) {
+            case "A" -> 14;
+            case "K" -> 13;
+            case "Q" -> 12;
+            case "J" -> 11;
+            default -> Integer.parseInt(valor);
+        };
     }
 
     // Valores a las figuras

@@ -85,7 +85,8 @@ public class MesaService {
                 userMesaRepository.save(jm);
 
                 User u = jm.getUser();
-                u.setPartidasGanadas(u.getPartidasGanadas() + 1);
+                u.setManosGanadas(u.getManosGanadas() + 1);
+                u.setFichasGanadasHistoricas(u.getFichasGanadasHistoricas() + premioPorJugador);
 
                 // Solo sumar fichas reales si la mesa NO es temporal
                 if (!mesa.isFichasTemporales() && !u.isEsIA()) {
@@ -99,6 +100,7 @@ public class MesaService {
                 HistorialMano historial = HistorialMano.builder()
                         .jugador(u)
                         .mesa(mesa)
+                        .cartasJugador(jm.getCarta1() + "," + jm.getCarta2())
                         .cartasGanadoras(String.join(",", g.getCartasGanadoras()))
                         .tipoManoGanadora(String.valueOf(g.getTipo()))
                         .fecha(new Date())
@@ -109,6 +111,7 @@ public class MesaService {
                                         .map(p -> p.getUser().getUsername())
                                         .collect(Collectors.joining(", "))
                         )
+                        .faseFinal(Fase.valueOf(mesa.getFase().name()))
                         .build();
                 historialManoRepository.save(historial);
             }
@@ -132,6 +135,12 @@ public class MesaService {
                 "tipo", tipoGanador != null ? tipoGanador.name() : "NINGUNO",
                 "cartas", cartasGanadoras
         ));
+
+        for (UserMesa jm : jugadoresActivos) {
+            User u = jm.getUser();
+            u.setManosJugadas(u.getManosJugadas() + 1);
+            userRepository.save(u);
+        }
 
         return new ResultadoShowdownInterno(ganadoresFinales, tipoGanador, cartasGanadoras);
     }
