@@ -1,6 +1,7 @@
 package com.pokeronline.service;
 
 import com.pokeronline.bot.DificultadBot;
+import com.pokeronline.bot.EstiloBot;
 import com.pokeronline.model.*;
 import com.pokeronline.repository.MesaRepository;
 import com.pokeronline.repository.UserMesaRepository;
@@ -91,7 +92,7 @@ public class MesaPrivadaService {
         return "Unido correctamente a la mesa privada";
     }
 
-    public void addBotAMesaPrivada(String codigoAcceso, int fichasIniciales, DificultadBot dificultad) {
+    public void addBotAMesaPrivada(String codigoAcceso, int fichasIniciales, DificultadBot dificultad, EstiloBot estiloBot) {
         Mesa mesa = mesaRepository.findByCodigoAcceso(codigoAcceso)
                 .orElseThrow(() -> new RuntimeException("Mesa privada no encontrada"));
 
@@ -108,7 +109,7 @@ public class MesaPrivadaService {
                 .fichas(0)
                 .esIA(true)
                 .nivelBot(dificultad != null ? dificultad : DificultadBot.FACIL)
-                .estiloBot(EstiloBot.CONSERVADOR)
+                .estiloBot(estiloBot != null ? estiloBot : EstiloBot.DEFAULT)
                 .build();
 
         if (!bot.isEsIA() && bot.getNivelBot() != null) {

@@ -7,8 +7,8 @@ import com.pokeronline.torneo.service.TorneoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/torneos")
@@ -20,6 +20,11 @@ public class TorneoController {
     @GetMapping
     public List<Torneo> listarTorneos() {
         return torneoService.listarTorneos();
+    }
+
+    @GetMapping("/torneo")
+    public Optional<Torneo> listarTorneoPorNombre(@RequestParam String nombre) {
+        return torneoService.obtenerTorneoPorNombre(nombre);
     }
 
     @PostMapping

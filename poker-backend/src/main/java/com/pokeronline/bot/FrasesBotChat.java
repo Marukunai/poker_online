@@ -1,7 +1,6 @@
 package com.pokeronline.bot;
 
 import com.pokeronline.model.Accion;
-import com.pokeronline.model.EstiloBot;
 import com.pokeronline.model.User;
 
 import java.util.*;

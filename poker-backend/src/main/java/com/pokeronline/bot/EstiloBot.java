@@ -1,4 +1,4 @@
-package com.pokeronline.model;
+package com.pokeronline.bot;
 
 public enum EstiloBot {
     DEFAULT,

@@ -25,6 +25,8 @@ public class TorneoService {
         return torneoRepository.findById(id);
     }
 
+    public Optional<Torneo> obtenerTorneoPorNombre(String nombre) { return torneoRepository.findByNombre(nombre); }
+
     @Transactional
     public Torneo crearTorneo(CrearTorneoDTO dto) {
         Torneo torneo = Torneo.builder()

@@ -1,7 +1,7 @@
 package com.pokeronline.dto;
 
 import com.pokeronline.bot.DificultadBot;
-import com.pokeronline.model.EstiloBot;
+import com.pokeronline.bot.EstiloBot;
 import lombok.*;
 
 @Data

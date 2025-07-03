@@ -13,7 +13,7 @@ public class BotDecisionEngine {
         DificultadBot nivel = Optional.ofNullable(bot.getNivelBot()).orElse(DificultadBot.FACIL);
         EstiloBot estilo = Optional.ofNullable(bot.getEstiloBot()).orElse(EstiloBot.DEFAULT);
         Fase fase = mesa.getFase();
-        int fuerza = mano.getFuerza();
+        int fuerza = (mano != null) ? mano.getFuerza() : -1;
         int fichas = userMesa.getFichasEnMesa();
         int bigBlind = mesa.getBigBlind();
         List<String> cartas = List.of(userMesa.getCarta1(), userMesa.getCarta2());
@@ -47,6 +47,12 @@ public class BotDecisionEngine {
         // Decisión
         return switch (nivel) {
             case FACIL -> {
+                if (fase == Fase.PRE_FLOP) {
+                    if (parejaAlta) yield new Decision(Accion.ALL_IN, fichas);
+                    if (pareja) yield new Decision(Accion.RAISE, apuestaMaxima + (int) Math.ceil(bigBlind * agresividad));
+                    yield apuestaMaxima == 0 ? new Decision(Accion.CHECK, 0) : new Decision(Accion.CALL, apuestaMaxima);
+                }
+
                 if (fuerza >= 8) yield new Decision(Accion.ALL_IN, fichas);
                 if (fuerza >= 5)
                     yield new Decision(Accion.RAISE, apuestaMaxima + (int) Math.ceil(bigBlind * agresividad));
@@ -107,6 +113,7 @@ public class BotDecisionEngine {
             };
         };
     }
+
 
     // -------- Utilidades --------
 

@@ -1,6 +1,7 @@
 package com.pokeronline.model;
 
 import com.pokeronline.bot.DificultadBot;
+import com.pokeronline.bot.EstiloBot;
 import jakarta.persistence.*;
 import lombok.*;
 
