@@ -1,0 +1,60 @@
+Lo que falta:
+
+Crear rondas (fase = 1, 2, final...).
+
+Agrupar participantes en TorneoMesa dinámicamente cuando comienza el torneo.
+
+Cuando en una mesa queda un solo jugador, avanza automáticamente de ronda.
+
+Finalizar torneo cuando solo quede un participante.
+
+2. Inicio automático del torneo en base a fecha/hora
+Añadir una tarea programada (@Scheduled) o lanzar el torneo desde el backend cuando fechaInicio <= now.
+
+Cambiar estado de PENDIENTE → EN_CURSO → FINALIZADO.
+
+3. Estructura de premios
+Calcular premioTotal en base al buyIn * participantes.
+
+Crear una tabla de premios: ej. 1.º 50%, 2.º 30%, 3.º 20%.
+
+Asignar premios a los usuarios al finalizar el torneo (ajustar fichas globales del User).
+
+4. Modo eliminación directa vs ranking
+Si eliminacionDirecta == true, se eliminan jugadores al quedarse sin fichas.
+
+Si false, se otorgan puntos por posición o rendimiento (ranking acumulativo).
+
+5. Visualización del torneo (opcional)
+Crear endpoint tipo /torneos/{id}/estado para ver:
+
+Participantes aún activos
+
+Mesas activas
+
+Ronda actual
+
+Tiempo restante (si se usa reloj)
+
+Premio en juego
+
+🧠 Ideas avanzadas (para cuando esté todo lo anterior):
+Gestión de relojes de ciegas (ciegas que suben por nivel de ronda).
+
+Torneos multimesa reales, donde los ganadores de cada mesa se mezclan.
+
+Soporte para torneos programados por el administrador (panel de gestión).
+
+Integración con notificaciones 
+
+---------- LO MAS IMPORTANTE ------------
+
+Crear lógica para iniciar un torneo automáticamente si la fecha se cumple.
+
+ Crear lógica de emparejamiento a mesas por ronda.
+
+ Gestionar finalización automática (quedar 1 jugador).
+
+ Asignar premios al finalizar.
+
+ Agregar endpoint para ver estado del torneo.

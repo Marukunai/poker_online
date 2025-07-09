@@ -1,0 +1,35 @@
+maruku:
+
+{
+  "email": "maruku@email.com",
+  "password": "123456"
+}
+
+eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE0NjUxMDgsImV4cCI6MTc1MTU1MTUwOH0.zeo7lhu78ugWXosL0ZGUT6oOX8n5ilDKaXhRtWFFtgjh8OodVzzQZTJbJxH_s1g0FF1P8BD-TGN94o5bGnGulw
+
+alice:
+
+{
+  "email": "alice@email.com",
+  "password": "123"
+}
+
+eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTQ2NjM5NCwiZXhwIjoxNzUxNTUyNzk0fQ.pADNp7sXw64Db-DvFz3-E0o6I4v0Lv0BHLRDoCxEdIexgAaX4kRvT2sDVWNnv2zynxVJReFlccSozf_FSDi_bw
+
+bob:
+
+{
+  "email": "bob@email.com",
+  "password": "123"
+}
+
+eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJib2JAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTEwMjE1ODAsImV4cCI6MTc1MTEwNzk4MH0.W-kE879mxpt_-6eY1KIO6RW9C4htnQfu_vSuKannqmQLl-O2n3e7oYQh67Hqccbr6XmxWZvSFTH0tTWkJ4iymw
+
+charlie:
+
+{
+  "email": "charlie@email.com",
+  "password": "123"
+}
+
+eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjaGFybGllQGVtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzUxMDIxNjEwLCJleHAiOjE3NTExMDgwMTB9.M8RNL-i21XDxVUv5-nKjJZx5QKyGHiNB0Tp-bO-OIUQ1arCsCtYInwa5GQNzoGZ-xmWtXJ5XhViKinW0oTuAHg

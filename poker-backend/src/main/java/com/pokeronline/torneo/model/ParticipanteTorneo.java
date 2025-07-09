@@ -1,5 +1,6 @@
 package com.pokeronline.torneo.model;
 
+import com.pokeronline.model.Mesa;
 import com.pokeronline.model.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,4 +26,6 @@ public class ParticipanteTorneo {
     private boolean eliminado;
     private int fichasActuales;
     private int puntos;
+
+    private Mesa mesa;
 }

@@ -12,4 +12,6 @@ public interface TorneoMesaRepository extends JpaRepository<TorneoMesa, Long> {
     List<TorneoMesa> findByTorneo(Torneo torneo);
     Optional<TorneoMesa> findByTorneoAndMesa(Torneo torneo, Mesa mesa);
     Optional<TorneoMesa> findByMesa(Mesa mesa);
+
+    List<TorneoMesa> findByTorneoAndRonda(Torneo torneo, int i);
 }

@@ -65,4 +65,8 @@ public class ParticipanteTorneoService {
             participanteTorneoRepository.save(p);
         });
     }
+
+    public void guardarParticipante(ParticipanteTorneo participante) {
+        participanteTorneoRepository.save(participante);
+    }
 }
