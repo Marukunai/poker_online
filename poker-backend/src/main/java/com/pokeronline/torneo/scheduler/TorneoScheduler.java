@@ -67,7 +67,6 @@ public class TorneoScheduler {
         log.info("Torneo '{}' iniciado con {} participantes distribuidos en {} mesas.", torneo.getNombre(), participantes.size(), mesas.size());
     }
 
-    @Scheduled(fixedRate = 60000)
     public void revisarTorneosEnCurso() {
         List<Torneo> torneosEnCurso = torneoService.listarTorneosEnCurso();
         for (Torneo torneo : torneosEnCurso) {
@@ -75,6 +74,8 @@ public class TorneoScheduler {
                     .stream()
                     .filter(p -> !p.isEliminado())
                     .toList();
+
+            revisarMesasFinalizadas(torneo, activos);
 
             if (activos.size() <= 1) {
                 torneoService.finalizarTorneo(torneo);
@@ -117,15 +118,5 @@ public class TorneoScheduler {
 
             log.info("Avanzó el jugador {} a la ronda {} del torneo '{}'.", ganador.getUser().getUsername(), nuevaRonda, torneo.getNombre());
         }
-    }
-
-    private void finalizarTorneo(Torneo torneo, ParticipanteTorneo ganador) {
-        torneo.setEstado(TorneoEstado.FINALIZADO);
-        torneoService.guardarTorneo(torneo);
-
-        ganador.setPosicion(1);
-        participanteService.guardarParticipante(ganador);
-
-        log.info("Torneo '{}' finalizado. Ganador: {}", torneo.getNombre(), ganador.getUser().getUsername());
     }
 }

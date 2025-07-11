@@ -10,12 +10,14 @@ import com.pokeronline.torneo.repository.TorneoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TorneoService {
 
     private final ParticipanteTorneoService participanteTorneoService;
@@ -75,16 +77,26 @@ public class TorneoService {
         List<ParticipanteTorneo> ranking = participanteTorneoService.obtenerRanking(torneo);
         int totalPremio = torneo.getPremioTotal();
 
-        int[] porcentajes = {50, 30, 20}; // 1.º 50%, 2.º 30%, 3.º 20%
-        for (int i = 0; i < Math.min(ranking.size(), 3); i++) {
+        int[] porcentajes = {50, 30, 20}; // Solo top 3 premian
+        for (int i = 0; i < ranking.size(); i++) {
             ParticipanteTorneo participante = ranking.get(i);
-            int premio = totalPremio * porcentajes[i] / 100;
-            User user = participante.getUser();
-            user.setFichas(user.getFichas() + premio);
-            userRepository.save(user); // Asegúrate de tener esto inyectado
+            participante.setPosicion(i + 1);
+
+            if (i < porcentajes.length) {
+                int premio = totalPremio * porcentajes[i] / 100;
+                User user = participante.getUser();
+                user.setFichas(user.getFichas() + premio);
+                userRepository.save(user);
+
+                log.info("🏆 Premio: {} fichas para {} (posición {})", premio, user.getUsername(), i + 1);
+            }
+
+            participanteTorneoService.guardarParticipante(participante);
         }
 
         torneo.setEstado(TorneoEstado.FINALIZADO);
         torneoRepository.save(torneo);
+
+        log.info("✅ Torneo '{}' finalizado. Se asignaron posiciones a {} jugadores.", torneo.getNombre(), ranking.size());
     }
 }
