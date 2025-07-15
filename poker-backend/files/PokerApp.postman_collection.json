@@ -734,28 +734,6 @@
 					"response": []
 				},
 				{
-					"name": "🔎 Listar por ID",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTQ2NjM5NCwiZXhwIjoxNzUxNTUyNzk0fQ.pADNp7sXw64Db-DvFz3-E0o6I4v0Lv0BHLRDoCxEdIexgAaX4kRvT2sDVWNnv2zynxVJReFlccSozf_FSDi_bw",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": "http://localhost:8080/api/torneos/1"
-					},
-					"response": []
-				},
-				{
 					"name": "🔎 Listar por Nombre",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -780,6 +758,113 @@
 							]
 						},
 						"url": "http://localhost:8080/api/torneos/torneo"
+					},
+					"response": []
+				},
+				{
+					"name": "🔎 Listar por ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTQ2NjM5NCwiZXhwIjoxNzUxNTUyNzk0fQ.pADNp7sXw64Db-DvFz3-E0o6I4v0Lv0BHLRDoCxEdIexgAaX4kRvT2sDVWNnv2zynxVJReFlccSozf_FSDi_bw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": "http://localhost:8080/api/torneos/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar pendientes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/pendientes"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar en curso",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTQ2NjM5NCwiZXhwIjoxNzUxNTUyNzk0fQ.pADNp7sXw64Db-DvFz3-E0o6I4v0Lv0BHLRDoCxEdIexgAaX4kRvT2sDVWNnv2zynxVJReFlccSozf_FSDi_bw",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/encurso"
+					},
+					"response": []
+				},
+				{
+					"name": "Ver estado del torneo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/1/estado"
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar estado",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "nuevoEstado",
+									"value": "EN_CURSO",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:8080/api/torneos/1/estado"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Ciegas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/1/nivel-ciegas"
 					},
 					"response": []
 				},
@@ -813,6 +898,26 @@
 					"response": []
 				},
 				{
+					"name": "🏁 Eliminar torneo",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE1MzA3MDYsImV4cCI6MTc1MTYxNzEwNn0.Am16l3JXeEMxZG-a9fe2cIabja4F-khwBsBMHIaCN_Fp3ho66r7BP6UXPfW896bLld57ITeS_tZWGrLhA2iDhA",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/1"
+					},
+					"response": []
+				},
+				{
 					"name": "👤 Inscribirse al torneo",
 					"request": {
 						"method": "POST",
@@ -839,6 +944,51 @@
 							}
 						],
 						"url": "http://localhost:8080/api/torneos/1/participantes"
+					},
+					"response": []
+				},
+				{
+					"name": "Sumar Puntos",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "puntos",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:8080/api/torneos/1/sumarpuntos"
+					},
+					"response": []
+				},
+				{
+					"name": "Asignar Puntos de Ranking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/1/asignarPuntosRendimiento"
 					},
 					"response": []
 				},
@@ -884,6 +1034,133 @@
 							}
 						],
 						"url": "http://localhost:8080/api/torneos/1/datos"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar mesas del torneo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/mesas/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Vincular mesa a torneo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "mesaId",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:8080/api/torneos/mesas/1/vincular"
+					},
+					"response": []
+				},
+				{
+					"name": "Desvincular mesa del torneo",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/mesas/desvincular/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar vínculo Torneo-Mesa",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "torneoId",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "mesaId",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:8080/api/torneos/mesas/buscar"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar niveles de ciegas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/1/blinds"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear nivel de ciegas",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nivel\": 1, \r\n    \"smallBlind\": 50, \r\n    \"bigBlind\": 100, \r\n    \"duracionSegundos\": 300\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/torneos/1/blinds"
 					},
 					"response": []
 				}

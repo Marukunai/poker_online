@@ -2,6 +2,7 @@ package com.pokeronline.torneo.controller;
 
 import com.pokeronline.model.User;
 import com.pokeronline.repository.UserRepository;
+import com.pokeronline.torneo.dto.EstadisticasTorneoDTO;
 import com.pokeronline.torneo.dto.ParticipanteTorneoDTO;
 import com.pokeronline.torneo.model.ParticipanteTorneo;
 import com.pokeronline.torneo.model.Torneo;
@@ -131,5 +132,12 @@ public class ParticipanteTorneoController {
         Torneo torneo = torneoService.obtenerTorneoPorId(id)
                 .orElseThrow(() -> new RuntimeException("Torneo no encontrado"));
         participanteService.otorgarPuntosPorRendimiento(torneo);
+    }
+
+    @GetMapping("/estadisticas")
+    public EstadisticasTorneoDTO obtenerEstadisticas(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return participanteService.obtenerEstadisticas(user);
     }
 }

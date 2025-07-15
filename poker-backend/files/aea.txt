@@ -1,0 +1,8 @@
+const socket = new SockJS('http://localhost:8080/ws');
+const stompClient = Stomp.over(socket);
+
+stompClient.connect({}, function () {
+  stompClient.subscribe('/topic/torneo/1/inicio', function (msg) {
+    console.log("Evento: ", msg.body);
+  });
+});

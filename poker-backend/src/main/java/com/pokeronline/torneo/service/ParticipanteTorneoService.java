@@ -1,13 +1,17 @@
 package com.pokeronline.torneo.service;
 
 import com.pokeronline.model.User;
+import com.pokeronline.torneo.dto.EstadisticasTorneoDTO;
 import com.pokeronline.torneo.model.ParticipanteTorneo;
 import com.pokeronline.torneo.model.Torneo;
+import com.pokeronline.torneo.model.TorneoEstado;
 import com.pokeronline.torneo.repository.ParticipanteTorneoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,5 +79,73 @@ public class ParticipanteTorneoService {
             p.setPuntos(p.getPuntos() + puntos);
             guardarParticipante(p);
         }
+    }
+
+    public EstadisticasTorneoDTO obtenerEstadisticas(User user) {
+        List<ParticipanteTorneo> historial = participanteTorneoRepository.findByUser(user);
+        if (historial.isEmpty()) {
+            return EstadisticasTorneoDTO.builder()
+                    .username(user.getUsername())
+                    .torneosJugados(0)
+                    .torneosGanados(0)
+                    .ratioVictorias(0)
+                    .vecesPrimeraRonda(0)
+                    .puntosTotales(0)
+                    .fichasGanadas(0)
+                    .mejorPosicion(0)
+                    .posicionPromedio(0)
+                    .fechaUltimoTorneo("-")
+                    .build();
+        }
+
+        int ganados = 0;
+        int primeraRonda = 0;
+        int puntos = 0;
+        int fichas = 0;
+        int mejor = Integer.MAX_VALUE;
+        int sumaPosiciones = 0;
+        String ultimaFecha = "";
+
+        for (ParticipanteTorneo p : historial) {
+            Torneo torneo = p.getTorneo();
+            if (torneo.getEstado() != TorneoEstado.FINALIZADO) continue;
+
+            puntos += p.getPuntos();
+            fichas += p.getFichasActuales();
+            int pos = p.getPosicion();
+            if (pos == 1) ganados++;
+            if (pos > 0) {
+                mejor = Math.min(mejor, pos);
+                sumaPosiciones += pos;
+            }
+            if (p.isEliminado() && torneo.getMesas().stream().allMatch(m -> m.getRonda() == 1)) {
+                primeraRonda++;
+            }
+
+            if (torneo.getFechaInicio() != null) {
+                if (ultimaFecha.isEmpty() || torneo.getFechaInicio().after(Date.from(Instant.parse(ultimaFecha)))) {
+                    ultimaFecha = torneo.getFechaInicio().toString();
+                }
+            }
+        }
+
+        int finalizados = (int) historial.stream()
+                .filter(p -> p.getTorneo().getEstado() == TorneoEstado.FINALIZADO).count();
+
+        double ratio = finalizados > 0 ? (double) ganados / finalizados : 0.0;
+        double promedio = finalizados > 0 ? (double) sumaPosiciones / finalizados : 0.0;
+
+        return EstadisticasTorneoDTO.builder()
+                .username(user.getUsername())
+                .torneosJugados(finalizados)
+                .torneosGanados(ganados)
+                .ratioVictorias(ratio)
+                .vecesPrimeraRonda(primeraRonda)
+                .puntosTotales(puntos)
+                .fichasGanadas(fichas)
+                .mejorPosicion(mejor == Integer.MAX_VALUE ? 0 : mejor)
+                .posicionPromedio(promedio)
+                .fechaUltimoTorneo(ultimaFecha)
+                .build();
     }
 }

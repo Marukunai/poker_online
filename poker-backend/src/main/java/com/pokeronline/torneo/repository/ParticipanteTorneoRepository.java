@@ -10,5 +10,6 @@ import java.util.Optional;
 
 public interface ParticipanteTorneoRepository extends JpaRepository<ParticipanteTorneo, Long> {
     List<ParticipanteTorneo> findByTorneo(Torneo torneo);
+    List<ParticipanteTorneo> findByUser(User user);
     Optional<ParticipanteTorneo> findByTorneoAndUser(Torneo torneo, User user);
 }
