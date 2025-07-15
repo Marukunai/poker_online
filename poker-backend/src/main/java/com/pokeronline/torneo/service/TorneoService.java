@@ -45,6 +45,8 @@ public class TorneoService {
                 .eliminacionDirecta(dto.isEliminacionDirecta())
                 .fechaInicio(dto.getFechaInicio())
                 .estado(TorneoEstado.PENDIENTE)
+                .nivelCiegasActual(0)
+                .timestampInicioNivel(null)
                 .build();
         return torneoRepository.save(torneo);
     }
@@ -88,7 +90,7 @@ public class TorneoService {
                 user.setFichas(user.getFichas() + premio);
                 userRepository.save(user);
 
-                log.info("🏆 Premio: {} fichas para {} (posición {})", premio, user.getUsername(), i + 1);
+                log.info("Premio: {} fichas para {} (posición {})", premio, user.getUsername(), i + 1);
             }
 
             participanteTorneoService.guardarParticipante(participante);
@@ -96,7 +98,10 @@ public class TorneoService {
 
         torneo.setEstado(TorneoEstado.FINALIZADO);
         torneoRepository.save(torneo);
+        if (!torneo.isEliminacionDirecta()) {
+            participanteTorneoService.otorgarPuntosPorRendimiento(torneo);
+        }
 
-        log.info("✅ Torneo '{}' finalizado. Se asignaron posiciones a {} jugadores.", torneo.getNombre(), ranking.size());
+        log.info("Torneo '{}' finalizado. Se asignaron posiciones a {} jugadores.", torneo.getNombre(), ranking.size());
     }
 }

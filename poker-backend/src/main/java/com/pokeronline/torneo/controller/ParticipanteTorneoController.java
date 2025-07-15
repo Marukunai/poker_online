@@ -112,4 +112,24 @@ public class ParticipanteTorneoController {
                 .eliminado(participante.isEliminado())
                 .build();
     }
+
+    @PatchMapping("/{id}/sumarpuntos")
+    public void sumarPuntos(@PathVariable Long id,
+                            @RequestParam String email,
+                            @RequestParam int puntos) {
+        Torneo torneo = torneoService.obtenerTorneoPorId(id)
+                .orElseThrow(() -> new RuntimeException("Torneo no encontrado"));
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        participanteService.sumarPuntos(user, torneo, puntos);
+    }
+
+    @PostMapping("/{id}/asignarPuntosRendimiento")
+    public void asignarPuntosRendimiento(@PathVariable Long id) {
+        Torneo torneo = torneoService.obtenerTorneoPorId(id)
+                .orElseThrow(() -> new RuntimeException("Torneo no encontrado"));
+        participanteService.otorgarPuntosPorRendimiento(torneo);
+    }
 }

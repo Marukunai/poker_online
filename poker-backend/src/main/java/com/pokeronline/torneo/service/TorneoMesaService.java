@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +36,9 @@ public class TorneoMesaService {
 
     public void desvincularMesa(Mesa mesa) {
         torneoMesaRepository.findByMesa(mesa).ifPresent(torneoMesaRepository::delete);
+    }
+
+    public Optional<TorneoMesa> obtenerPorTorneoYMesa(Torneo torneo, Mesa mesa) {
+        return torneoMesaRepository.findByTorneoAndMesa(torneo, mesa);
     }
 }

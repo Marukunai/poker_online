@@ -1,13 +1,14 @@
 package com.pokeronline.torneo.controller;
 
 import com.pokeronline.torneo.dto.CrearTorneoDTO;
-import com.pokeronline.torneo.model.Torneo;
-import com.pokeronline.torneo.model.TorneoEstado;
+import com.pokeronline.torneo.model.*;
 import com.pokeronline.torneo.service.TorneoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -25,6 +26,48 @@ public class TorneoController {
     @GetMapping("/torneo")
     public Optional<Torneo> listarTorneoPorNombre(@RequestParam String nombre) {
         return torneoService.obtenerTorneoPorNombre(nombre);
+    }
+
+    @GetMapping("/pendientes")
+    public List<Torneo> listarPendientes() {
+        return torneoService.listarTorneosPendientes();
+    }
+
+    @GetMapping("/encurso")
+    public List<Torneo> listarEnCurso() {
+        return torneoService.listarTorneosEnCurso();
+    }
+
+    @GetMapping("/{id}/estado")
+    public Map<String, Object> estadoTorneo(@PathVariable Long id) {
+        Torneo torneo = torneoService.obtenerTorneoPorId(id)
+                .orElseThrow(() -> new RuntimeException("Torneo no encontrado"));
+
+        List<ParticipanteTorneo> activos = torneo.getParticipantes().stream()
+                .filter(p -> !p.isEliminado()).toList();
+
+        int rondaMax = torneo.getMesas().stream()
+                .mapToInt(TorneoMesa::getRonda).max().orElse(1);
+
+        Map<String, Object> estado = new HashMap<>();
+        estado.put("nombre", torneo.getNombre());
+        estado.put("estado", torneo.getEstado());
+        estado.put("participantesActivos", activos.size());
+        estado.put("rondaActual", rondaMax);
+        estado.put("premioTotal", torneo.getPremioTotal());
+        return estado;
+    }
+
+    @GetMapping("/{id}/nivel-ciegas")
+    public BlindLevel getNivelCiegasActual(@PathVariable Long id) {
+        Torneo torneo = torneoService.obtenerTorneoPorId(id).orElseThrow();
+        List<BlindLevel> niveles = torneo.getBlindLevels();
+        int nivelActual = torneo.getNivelCiegasActual();
+        if (nivelActual < niveles.size()) {
+            return niveles.get(nivelActual);
+        } else {
+            return niveles.get(niveles.size() - 1); // último nivel
+        }
     }
 
     @PostMapping

@@ -1,10 +1,7 @@
 package com.pokeronline.torneo.scheduler;
 
 import com.pokeronline.model.Mesa;
-import com.pokeronline.torneo.model.ParticipanteTorneo;
-import com.pokeronline.torneo.model.Torneo;
-import com.pokeronline.torneo.model.TorneoEstado;
-import com.pokeronline.torneo.model.TorneoMesa;
+import com.pokeronline.torneo.model.*;
 import com.pokeronline.torneo.repository.TorneoMesaRepository;
 import com.pokeronline.torneo.service.ParticipanteTorneoService;
 import com.pokeronline.torneo.service.TorneoService;
@@ -30,6 +27,7 @@ public class TorneoScheduler {
     public void gestionarTorneos() {
         revisarTorneosPendientes();
         revisarTorneosEnCurso();
+        gestionarBlinds();
     }
 
     private void revisarTorneosPendientes() {
@@ -77,9 +75,16 @@ public class TorneoScheduler {
 
             revisarMesasFinalizadas(torneo, activos);
 
-            if (activos.size() <= 1) {
-                torneoService.finalizarTorneo(torneo);
-                System.out.println("Torneo " + torneo.getNombre() + " finalizado automáticamente.");
+            if (torneo.isEliminacionDirecta()) {
+                if (activos.size() <= 1) {
+                    torneoService.finalizarTorneo(torneo);
+                    System.out.println("Torneo " + torneo.getNombre() + " finalizado automáticamente.");
+                }
+            } else {
+                // Si es modo ranking, simplemente actualiza puntos (más adelante) y finaliza si hay fecha de fin o condición externa.
+                if (activos.isEmpty()) {
+                    torneoService.finalizarTorneo(torneo);
+                }
             }
         }
     }
@@ -116,7 +121,46 @@ public class TorneoScheduler {
             ganador.setMesa(nuevaMesa.getMesa());
             participanteService.guardarParticipante(ganador);
 
+            if (!torneo.isEliminacionDirecta()) {
+                ganador.setFichasActuales(torneo.getFichasIniciales());
+            }
+
             log.info("Avanzó el jugador {} a la ronda {} del torneo '{}'.", ganador.getUser().getUsername(), nuevaRonda, torneo.getNombre());
+        }
+    }
+
+    private void gestionarBlinds() {
+        List<Torneo> torneosEnCurso = torneoService.listarTorneosEnCurso();
+        Date ahora = new Date();
+
+        for (Torneo torneo : torneosEnCurso) {
+            List<BlindLevel> niveles = torneo.getBlindLevels();
+            if (niveles == null || niveles.isEmpty()) continue;
+
+            int actual = torneo.getNivelCiegasActual();
+            if (actual >= niveles.size()) continue;
+
+            BlindLevel nivelActual = niveles.get(actual);
+            Date inicioNivel = torneo.getTimestampInicioNivel();
+
+            if (inicioNivel == null) {
+                torneo.setTimestampInicioNivel(new Date());
+                torneoService.guardarTorneo(torneo);
+                continue;
+            }
+
+            long duracion = nivelActual.getDuracionSegundos() * 1000L;
+            if (ahora.getTime() - inicioNivel.getTime() >= duracion) {
+                torneo.setNivelCiegasActual(actual + 1);
+                torneo.setTimestampInicioNivel(new Date());
+                torneoService.guardarTorneo(torneo);
+
+                log.info("🏁 Torneo '{}' avanzó a nivel de ciegas {} (SB: {}, BB: {})",
+                        torneo.getNombre(),
+                        actual + 1,
+                        niveles.get(actual).getSmallBlind(),
+                        niveles.get(actual).getBigBlind());
+            }
         }
     }
 }

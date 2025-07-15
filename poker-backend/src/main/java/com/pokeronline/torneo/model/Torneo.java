@@ -32,4 +32,10 @@ public class Torneo {
 
     @OneToMany(mappedBy = "torneo", cascade = CascadeType.ALL)
     private List<ParticipanteTorneo> participantes;
+
+    @OneToMany(mappedBy = "torneo", cascade = CascadeType.ALL)
+    private List<BlindLevel> blindLevels;
+
+    private int nivelCiegasActual;
+    private Date timestampInicioNivel;
 }

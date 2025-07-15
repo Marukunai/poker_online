@@ -38,11 +38,8 @@ public class ParticipanteTorneoService {
     public List<ParticipanteTorneo> obtenerRanking(Torneo torneo) {
         return participanteTorneoRepository.findByTorneo(torneo).stream()
                 .sorted(
-                        // 1. Sort by 'eliminado'
                         Comparator.comparing(ParticipanteTorneo::isEliminado)
-                                // 2. Then, sort by 'puntos'
                                 .thenComparing(ParticipanteTorneo::getPuntos, Comparator.reverseOrder())
-                                // 3. Finally, sort by 'fichasActuales'
                                 .thenComparing(ParticipanteTorneo::getFichasActuales, Comparator.reverseOrder())
                 )
                 .toList();
@@ -68,5 +65,15 @@ public class ParticipanteTorneoService {
 
     public void guardarParticipante(ParticipanteTorneo participante) {
         participanteTorneoRepository.save(participante);
+    }
+
+    public void otorgarPuntosPorRendimiento(Torneo torneo) {
+        List<ParticipanteTorneo> ranking = obtenerRanking(torneo);
+        for (int i = 0; i < ranking.size(); i++) {
+            ParticipanteTorneo p = ranking.get(i);
+            int puntos = Math.max(0, 100 - i * 10); // Ejemplo: 1.º 100, 2.º 90, 3.º 80, etc.
+            p.setPuntos(p.getPuntos() + puntos);
+            guardarParticipante(p);
+        }
     }
 }

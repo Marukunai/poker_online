@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"alice@email.com\",\r\n  \"password\": \"123\"\r\n}",
+							"raw": "{\r\n  \"email\": \"maruku@email.com\",\r\n  \"password\": \"123456\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -296,6 +296,12 @@
 									"key": "fichasIniciales",
 									"value": "1000000",
 									"type": "text"
+								},
+								{
+									"key": "nivelDificultad",
+									"value": "3",
+									"description": "si se deja nulo será default 1",
+									"type": "text"
 								}
 							]
 						},
@@ -409,11 +415,11 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTAyMTUwMiwiZXhwIjoxNzUxMTA3OTAyfQ.cRJCM3RDSTR_uzygkfmwjbGOi5j8W2SnDVRHVl1t6_6aqOyJLL0KxtLDcfniupEkgVbNlkM72AxMCsTWfrUsyQ",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE0NjUxMDgsImV4cCI6MTc1MTU1MTUwOH0.zeo7lhu78ugWXosL0ZGUT6oOX8n5ilDKaXhRtWFFtgjh8OodVzzQZTJbJxH_s1g0FF1P8BD-TGN94o5bGnGulw",
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/repartir"
+						"url": "http://localhost:8080/api/mesas/4/repartir"
 					},
 					"response": []
 				},
@@ -424,11 +430,11 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTAyMTUwMiwiZXhwIjoxNzUxMTA3OTAyfQ.cRJCM3RDSTR_uzygkfmwjbGOi5j8W2SnDVRHVl1t6_6aqOyJLL0KxtLDcfniupEkgVbNlkM72AxMCsTWfrUsyQ",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE0NjUxMDgsImV4cCI6MTc1MTU1MTUwOH0.zeo7lhu78ugWXosL0ZGUT6oOX8n5ilDKaXhRtWFFtgjh8OodVzzQZTJbJxH_s1g0FF1P8BD-TGN94o5bGnGulw",
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/nueva-mano"
+						"url": "http://localhost:8080/api/mesas/4/nueva-mano"
 					},
 					"response": []
 				},
@@ -639,6 +645,245 @@
 							}
 						],
 						"url": "http://localhost:8080/api/mesas/1/acciones"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Espectadores",
+			"item": [
+				{
+					"name": "✅ Unirse como espectador",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE0NTQ5NzEsImV4cCI6MTc1MTU0MTM3MX0.swdM9iuCTiljcjqcoY_elDL4BUe_8RcKnWBhESxXL73O-DthMOAI7hme6UG6EEFILbjYOaAGf9YRKIBdBLGVYw",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesa/espectadores/1/unirse"
+					},
+					"response": []
+				},
+				{
+					"name": "🔙 Salir del modo espectador",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE0NjUxMDgsImV4cCI6MTc1MTU1MTUwOH0.zeo7lhu78ugWXosL0ZGUT6oOX8n5ilDKaXhRtWFFtgjh8OodVzzQZTJbJxH_s1g0FF1P8BD-TGN94o5bGnGulw",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesa/espectadores/1/salir"
+					},
+					"response": []
+				},
+				{
+					"name": "Lista de espectadores",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE0NjUxMDgsImV4cCI6MTc1MTU1MTUwOH0.zeo7lhu78ugWXosL0ZGUT6oOX8n5ilDKaXhRtWFFtgjh8OodVzzQZTJbJxH_s1g0FF1P8BD-TGN94o5bGnGulw",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/mesa/espectadores/1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Torneos",
+			"item": [
+				{
+					"name": "📋 Listar torneos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTQ2NjM5NCwiZXhwIjoxNzUxNTUyNzk0fQ.pADNp7sXw64Db-DvFz3-E0o6I4v0Lv0BHLRDoCxEdIexgAaX4kRvT2sDVWNnv2zynxVJReFlccSozf_FSDi_bw",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos"
+					},
+					"response": []
+				},
+				{
+					"name": "🔎 Listar por ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTQ2NjM5NCwiZXhwIjoxNzUxNTUyNzk0fQ.pADNp7sXw64Db-DvFz3-E0o6I4v0Lv0BHLRDoCxEdIexgAaX4kRvT2sDVWNnv2zynxVJReFlccSozf_FSDi_bw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": "http://localhost:8080/api/torneos/1"
+					},
+					"response": []
+				},
+				{
+					"name": "🔎 Listar por Nombre",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE1MzA3MDYsImV4cCI6MTc1MTYxNzEwNn0.Am16l3JXeEMxZG-a9fe2cIabja4F-khwBsBMHIaCN_Fp3ho66r7BP6UXPfW896bLld57ITeS_tZWGrLhA2iDhA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "nombre",
+									"value": "WPT Valencia",
+									"type": "text"
+								}
+							]
+						},
+						"url": "http://localhost:8080/api/torneos/torneo"
+					},
+					"response": []
+				},
+				{
+					"name": "🏁 Crear torneo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE1MzA3MDYsImV4cCI6MTc1MTYxNzEwNn0.Am16l3JXeEMxZG-a9fe2cIabja4F-khwBsBMHIaCN_Fp3ho66r7BP6UXPfW896bLld57ITeS_tZWGrLhA2iDhA",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nombre\": \"WPT Valencia\",\r\n  \"buyIn\": 1000,\r\n  \"fichasIniciales\": 5000,\r\n  \"premioTotal\": 60000,\r\n  \"maxParticipantes\": 9,\r\n  \"eliminacionDirecta\": true,\r\n  \"fechaInicio\": \"2025-07-05T15:00:00\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/torneos"
+					},
+					"response": []
+				},
+				{
+					"name": "👤 Inscribirse al torneo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE0NjUxMDgsImV4cCI6MTc1MTU1MTUwOH0.zeo7lhu78ugWXosL0ZGUT6oOX8n5ilDKaXhRtWFFtgjh8OodVzzQZTJbJxH_s1g0FF1P8BD-TGN94o5bGnGulw",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/1/inscribirse"
+					},
+					"response": []
+				},
+				{
+					"name": "🧍‍♂️ Listar participantes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTQ2NjM5NCwiZXhwIjoxNzUxNTUyNzk0fQ.pADNp7sXw64Db-DvFz3-E0o6I4v0Lv0BHLRDoCxEdIexgAaX4kRvT2sDVWNnv2zynxVJReFlccSozf_FSDi_bw",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/1/participantes"
+					},
+					"response": []
+				},
+				{
+					"name": "🥇 Ranking del torneo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTQ2NjM5NCwiZXhwIjoxNzUxNTUyNzk0fQ.pADNp7sXw64Db-DvFz3-E0o6I4v0Lv0BHLRDoCxEdIexgAaX4kRvT2sDVWNnv2zynxVJReFlccSozf_FSDi_bw",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/1/ranking"
+					},
+					"response": []
+				},
+				{
+					"name": "❌ Salirse del torneo",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTQ2NjM5NCwiZXhwIjoxNzUxNTUyNzk0fQ.pADNp7sXw64Db-DvFz3-E0o6I4v0Lv0BHLRDoCxEdIexgAaX4kRvT2sDVWNnv2zynxVJReFlccSozf_FSDi_bw",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/1/participantes"
+					},
+					"response": []
+				},
+				{
+					"name": "🧾 Ver tus datos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTQ2NjM5NCwiZXhwIjoxNzUxNTUyNzk0fQ.pADNp7sXw64Db-DvFz3-E0o6I4v0Lv0BHLRDoCxEdIexgAaX4kRvT2sDVWNnv2zynxVJReFlccSozf_FSDi_bw",
+								"type": "text"
+							}
+						],
+						"url": "http://localhost:8080/api/torneos/1/datos"
 					},
 					"response": []
 				}
