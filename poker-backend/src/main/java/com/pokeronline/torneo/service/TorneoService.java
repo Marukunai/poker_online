@@ -44,6 +44,7 @@ public class TorneoService {
                 .premioTotal(dto.getPremioTotal())
                 .eliminacionDirecta(dto.isEliminacionDirecta())
                 .fechaInicio(dto.getFechaInicio())
+                .fechaFin(dto.getFechaFin())
                 .estado(TorneoEstado.PENDIENTE)
                 .nivelCiegasActual(0)
                 .timestampInicioNivel(null)

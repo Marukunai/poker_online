@@ -16,4 +16,5 @@ public class CrearTorneoDTO {
     private int maxParticipantes;
     private boolean eliminacionDirecta;
     private Date fechaInicio;
+    private Date fechaFin;
 }

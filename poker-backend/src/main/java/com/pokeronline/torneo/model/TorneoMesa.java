@@ -18,7 +18,7 @@ public class TorneoMesa {
     @ManyToOne
     private Torneo torneo;
 
-    @OneToOne
+    @ManyToOne
     private Mesa mesa;
 
     private int ronda; // Para saber si es una mesa de fase inicial, semifinal, final, etc.

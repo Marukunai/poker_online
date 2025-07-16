@@ -27,5 +27,7 @@ public class ParticipanteTorneo {
     private int fichasActuales;
     private int puntos;
 
+    @ManyToOne
+    @JoinColumn(name = "mesa_id")
     private Mesa mesa;
 }

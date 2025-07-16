@@ -18,6 +18,10 @@ public class Torneo {
 
     private String nombre;
     private Date fechaInicio;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaFin;
+
     private int buyIn;
     private int fichasIniciales;
     private int premioTotal;

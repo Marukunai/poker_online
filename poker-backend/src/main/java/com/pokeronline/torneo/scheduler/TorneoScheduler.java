@@ -5,7 +5,6 @@ import com.pokeronline.torneo.model.*;
 import com.pokeronline.torneo.repository.TorneoMesaRepository;
 import com.pokeronline.torneo.service.ParticipanteTorneoService;
 import com.pokeronline.torneo.service.TorneoService;
-import com.pokeronline.torneo.websocket.TorneoEventPublisher;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import java.util.*;
 @Slf4j
 public class TorneoScheduler {
 
-    private final TorneoEventPublisher torneoEventPublisher;
     private final TorneoService torneoService;
     private final ParticipanteTorneoService participanteService;
     private final TorneoMesaRepository torneoMesaRepository;
@@ -64,32 +62,38 @@ public class TorneoScheduler {
             participanteService.guardarParticipante(p);
         }
 
-        torneoEventPublisher.publicarInicioTorneo(torneo);
         log.info("Torneo '{}' iniciado con {} participantes distribuidos en {} mesas.",
                 torneo.getNombre(), participantes.size(), mesas.size());
     }
 
     public void revisarTorneosEnCurso() {
         List<Torneo> torneosEnCurso = torneoService.listarTorneosEnCurso();
+        Date ahora = new Date();
+
         for (Torneo torneo : torneosEnCurso) {
             List<ParticipanteTorneo> activos = participanteService.obtenerParticipantes(torneo)
                     .stream()
                     .filter(p -> !p.isEliminado())
                     .toList();
 
+            // Nueva condición: finalizar si ha pasado la fechaFin
+            if (torneo.getFechaFin() != null && torneo.getFechaFin().before(ahora)) {
+                torneoService.finalizarTorneo(torneo);
+                log.info("Torneo '{}' finalizado automáticamente por fechaFin.", torneo.getNombre());
+                continue;
+            }
+
             revisarMesasFinalizadas(torneo, activos);
 
             if (torneo.isEliminacionDirecta()) {
                 if (activos.size() <= 1) {
                     torneoService.finalizarTorneo(torneo);
-                    torneoEventPublisher.publicarFinalizacionTorneo(torneo);
                     log.info("Torneo '{}' finalizado automáticamente (eliminación directa).", torneo.getNombre());
                 }
             } else {
                 if (activos.isEmpty()) {
                     torneoService.finalizarTorneo(torneo);
-                    torneoEventPublisher.publicarFinalizacionTorneo(torneo);
-                    log.info("Torneo '{}' finalizado automáticamente (ranking).", torneo.getNombre());
+                    log.info("Torneo '{}' finalizado automáticamente (ranking sin jugadores activos).", torneo.getNombre());
                 }
             }
         }
@@ -130,7 +134,6 @@ public class TorneoScheduler {
             }
 
             participanteService.guardarParticipante(ganador);
-            torneoEventPublisher.publicarAvanceRonda(torneo.getId(), nuevaRonda);
 
             log.info("Avanzó el jugador {} a la ronda {} del torneo '{}'.",
                     ganador.getUser().getUsername(), nuevaRonda, torneo.getNombre());
@@ -165,7 +168,6 @@ public class TorneoScheduler {
 
                 String resumen = "Nivel " + (actual + 1) + " (SB: " + nivelActual.getSmallBlind()
                         + ", BB: " + nivelActual.getBigBlind() + ")";
-                torneoEventPublisher.publicarCambioCiegas(torneo.getId(), resumen);
 
                 log.info("🏁 Torneo '{}' avanzó a {}", torneo.getNombre(), resumen);
             }
