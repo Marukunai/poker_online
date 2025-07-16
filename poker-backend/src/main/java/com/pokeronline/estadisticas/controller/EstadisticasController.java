@@ -1,5 +1,6 @@
-package com.pokeronline.estadisticas;
+package com.pokeronline.estadisticas.controller;
 
+import com.pokeronline.estadisticas.service.EstadisticasService;
 import com.pokeronline.estadisticas.dto.EstadisticasUsuarioDTO;
 import com.pokeronline.estadisticas.dto.ProgresoMensualDTO;
 import com.pokeronline.estadisticas.dto.ProgresoMensualPartidasDTO;

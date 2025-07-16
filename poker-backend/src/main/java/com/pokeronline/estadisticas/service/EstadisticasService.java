@@ -1,4 +1,4 @@
-package com.pokeronline.estadisticas;
+package com.pokeronline.estadisticas.service;
 
 import com.pokeronline.estadisticas.dto.*;
 import com.pokeronline.model.User;
