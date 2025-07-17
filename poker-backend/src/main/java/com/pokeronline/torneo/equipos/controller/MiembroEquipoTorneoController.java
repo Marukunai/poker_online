@@ -8,6 +8,8 @@ import com.pokeronline.torneo.equipos.model.MiembroEquipoTorneo;
 import com.pokeronline.torneo.equipos.service.EquipoTorneoService;
 import com.pokeronline.torneo.equipos.service.MiembroEquipoTorneoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,9 +24,17 @@ public class MiembroEquipoTorneoController {
     private final UserService userService;
 
     @PostMapping
-    public MiembroEquipoDTO agregarMiembro(@RequestBody AgregarMiembroDTO dto) {
+    public MiembroEquipoDTO agregarMiembro(@RequestBody AgregarMiembroDTO dto,
+                                           @AuthenticationPrincipal UserDetails userDetails) {
+        Long userIdSolicitante = userService.getUserIdFromUserDetails(userDetails);
+
         User user = userService.getById(dto.getUserId());
-        MiembroEquipoTorneo miembro = miembroService.anadirMiembro(equipoService.obtenerEquipo(dto.getEquipoId()), user);
+
+        MiembroEquipoTorneo miembro = miembroService.anadirMiembro(
+                equipoService.obtenerEquipo(dto.getEquipoId()),
+                user,
+                userIdSolicitante
+        );
         return MiembroEquipoDTO.fromEntity(miembro);
     }
 
@@ -37,12 +47,23 @@ public class MiembroEquipoTorneoController {
     }
 
     @DeleteMapping("/{miembroId}")
-    public void eliminarMiembro(@PathVariable Long miembroId) {
-        miembroService.eliminarMiembro(miembroId);
+    public void eliminarMiembro(@PathVariable Long miembroId,
+                                @AuthenticationPrincipal UserDetails userDetails) {
+        Long userIdSolicitante = userService.getUserIdFromUserDetails(userDetails);
+        miembroService.eliminarMiembro(miembroId, userIdSolicitante);
     }
 
     @DeleteMapping("/equipo/{equipoId}")
-    public void eliminarTodosDeEquipo(@PathVariable Long equipoId) {
-        miembroService.eliminarTodosLosMiembrosDeEquipo(equipoId);
+    public void eliminarTodosDeEquipo(@PathVariable Long equipoId,
+                                      @AuthenticationPrincipal UserDetails userDetails) {
+        Long userIdSolicitante = userService.getUserIdFromUserDetails(userDetails);
+        miembroService.eliminarTodosLosMiembrosDeEquipo(equipoId, userIdSolicitante);
+    }
+
+    @GetMapping("/equipo/{equipoId}/user/{userId}")
+    public MiembroEquipoDTO obtenerMiembroEspecifico(@PathVariable Long equipoId,
+                                                     @PathVariable Long userId) {
+        MiembroEquipoTorneo miembro = miembroService.obtenerMiembro(equipoId, userId);
+        return MiembroEquipoDTO.fromEntity(miembro);
     }
 }

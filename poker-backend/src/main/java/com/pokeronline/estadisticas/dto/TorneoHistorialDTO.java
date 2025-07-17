@@ -18,4 +18,6 @@ public class TorneoHistorialDTO {
     private Date fechaInicio;
     private boolean ganado;
     private int puntosObtenidos;
+    private boolean enEquipo;
+    private String nombreEquipo;
 }

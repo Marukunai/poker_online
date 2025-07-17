@@ -11,5 +11,6 @@ public class RankingUsuarioDTO {
     private String username;
     private int puntosTotales;
     private int torneosGanados;
+    private int torneosJugados;
     private int fichasGanadas;
 }

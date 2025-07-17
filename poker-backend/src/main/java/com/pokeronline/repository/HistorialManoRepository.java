@@ -10,12 +10,14 @@ import java.util.Optional;
 
 public interface HistorialManoRepository extends JpaRepository<HistorialMano, Long> {
 
+    List<HistorialMano> findByJugador(User jugador);
+
     List<HistorialMano> findByJugadorOrderByFechaDesc(User jugador);
 
     int countByJugador(User jugador);
 
     int countByJugadorAndEmpateFalse(User jugador);
 
-    @Query("SELECT SUM(h.fichasGanadas) FROM HistorialMano h WHERE h.jugador = :jugador")
+    @Query("SELECT SUM(h.fichasGanadas) FROM Historial_Mano h WHERE h.jugador = :jugador")
     Optional<Integer> sumFichasGanadasByJugador(User jugador);
 }

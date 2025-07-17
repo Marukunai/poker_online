@@ -2,6 +2,7 @@ package com.pokeronline.torneo.model;
 
 import com.pokeronline.model.Mesa;
 import com.pokeronline.model.User;
+import com.pokeronline.torneo.equipos.model.EquipoTorneo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,4 +31,8 @@ public class ParticipanteTorneo {
     @ManyToOne
     @JoinColumn(name = "mesa_id")
     private Mesa mesa;
+
+    @ManyToOne
+    @JoinColumn(name = "equipo_id")
+    private EquipoTorneo equipo;
 }

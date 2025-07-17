@@ -28,4 +28,7 @@ public class EstadisticasUsuarioDTO {
     private List<TorneoHistorialDTO> historialTorneos;
     private List<ProgresoMensualDTO> progresoMensual;
     private List<ProgresoMensualPartidasDTO> progresoMensualPartidas;
+
+    private int torneosJugadosEquipo;
+    private int torneosJugadosIndividual;
 }

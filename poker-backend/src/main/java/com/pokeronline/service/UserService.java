@@ -3,6 +3,7 @@ package com.pokeronline.service;
 import com.pokeronline.model.User;
 import com.pokeronline.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -13,7 +14,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public User obtenerPorId(Long id) {
+    public User getById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
@@ -25,5 +26,15 @@ public class UserService {
         return userRepository.existsById(id);
     }
 
+    public Long getUserIdFromUserDetails(UserDetails userDetails) {
+        return userRepository.findByEmail(userDetails.getUsername())
+                .map(User::getId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + userDetails.getUsername()));
+    }
 
+    public boolean isAdmin(Long userId) {
+        return userRepository.findById(userId)
+                .map(user -> user.getRole().name().equals("ADMIN"))
+                .orElse(false);
+    }
 }
