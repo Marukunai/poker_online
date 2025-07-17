@@ -2,6 +2,7 @@ package com.pokeronline.service;
 
 import com.pokeronline.bot.BotEngineService;
 import com.pokeronline.bot.BotService;
+import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.*;
 import com.pokeronline.repository.*;
 import com.pokeronline.websocket.WebSocketService;
@@ -19,6 +20,7 @@ import java.util.List;
 @Service
 public class TurnoService implements BotEngineService {
 
+    private final LogroService logroService;
     private final BotService botService;
     private final WebSocketService webSocketService;
     private final AccionPartidaRepository accionPartidaRepository;
@@ -36,7 +38,8 @@ public class TurnoService implements BotEngineService {
             TurnoRepository turnoRepository,
             UserMesaRepository userMesaRepository,
             UserRepository userRepository,
-            MesaRepository mesaRepository
+            MesaRepository mesaRepository,
+            LogroService logroService
     ) {
         this.botService = botService;
         this.webSocketService = webSocketService;
@@ -46,6 +49,7 @@ public class TurnoService implements BotEngineService {
         this.userMesaRepository = userMesaRepository;
         this.userRepository = userRepository;
         this.mesaRepository = mesaRepository;
+        this.logroService = logroService;
     }
 
     @Transactional
@@ -389,6 +393,9 @@ public class TurnoService implements BotEngineService {
                     if (incremento >= mesa.getBigBlind() * 3) {
                         user.setVecesHizoBluff(user.getVecesHizoBluff() + 1);
                         userRepository.save(user); // Persistimos la estadística
+
+                        logroService.otorgarLogroSiNoTiene(user.getId(), "Ganador con Bluff");
+                        logroService.otorgarLogroSiNoTiene(user.getId(), "Bluff Master");
                     }
                 }
             }
@@ -426,9 +433,13 @@ public class TurnoService implements BotEngineService {
                 userMesa.setTotalApostado(userMesa.getTotalApostado() + incremento);
                 mesa.setPot(mesa.getPot() + incremento);
                 userMesa.setFichasEnMesa(0);
+                logroService.otorgarLogroSiNoTiene(user.getId(), "Sin fichas");
 
                 user.setVecesAllIn(user.getVecesAllIn() + 1);
                 userRepository.save(user); // Persistimos la estadística
+
+                logroService.otorgarLogroSiNoTiene(user.getId(), "All-in");
+                logroService.otorgarLogroSiNoTiene(user.getId(), "All-in Master");
             }
         }
 

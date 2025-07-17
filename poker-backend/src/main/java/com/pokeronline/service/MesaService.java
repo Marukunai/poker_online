@@ -1,6 +1,7 @@
 package com.pokeronline.service;
 
 import com.pokeronline.dto.ResultadoShowdownInterno;
+import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.*;
 import com.pokeronline.repository.*;
 import com.pokeronline.websocket.WebSocketService;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MesaService {
 
+    private final LogroService logroService;
     private final WebSocketService webSocketService;
     private final HistorialManoRepository historialManoRepository;
     private final UserRepository userRepository;
@@ -95,6 +97,59 @@ public class MesaService {
 
                 userRepository.save(u);
 
+                // OTORGAR LOGROS ESTRATEGIA SEGÚN MANO
+                logroService.otorgarLogroSiNoTiene(u.getId(), switch (g.getTipo()) {
+                    case TRIO -> "Trips";
+                    case FULL_HOUSE -> "Full House";
+                    case POKER -> "Poker";
+                    case ESCALERA -> "Straight";
+                    case COLOR -> "Flush";
+                    case ESCALERA_REAL -> "Royal Flush";
+                    default -> null;
+                });
+
+                final Map<Long, Integer> escaleraConsecutivas = new HashMap<>();
+                final Map<Long, Integer> comboFuertes = new HashMap<>();
+
+                // === ESCALERA DOBLES ===
+                if (g.getTipo() == ManoTipo.ESCALERA) {
+                    escaleraConsecutivas.put(u.getId(), escaleraConsecutivas.getOrDefault(u.getId(), 0) + 1);
+                    if (escaleraConsecutivas.get(u.getId()) == 2) {
+                        logroService.otorgarLogroSiNoTiene(u.getId(), "Escalera Dobles");
+                        escaleraConsecutivas.put(u.getId(), 0);
+                    }
+                } else {
+                    escaleraConsecutivas.put(u.getId(), 0);
+                }
+
+                // === COMBO LETAL ===
+                if (List.of(ManoTipo.ESCALERA, ManoTipo.COLOR, ManoTipo.FULL_HOUSE, ManoTipo.POKER, ManoTipo.ESCALERA_REAL).contains(g.getTipo())) {
+                    comboFuertes.put(u.getId(), comboFuertes.getOrDefault(u.getId(), 0) + 1);
+                    if (comboFuertes.get(u.getId()) == 3) {
+                        logroService.otorgarLogroSiNoTiene(u.getId(), "Combo Letal");
+                        comboFuertes.put(u.getId(), 0);
+                    }
+                } else {
+                    comboFuertes.put(u.getId(), 0);
+                }
+
+                // OTORGAR LOGRO CONTRA BOTS
+                if (mesa.isFichasTemporales() && mesa.getJugadores().stream().anyMatch(j -> j.getUser().isEsIA())) {
+                    logroService.otorgarLogroSiNoTiene(u.getId(), "Vencedor Bot");
+
+                    long botsDificiles = mesa.getJugadores().stream()
+                            .filter(j -> j.getUser().isEsIA() && j.getUser().getNivelBot() != null && j.getUser().getNivelBot().name().equals("DIFICIL"))
+                            .count();
+                    if (botsDificiles > 0) {
+                        logroService.otorgarLogroSiNoTiene(u.getId(), "Humillador de IA");
+                    }
+
+                    long totalBots = mesa.getJugadores().stream().filter(j -> j.getUser().isEsIA()).count();
+                    if (totalBots >= 3) {
+                        logroService.otorgarLogroSiNoTiene(u.getId(), "El futuro contra mí");
+                    }
+                }
+
                 ganadoresFinales.add(u);
 
                 HistorialMano historial = HistorialMano.builder()
@@ -139,6 +194,16 @@ public class MesaService {
         for (UserMesa jm : jugadoresActivos) {
             User u = jm.getUser();
             u.setManosJugadas(u.getManosJugadas() + 1);
+            // LOGROS POR NÚMERO DE MANOS JUGADAS
+            if (u.getManosJugadas() >= 100) {
+                logroService.otorgarLogroSiNoTiene(u.getId(), "Mano Centenaria");
+            } else if (u.getManosJugadas() >= 50) {
+                logroService.otorgarLogroSiNoTiene(u.getId(), "Profesional");
+            } else if (u.getManosJugadas() >= 10) {
+                logroService.otorgarLogroSiNoTiene(u.getId(), "Veterano");
+            } else if (u.getManosJugadas() >= 1) {
+                logroService.otorgarLogroSiNoTiene(u.getId(), "Primera Partida");
+            }
             userRepository.save(u);
         }
 

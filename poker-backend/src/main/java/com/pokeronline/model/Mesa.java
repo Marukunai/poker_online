@@ -44,4 +44,6 @@ public class Mesa {
 
     private boolean fichasTemporales;
 
+    @ManyToOne
+    private User creador;
 }

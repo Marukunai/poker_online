@@ -2,6 +2,7 @@ package com.pokeronline.service;
 
 import com.pokeronline.bot.DificultadBot;
 import com.pokeronline.bot.EstiloBot;
+import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.*;
 import com.pokeronline.repository.MesaRepository;
 import com.pokeronline.repository.UserMesaRepository;
@@ -18,12 +19,15 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MesaPrivadaService {
 
+    private final LogroService logroService;
     private final MesaRepository mesaRepository;
     private final UserRepository userRepository;
     private final UserMesaRepository userMesaRepository;
 
-    public Mesa crearMesaPrivada(String nombre, int maxJugadores, String codigoAcceso, boolean fichasTemporales, int smallBlind, int bigBlind) {
+    public Mesa crearMesaPrivada(String emailCreador, String nombre, int maxJugadores, String codigoAcceso, boolean fichasTemporales, int smallBlind, int bigBlind) {
         if (maxJugadores > 8) throw new IllegalArgumentException("No pueden jugar más de 8 personas.");
+
+        User creador = userRepository.findByEmail(emailCreador).orElseThrow();
 
         Mesa mesa = Mesa.builder()
                 .nombre(nombre)
@@ -36,7 +40,20 @@ public class MesaPrivadaService {
                 .fase(Fase.PRE_FLOP)
                 .pot(0)
                 .maxJugadores(maxJugadores)
+                .creador(creador)
                 .build();
+
+        long creadas = mesaRepository.findByCreadorAndPrivadaTrue(creador).size();
+
+        if (creadas >= 1) {
+            logroService.otorgarLogroSiNoTiene(creador.getId(), "Creador de salas");
+        }
+        if (creadas >= 5) {
+            logroService.otorgarLogroSiNoTiene(creador.getId(), "Organizador Pro");
+        }
+        if (creadas >= 10) {
+            logroService.otorgarLogroSiNoTiene(creador.getId(), "Amo de las mesas privadas");
+        }
 
         return mesaRepository.save(mesa);
     }
@@ -89,6 +106,22 @@ public class MesaPrivadaService {
                 .build();
 
         userMesaRepository.save(userMesa);
+
+        // Otorgar logros por unirse a mesas privadas
+        long privadas = userMesaRepository.findByUser(user).stream()
+                .filter(um -> um.getMesa().getPrivada())
+                .count();
+
+        if (privadas >= 1) {
+            logroService.otorgarLogroSiNoTiene(user.getId(), "Bienvenido a lo privado");
+        }
+        if (privadas >= 5) {
+            logroService.otorgarLogroSiNoTiene(user.getId(), "Jugador VIP");
+        }
+        if (privadas >= 10) {
+            logroService.otorgarLogroSiNoTiene(user.getId(), "Privacidad al máximo");
+        }
+
         return "Unido correctamente a la mesa privada";
     }
 

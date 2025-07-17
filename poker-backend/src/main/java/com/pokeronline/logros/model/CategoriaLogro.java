@@ -6,5 +6,6 @@ public enum CategoriaLogro {
     CONTRA_BOTS,
     PARTIDAS_SIMPLES,
     ACCIONES_ESPECIALES,
-    EQUIPO
+    EQUIPO,
+    PRIVADAS
 }
