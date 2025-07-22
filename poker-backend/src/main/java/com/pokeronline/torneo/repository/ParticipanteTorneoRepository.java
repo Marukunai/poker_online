@@ -14,6 +14,7 @@ public interface ParticipanteTorneoRepository extends JpaRepository<Participante
     List<ParticipanteTorneo> findByUser(User user);
     Optional<ParticipanteTorneo> findByTorneoAndUser(Torneo torneo, User user);
     List<ParticipanteTorneo> findByUserAndTorneo_FechaInicioBetween(User user, Date inicio, Date fin);
-
+    long countByUser(User user);
     List<ParticipanteTorneo> findByTorneo_FechaInicioBetween(Date inicio, Date fin);
+    long countByUserAndPosicion(User user, int posicion);
 }

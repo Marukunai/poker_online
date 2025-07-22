@@ -1,5 +1,6 @@
 package com.pokeronline.torneo.service;
 
+import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.User;
 import com.pokeronline.torneo.dto.EstadisticasTorneoDTO;
 import com.pokeronline.torneo.model.ParticipanteTorneo;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ParticipanteTorneoService {
 
+    private final LogroService logroService;
     private final ParticipanteTorneoRepository participanteTorneoRepository;
 
     public ParticipanteTorneo inscribirUsuario(Torneo torneo, User user) {
@@ -31,6 +33,18 @@ public class ParticipanteTorneoService {
                     .fichasActuales(torneo.getFichasIniciales())
                     .eliminado(false)
                     .build();
+
+            // Al final de inscribirUsuario(...) en ParticipanteTorneoService
+            long totalTorneos = participanteTorneoRepository.countByUser(user);
+            logroService.otorgarLogroSiNoTiene(user.getId(), "Primer Torneo");
+
+            if (totalTorneos >= 10) {
+                logroService.otorgarLogroSiNoTiene(user.getId(), "Jugador Competitivo Constante");
+            }
+            if (totalTorneos >= 25) {
+                logroService.otorgarLogroSiNoTiene(user.getId(), "Amante de los Torneos");
+            }
+
             return participanteTorneoRepository.save(nuevo);
         });
     }

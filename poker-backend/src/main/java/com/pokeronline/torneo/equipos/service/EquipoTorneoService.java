@@ -1,18 +1,23 @@
 package com.pokeronline.torneo.equipos.service;
 
+import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.User;
+import com.pokeronline.model.UserMesa;
 import com.pokeronline.repository.UserRepository;
 import com.pokeronline.service.UserService;
 import com.pokeronline.torneo.equipos.dto.EquipoEstadisticasDTO;
 import com.pokeronline.torneo.equipos.dto.HistorialEquipoDTO;
 import com.pokeronline.torneo.equipos.dto.RankingEquipoDTO;
 import com.pokeronline.torneo.equipos.dto.UpdateCapitanDTO;
+import com.pokeronline.torneo.equipos.model.MiembroEquipoTorneo;
 import com.pokeronline.torneo.model.Torneo;
 import com.pokeronline.torneo.equipos.model.EquipoTorneo;
 import com.pokeronline.torneo.equipos.repository.EquipoTorneoRepository;
 import com.pokeronline.torneo.equipos.repository.MiembroEquipoTorneoRepository;
+import com.pokeronline.torneo.model.TorneoMesa;
 import com.pokeronline.torneo.repository.TorneoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -21,15 +26,17 @@ import java.util.Calendar;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EquipoTorneoService {
 
+    private final LogroService logroService;
+    private final MiembroEquipoTorneoRepository miembroEquipoTorneoRepository;
     private final EquipoTorneoRepository equipoTorneoRepository;
     private final TorneoRepository torneoRepository;
     private final UserRepository userRepository;
     private final UserService userService;
-    private final MiembroEquipoTorneoRepository miembroEquipoTorneoRepository;
 
     public EquipoTorneo crearEquipo(Torneo torneo, String nombreEquipo, User capitan) {
         EquipoTorneo equipo = EquipoTorneo.builder()
@@ -119,7 +126,7 @@ public class EquipoTorneoService {
 
     public List<RankingEquipoDTO> obtenerRankingMensual(int year, int mes) {
         Calendar calInicio = Calendar.getInstance();
-        calInicio.set(year, mes - 1, 1, 0, 0, 0); // mes en Calendar empieza en 0
+        calInicio.set(year, mes - 1, 1, 0, 0, 0);
         calInicio.set(Calendar.MILLISECOND, 0);
 
         Calendar calFin = (Calendar) calInicio.clone();
@@ -244,5 +251,85 @@ public class EquipoTorneoService {
         }
 
         return historialDTOs;
+    }
+
+    public void asignarLogrosEquipoGanador(Torneo torneo) {
+        // 1. Obtener equipo ganador
+        List<EquipoTorneo> equipos = equipoTorneoRepository.findByTorneo(torneo);
+        EquipoTorneo ganador = equipos.stream()
+                .max(Comparator.comparingInt(EquipoTorneo::getPuntosTotales))
+                .orElse(null);
+
+        if (ganador == null) {
+            log.warn("No se encontró equipo ganador para el torneo '{}'", torneo.getNombre());
+            return;
+        }
+
+        List<MiembroEquipoTorneo> miembros = miembroEquipoTorneoRepository.findByEquipo(ganador);
+
+        // 2. 🏆 Logro: Campeón por Equipos
+        for (MiembroEquipoTorneo miembro : miembros) {
+            logroService.otorgarLogroSiNoTiene(miembro.getUser().getId(), "Campeón por Equipos");
+        }
+
+        // 3. 👨‍👩‍👧‍👦 Logro: Equipo o familia?
+        long torneosGanadosConEseNombre = equipoTorneoRepository
+                .findByNombreAndTorneoIsNotNullOrderByTorneo_FechaInicioDesc(ganador.getNombre()).stream()
+                .filter(e -> {
+                    List<EquipoTorneo> todos = equipoTorneoRepository.findByTorneo(e.getTorneo());
+                    int max = todos.stream().mapToInt(EquipoTorneo::getPuntosTotales).max().orElse(0);
+                    return e.getPuntosTotales() >= max;
+                })
+                .count();
+
+        if (torneosGanadosConEseNombre >= 3) {
+            for (MiembroEquipoTorneo miembro : miembros) {
+                logroService.otorgarLogroSiNoTiene(miembro.getUser().getId(), "Equipo o familia?");
+            }
+        }
+
+        // 4. 🌪 Logro: Arrasador en Equipo
+        for (MiembroEquipoTorneo miembro : miembros) {
+            long ganados = equipoTorneoRepository.findByMiembro(miembro.getUser()).stream()
+                    .filter(e -> {
+                        List<EquipoTorneo> todos = equipoTorneoRepository.findByTorneo(e.getTorneo());
+                        int max = todos.stream().mapToInt(EquipoTorneo::getPuntosTotales).max().orElse(0);
+                        return e.getPuntosTotales() >= max;
+                    })
+                    .count();
+
+            if (ganados >= 3) {
+                logroService.otorgarLogroSiNoTiene(miembro.getUser().getId(), "Arrasador en Equipo");
+            }
+        }
+
+        // 5. 🧠 Logro: Capitán Estratégico
+        User capitan = ganador.getCapitan();
+        logroService.otorgarLogroSiNoTiene(capitan.getId(), "Capitán Estratégico");
+
+        // 6. 🤝 Logro: Todos a una
+        int rondaFinal = torneo.getMesas().stream()
+                .mapToInt(TorneoMesa::getRonda)
+                .max()
+                .orElse(1);
+
+        List<Long> idsFinalistas = torneo.getMesas().stream()
+                .filter(m -> m.getRonda() == rondaFinal)
+                .flatMap(m -> m.getMesa().getJugadores().stream())
+                .map(UserMesa::getUser)
+                .map(User::getId)
+                .toList();
+
+        boolean todosEstan = miembros.stream()
+                .map(m -> m.getUser().getId())
+                .allMatch(idsFinalistas::contains);
+
+        if (todosEstan) {
+            for (MiembroEquipoTorneo miembro : miembros) {
+                logroService.otorgarLogroSiNoTiene(miembro.getUser().getId(), "Todos a una");
+            }
+        }
+
+        log.info("Logros de equipo asignados al ganador '{}'", ganador.getNombre());
     }
 }

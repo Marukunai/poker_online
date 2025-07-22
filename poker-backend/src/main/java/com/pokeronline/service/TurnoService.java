@@ -437,9 +437,10 @@ public class TurnoService implements BotEngineService {
 
                 user.setVecesAllIn(user.getVecesAllIn() + 1);
                 userRepository.save(user); // Persistimos la estadística
-
                 logroService.otorgarLogroSiNoTiene(user.getId(), "All-in");
-                logroService.otorgarLogroSiNoTiene(user.getId(), "All-in Master");
+                if (user.getVecesAllIn() >= 50) {
+                    logroService.otorgarLogroSiNoTiene(user.getId(), "All-in Master");
+                }
             }
         }
 

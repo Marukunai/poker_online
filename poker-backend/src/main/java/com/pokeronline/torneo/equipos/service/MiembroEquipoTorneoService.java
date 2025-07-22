@@ -1,5 +1,6 @@
 package com.pokeronline.torneo.equipos.service;
 
+import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.User;
 import com.pokeronline.service.UserService;
 import com.pokeronline.torneo.equipos.model.EquipoTorneo;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MiembroEquipoTorneoService {
 
+    private final LogroService logroService;
     private final MiembroEquipoTorneoRepository miembroRepo;
     private final EquipoTorneoRepository equipoRepo;
     private final UserService userService;
@@ -32,6 +34,7 @@ public class MiembroEquipoTorneoService {
                 .user(user)
                 .build();
 
+        logroService.otorgarLogroSiNoTiene(user.getId(), "Jugador en equipo");
         return miembroRepo.save(miembro);
     }
 

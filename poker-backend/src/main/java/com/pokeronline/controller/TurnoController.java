@@ -1,5 +1,6 @@
 package com.pokeronline.controller;
 
+import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.*;
 import com.pokeronline.repository.MesaRepository;
 import com.pokeronline.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TurnoController {
 
+    private final LogroService logroService;
     private final TurnoService turnoService;
     private final MesaRepository mesaRepository;
     private final UserRepository userRepository;
@@ -59,6 +61,18 @@ public class TurnoController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         turnoService.realizarAccion(mesa, user, accion, cantidad);
+
+        // 🎯 Detectar si hizo ALL-IN
+        if (accion == Accion.ALL_IN) {
+            user.setVecesAllIn(user.getVecesAllIn() + 1);
+            userRepository.save(user);
+
+            logroService.otorgarLogroSiNoTiene(user.getId(), "All-in");
+
+            if (user.getVecesAllIn() >= 10) {
+                logroService.otorgarLogroSiNoTiene(user.getId(), "All-in Master");
+            }
+        }
 
         return ResponseEntity.ok("Acción realizada correctamente");
     }

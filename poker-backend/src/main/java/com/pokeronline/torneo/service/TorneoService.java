@@ -1,11 +1,15 @@
 package com.pokeronline.torneo.service;
 
+import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.User;
+import com.pokeronline.model.UserMesa;
 import com.pokeronline.repository.UserRepository;
 import com.pokeronline.torneo.dto.CrearTorneoDTO;
 import com.pokeronline.torneo.model.ParticipanteTorneo;
 import com.pokeronline.torneo.model.Torneo;
 import com.pokeronline.torneo.model.TorneoEstado;
+import com.pokeronline.torneo.model.TorneoMesa;
+import com.pokeronline.torneo.repository.ParticipanteTorneoRepository;
 import com.pokeronline.torneo.repository.TorneoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +24,8 @@ import java.util.Optional;
 @Slf4j
 public class TorneoService {
 
+    private final ParticipanteTorneoRepository participanteTorneoRepository;
+    private final LogroService logroService;
     private final ParticipanteTorneoService participanteTorneoService;
     private final UserRepository userRepository;
     private final TorneoRepository torneoRepository;
@@ -85,9 +91,26 @@ public class TorneoService {
             ParticipanteTorneo participante = ranking.get(i);
             participante.setPosicion(i + 1);
 
+            User user = participante.getUser();
+
+            // Logro: Top 3
+            if (i < 3) {
+                logroService.otorgarLogroSiNoTiene(user.getId(), "Top 3");
+            }
+
+            // Logro: Campeón
+            if (i == 0) {
+                logroService.otorgarLogroSiNoTiene(user.getId(), "Campeón");
+
+                long torneosGanados = participanteTorneoRepository.countByUserAndPosicion(user, 1);
+                if (torneosGanados >= 10) {
+                    logroService.otorgarLogroSiNoTiene(user.getId(), "Jugador Legendario");
+                }
+            }
+
+
             if (i < porcentajes.length) {
                 int premio = totalPremio * porcentajes[i] / 100;
-                User user = participante.getUser();
                 user.setFichas(user.getFichas() + premio);
                 userRepository.save(user);
 
@@ -95,6 +118,34 @@ public class TorneoService {
             }
 
             participanteTorneoService.guardarParticipante(participante);
+        }
+
+        // Detectar ronda final (mayor ronda entre todas las mesas del torneo)
+        int rondaFinal = torneo.getMesas().stream()
+                .mapToInt(TorneoMesa::getRonda)
+                .max()
+                .orElse(1);
+
+        for (ParticipanteTorneo participante : ranking) {
+            User user = participante.getUser();
+
+            boolean estaEnMesaFinal = torneo.getMesas().stream()
+                    .filter(tm -> tm.getRonda() == rondaFinal)
+                    .map(TorneoMesa::getMesa)
+                    .anyMatch(m -> m.getJugadores().stream()
+                            .map(UserMesa::getUser)
+                            .anyMatch(j -> j.getId().equals(user.getId()))
+                    );
+
+            if (estaEnMesaFinal) {
+                logroService.otorgarLogroSiNoTiene(user.getId(), "Finalista");
+            }
+        }
+
+        int clasificados = Math.max(1, ranking.size() / 2); // Por ejemplo, top 50% entran al bracket
+        for (int i = 0; i < clasificados; i++) {
+            User user = ranking.get(i).getUser();
+            logroService.otorgarLogroSiNoTiene(user.getId(), "Clasificado Pro");
         }
 
         torneo.setEstado(TorneoEstado.FINALIZADO);

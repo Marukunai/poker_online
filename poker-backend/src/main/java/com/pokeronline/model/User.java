@@ -57,4 +57,7 @@ public class User {
 
     @Builder.Default
     private int vecesHizoBluff = 0;
+
+    private int rachaVictorias;
+    private int rachaDerrotas;
 }

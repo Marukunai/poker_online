@@ -34,6 +34,9 @@ public class MesaService {
                 .filter(j -> j.getCarta1() != null && j.getCarta2() != null)
                 .toList();
 
+        Map<Long, Integer> fichasInicioMano = mesa.getJugadores().stream()
+                .collect(Collectors.toMap(jm -> jm.getUser().getId(), UserMesa::getFichasEnMesa));
+
         if (jugadoresActivos.isEmpty()) return new ResultadoShowdownInterno(List.of(), null, List.of());
 
         Map<UserMesa, Integer> apuestas = new HashMap<>();
@@ -83,10 +86,35 @@ public class MesaService {
                         .findFirst()
                         .orElseThrow();
 
+                if (jm.getFichasEnMesa() == 0 && jm.getTotalApostado() > 0 && g.getUser().getId().equals(jm.getUser().getId())) {
+                    logroService.otorgarLogroSiNoTiene(jm.getUser().getId(), "All-in Victorioso");
+                }
+
                 jm.setFichasEnMesa(jm.getFichasEnMesa() + premioPorJugador);
+
                 userMesaRepository.save(jm);
 
                 User u = jm.getUser();
+
+                int fichasIniciales = fichasInicioMano.getOrDefault(u.getId(), 0);
+                int totalFichasMesaInicio = fichasInicioMano.values().stream().mapToInt(Integer::intValue).sum();
+
+                if (fichasIniciales > 0 && totalFichasMesaInicio > 0) {
+                    double porcentaje = (double) fichasIniciales / totalFichasMesaInicio;
+                    if (porcentaje < 0.10) {
+                        logroService.otorgarLogroSiNoTiene(u.getId(), "Comeback");
+                    }
+                }
+
+                int totalFichasMesa = mesa.getJugadores().stream().mapToInt(UserMesa::getFichasEnMesa).sum();
+                if (totalFichasMesa > 0 && jm.getFichasEnMesa() < totalFichasMesa * 0.05) {
+                    logroService.otorgarLogroSiNoTiene(u.getId(), "Superviviente");
+                }
+
+                if (premioPorJugador >= 20_000) {
+                    logroService.otorgarLogroSiNoTiene(u.getId(), "Subidón");
+                }
+
                 u.setManosGanadas(u.getManosGanadas() + 1);
                 u.setFichasGanadasHistoricas(u.getFichasGanadasHistoricas() + premioPorJugador);
 
@@ -95,7 +123,19 @@ public class MesaService {
                     u.setFichas(u.getFichas() + premioPorJugador);
                 }
 
+                if (u.getFichas() >= 100_000) {
+                    logroService.otorgarLogroSiNoTiene(u.getId(), "Jugador Rico");
+                }
+
+                if (u.getFichas() >= 1_000_000) {
+                    logroService.otorgarLogroSiNoTiene(u.getId(), "Millonario");
+                }
+
                 userRepository.save(u);
+
+                if (esMilagro(jm, participantes, mesa)) {
+                    logroService.otorgarLogroSiNoTiene(u.getId(), "Milagro");
+                }
 
                 // OTORGAR LOGROS ESTRATEGIA SEGÚN MANO
                 logroService.otorgarLogroSiNoTiene(u.getId(), switch (g.getTipo()) {
@@ -136,6 +176,11 @@ public class MesaService {
                 // OTORGAR LOGRO CONTRA BOTS
                 if (mesa.isFichasTemporales() && mesa.getJugadores().stream().anyMatch(j -> j.getUser().isEsIA())) {
                     logroService.otorgarLogroSiNoTiene(u.getId(), "Vencedor Bot");
+
+                    long victoriasVsBots = historialManoRepository.contarVictoriasVsBots(u);
+                    if (victoriasVsBots >= 10) {
+                        logroService.otorgarLogroSiNoTiene(u.getId(), "Derrotador de Máquinas");
+                    }
 
                     long botsDificiles = mesa.getJugadores().stream()
                             .filter(j -> j.getUser().isEsIA() && j.getUser().getNivelBot() != null && j.getUser().getNivelBot().name().equals("DIFICIL"))
@@ -204,7 +249,41 @@ public class MesaService {
             } else if (u.getManosJugadas() >= 1) {
                 logroService.otorgarLogroSiNoTiene(u.getId(), "Primera Partida");
             }
+
+            if (ganadoresFinales.contains(u)) {
+
+                if (mesa.getPrivada()) {
+                    logroService.otorgarLogroSiNoTiene(u.getId(), "Victoria Privada");
+                }
+
+                u.setRachaVictorias(u.getRachaVictorias() + 1);
+                u.setRachaDerrotas(0);
+
+                if (u.getRachaVictorias() == 3) {
+                    logroService.otorgarLogroSiNoTiene(u.getId(), "Racha de la Suerte");
+                }
+            } else {
+                u.setRachaVictorias(0);
+                u.setRachaDerrotas(u.getRachaDerrotas() + 1);
+
+                if (u.getRachaDerrotas() == 3) {
+                    logroService.otorgarLogroSiNoTiene(u.getId(), "Perdedor Persistente");
+                }
+            }
+
             userRepository.save(u);
+            comprobarLogroJugadorDiario(u);
+        }
+
+        // === LOGRO PARTIDA EXPRESS ===
+        if (mesa.getInicioMano() != null) {
+            long duracionSegundos = (new Date().getTime() - mesa.getInicioMano().getTime()) / 1000;
+
+            if (duracionSegundos < 120) {
+                for (User ganador : ganadoresFinales) {
+                    logroService.otorgarLogroSiNoTiene(ganador.getId(), "Partida Express");
+                }
+            }
         }
 
         return new ResultadoShowdownInterno(ganadoresFinales, tipoGanador, cartasGanadoras);
@@ -228,6 +307,7 @@ public class MesaService {
             userMesaRepository.save(jm);
         }
 
+        mesa.setInicioMano(new Date());
         mesaRepository.save(mesa);
         turnoRepository.deleteAllByMesa(mesa);
         asignarPosicionesYAplicarCiegas(mesa);
@@ -310,5 +390,76 @@ public class MesaService {
         jm.setFichasEnMesa(fichas - apuesta);
         jm.setTotalApostado(jm.getTotalApostado() + apuesta);
         mesa.setPot(mesa.getPot() + apuesta);
+    }
+
+    private void comprobarLogroJugadorDiario(User user) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_YEAR, -6);
+        Date hace7Dias = cal.getTime();
+
+        List<Date> dias = historialManoRepository
+                .obtenerDiasConPartida(user, hace7Dias)
+                .stream()
+                .map(date -> {
+                    Calendar d = Calendar.getInstance();
+                    d.setTime(date);
+                    d.set(Calendar.HOUR_OF_DAY, 0);
+                    d.set(Calendar.MINUTE, 0);
+                    d.set(Calendar.SECOND, 0);
+                    d.set(Calendar.MILLISECOND, 0);
+                    return d.getTime();
+                })
+                .distinct()
+                .toList();
+
+        if (dias.size() >= 7) {
+            logroService.otorgarLogroSiNoTiene(user.getId(), "Jugador Diario");
+        }
+    }
+
+    private boolean esMilagro(UserMesa ganador, List<UserMesa> participantes, Mesa mesa) {
+        // Cartas hasta el TURN
+        List<String> comunidadTurn = List.of(
+                mesa.getFlop1(), mesa.getFlop2(), mesa.getFlop3(), mesa.getTurn()
+        );
+
+        // Cartas completas con el RIVER
+        List<String> comunidadRiver = new ArrayList<>(comunidadTurn);
+        comunidadRiver.add(mesa.getRiver());
+
+        // Evaluación final
+        ManoEvaluada manoFinal = evaluadorManoService.evaluarMano(
+                ganador.getUser(),
+                List.of(ganador.getCarta1(), ganador.getCarta2()),
+                comunidadRiver
+        );
+
+        // Evaluación sin river
+        ManoEvaluada manoAntesRiver = evaluadorManoService.evaluarMano(
+                ganador.getUser(),
+                List.of(ganador.getCarta1(), ganador.getCarta2()),
+                comunidadTurn
+        );
+
+        int fuerzaGanadorAntes = manoAntesRiver.getFuerza();
+        int fuerzaGanadorDespues = manoFinal.getFuerza();
+
+        // Evaluar si otro jugador ganaba antes del river
+        for (UserMesa p : participantes) {
+            if (p.getUser().getId().equals(ganador.getUser().getId())) continue;
+
+            ManoEvaluada manoRivalAntes = evaluadorManoService.evaluarMano(
+                    p.getUser(),
+                    List.of(p.getCarta1(), p.getCarta2()),
+                    comunidadTurn
+            );
+
+            if (manoRivalAntes.getFuerza() > fuerzaGanadorAntes) {
+                // El ganador iba perdiendo antes del river
+                return fuerzaGanadorDespues > fuerzaGanadorAntes;
+            }
+        }
+
+        return false;
     }
 }

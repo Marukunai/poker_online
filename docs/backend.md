@@ -36,6 +36,8 @@ Este proyecto representa el backend de una aplicación web y móvil de póker en
 * **MySQL** como base de datos
 * **WebSocket** para comunicación en tiempo real (turnos, acciones)
 * **Postman** para pruebas
+* **Spring Security** para roles y protección de rutas
+* **Lombok** para simplificar entidades y DTOs
 
 ---
 
@@ -214,17 +216,6 @@ POST /api/turnos/fase/{mesaId}/siguiente
 
 ---
 
-## 🚀 Nuevas funcionalidades implementadas
-
-### 🧠 Jugadores controlados por IA (bots)
-
-Se ha añadido soporte para añadir bots en partidas privadas:
-
-- Los bots se representan como `User` con `esIA = true`.
-- Se crean dinámicamente con nombres únicos como `CPU-32`.
-- Sólo pueden añadirse en mesas privadas.
-- Ignorados al calcular fichas globales (`User.fichas`).
-
 ### 🔒 Mesas privadas
 
 Ahora es posible crear mesas privadas con:
@@ -272,7 +263,14 @@ Añade un bot a la mesa privada.
 
 ## 🧠 Jugadores controlados por IA (bots)
 
-Los bots ahora tienen un comportamiento avanzado y realista, incluyendo decisiones estratégicas, estilo de juego, y simulación de chat.
+Hemos implementado soporte para añadir bots en partidas privadas, los cuales cuentan con un comportamiento avanzado y realista, incluyendo decisiones estratégicas, estilo de juego y simulación de chat.
+
+- Los bots se representan como `User` con `esIA = true`.
+- Se crean dinámicamente con nombres únicos como `CPU-32`.
+- Sólo pueden añadirse en mesas privadas.
+- Ignorados al calcular fichas globales (`User.fichas`).
+
+- Los bots ahora tienen un comportamiento avanzado y realista, incluyendo decisiones estratégicas, estilo de juego, y simulación de chat.
 
 ### 🔧 Características principales
 
@@ -338,27 +336,6 @@ Estas frases se gestionan mediante el enum `FrasesBotChat.java`.
     - Si un humano se une y la mesa está llena, se elimina automáticamente un bot.
 - Los bots **no afectan** el saldo global (`User.fichas`) y usan **fichas temporales** (`UserMesa.fichasEnMesa`).
 - Bots eliminados si abandonan mesa o se reemplazan por humanos.
-
----
-
-## 📦 Pruebas y depuración
-
-Los endpoints nuevos pueden probarse vía Postman:
-
-- Crear mesa privada.
-- Unirse con fichas temporales.
-- Añadir CPU bots.
-- Validar que no afecta al saldo global.
-
----
-
-## 🏆 Próximas funcionalidades
-
-- [ ] Reloj de turnos visual (UI)
-- [ ] Modo espectador (join sin jugar)
-- [ ] Sistema de chat in-game
-- [ ] Clasificación de jugadores (ranking, torneos)
-- [ ] IA con decisiones de juego (fold, call, raise)
 
 ---
 
@@ -445,61 +422,6 @@ Permite reconstruir o analizar partidas completas.
 
 ---
 
-## 📊 Estadísticas por jugador
-
-Actualizadas automáticamente:
-
-- `manosJugadas`
-- `manosGanadas`
-- `vecesAllIn`
-- `fichasGanadasHistoricas`
-- `vecesHizoBluff`
-
-Disponible en el perfil del usuario.
-
----
-
-## 🏆 Torneos (WPT-style)
-
-Sistema completo de torneos:
-
-- Buy-in configurable
-- Premio total
-- Eliminación directa o ranking
-- Fichas iniciales por jugador
-- Rondas (mesa inicial, semifinales, final)
-
-### Entidades principales
-
-```
-Torneo
-ParticipanteTorneo
-TorneoMesa
-```
-
-### Endpoints disponibles
-
-```
-POST   /api/torneos                          → crear torneo
-GET    /api/torneos                          → listar
-GET    /api/torneos/{id}                   → detalles
-DELETE /api/torneos/{id}                   → eliminar
-POST   /api/torneos/{id}/inscribirse       → usuario se inscribe
-GET    /api/torneos/{id}/ranking           → ranking actual
-GET    /api/torneos/{id}/participantes     → listado completo
-GET    /api/torneos/{id}/datos             → mis datos
-DELETE /api/torneos/{id}                   → marcar eliminado
-```
-
-### Lógica del torneo
-
-- Participante tiene `fichasActuales`, `eliminado`, `puntos`
-- Ranking según puntos (sumables)
-- Cada mesa pertenece a un torneo y una ronda
-- Premios futuros según ranking o supervivencia
-
----
-
 ## 🧪 Pruebas (Postman)
 
 - Crear torneo
@@ -524,44 +446,164 @@ DELETE /api/torneos/{id}                   → marcar eliminado
 - ✅ Registro de historial y acciones
 - ✅ Estadísticas por jugador
 - ✅ Sistema de torneos básico
+- ✅ Rondas automáticas en torneos
+- ✅ Reparto de premios por ranking
+- ✅ Avance automático entre fases de torneo
+
+--- 
+
+## 🚀 Sistema de torneos
+
+* Torneos con buy-in, premios y rondas automáticas
+* Soporte para torneos por equipos
+* Sistema de eliminación directa o ranking por puntos
+* Ciegas crecientes por nivel (blind levels)
+* Integración con WebSocket para eventos en tiempo real
+
+### **Endpoints REST** (TorneoController):
+
+```
+POST   /api/torneos
+GET    /api/torneos
+GET    /api/torneos/{id}
+POST   /api/torneos/{id}/inscribirse
+GET    /api/torneos/{id}/ranking
+POST   /api/torneos/{id}/empezar
+```
+
+**Entidades:** `Torneo`, `ParticipanteTorneo`, `TorneoMesa`, `BlindLevel`
 
 ---
 
-## 🛠️ Futuras mejoras
+### 👥 Torneos por equipos
 
-- [ ] Rondas automáticas en torneos
-- [ ] Reparto de premios por ranking
-- [ ] Avance automático entre fases de torneo
-- [ ] Integración UI con estadísticas
+* Equipos con nombre, capitán y miembros
+* Participación por equipos en torneos
+* Ranking por rendimiento colectivo
+* Logros específicos para torneos por equipos
+
+**Endpoints REST** (EquipoTorneoController):
+
+```
+POST   /api/equipos/torneo/{torneoId}/crear
+POST   /api/equipos/{equipoId}/agregar-miembro
+GET    /api/equipos/{equipoId}
+GET    /api/equipos/torneo/{torneoId}/ranking
+```
+
+**Entidades:** `EquipoTorneo`, `MiembroEquipoTorneo`
+
+---
+
+## 🏆 Sistema de logros (automático)
+
+Se han implementado más de 50 logros dedicados a los jugadores, para que vayan consiguiendo dichos logros y así incitarlos a conseguirlos todos. 
+
+* Logros otorgados desde servicios (`MesaService`, `TurnoService`, `TorneoService`, etc.)
+* Clasificados por categoría: `ESTRATEGIA`, `TORNEOS`, `CONTRA_BOTS`, `PARTIDAS_SIMPLES`, `ACCIONES_ESPECIALES`, `EQUIPO`
+* Iconos asociados en `/files/images/logros/`
+
+**Ejemplos de logros implementados:**
+
+| Nombre                 | Categoría            | Condición                                                  |
+| ---------------------- | -------------------- | ---------------------------------------------------------- |
+| All-In Maniaco         | ESTRATEGIA           | Hacer All-In 50 veces (TurnoService)                       |
+| Bluff Maestro          | ESTRATEGIA           | Hacer farol en Flop y ganar (TurnoService + MesaService)   |
+| Sin Fichas             | ESTRATEGIA           | Quedarse sin fichas globales (TurnoService)                |
+| Superviviente          | ESTRATEGIA           | Ganar con <5% fichas (MesaService)                         |
+| Comeback               | ACCIONES\_ESPECIALES | Ganar mano comenzando con <10% de fichas (MesaService)     |
+| Derrotador de Máquinas | CONTRA\_BOTS         | Ganar 10 partidas contra bots (MesaService)                |
+| Victoria Privada       | PARTIDAS\_SIMPLES    | Ganar una partida privada (MesaService)                    |
+| Jugador Rico           | ACCIONES\_ESPECIALES | Alcanzar 100K fichas globales (MesaService)                |
+| Millonario             | ACCIONES\_ESPECIALES | Alcanzar 1M fichas globales (MesaService)                  |
+| Subidón                | ACCIONES\_ESPECIALES | Ganar 20K fichas en una sola partida (MesaService)         |
+| Clasificado Pro        | TORNEOS              | Clasificarse en torneo (TorneoService)                     |
+| Jugador en equipo      | EQUIPO               | Participar en torneo por equipos (EquipoTorneoService)     |
+| Campeón por Equipos    | EQUIPO               | Ganar torneo por equipos (EquipoTorneoService)             |
+| Equipo o familia?      | EQUIPO               | Ganar 3 torneos con mismo equipo (EquipoTorneoService)     |
+| Arrasador en Equipo    | EQUIPO               | Ganar 3 torneos con cualquier equipo (EquipoTorneoService) |
+| Capitán Estratégico    | EQUIPO               | Ser capitán y ganar (EquipoTorneoService)                  |
+| Todos a una            | EQUIPO               | Todo el equipo clasifica a final (EquipoTorneoService)     |
+
+> Los logros se gestionan desde `LogroUsuarioService` y se otorgan mediante `logroService.otorgarLogroSiNoTiene(...)`
+
+---
+
+## 🔢 Estadísticas y ranking
+
+* Estadísticas por usuario:
+
+  * manosJugadas, manosGanadas, fichasGanadas, all-in realizados, faroles
+  
+* Estadísticas por torneo:
+
+  * torneos ganados, puntos, mejores posiciones, progreso mensual
+  
+* Ranking global y mensual por puntos y fichas ganadas
+
+**Endpoints:**
+
+```
+GET /api/estadisticas/usuario/{id}
+GET /api/estadisticas/ranking/global
+GET /api/estadisticas/ranking/mensual
+```
+
+---
+
+## 🏃️ Avance automático en torneos
+
+* Programador `@Scheduled` que inicia torneos cuando llega la fecha (`TorneoScheduler`)
+* Agrupa jugadores en `TorneoMesa` por rondas
+* Avanza de fase cuando queda 1 jugador por mesa
+* Asigna premios al finalizar
+
+> Lógica gestionada desde `TorneoService` y `TorneoMesaService`
+
+---
+
+## 🔗 WebSocket (eventos en tiempo real)
+
+* Acciones como turno, fase, all-in, showdown y resultado final se notifican por WebSocket
+* Compatible con modo espectador
+* Frases de bots simuladas como mensajes de chat
+
+---
+
+## 🔧 Mejoras internas respecto a la última versión
+
+* Control completo de bots en mesas privadas
+* Separación clara entre fichas globales y fichas en mesa
+* Integración de logros y estadísticas sin afectar rendimiento
+* Control de reemplazo de bots si la mesa se llena
+
+---
+
+## 📅 Registro de historial
+
+Cada showdown guarda información en `HistorialMano`:
+
+* Usuario, cartas, mano final, fichas ganadas, fecha
+* Base para progreso mensual y paneles estadísticos
+
+---
+
+## 🔒 Seguridad y autenticación
+
+* JWT con filtros personalizados (`JwtAuthenticationFilter`)
+* Roles: USER, ADMIN
+* Endpoints protegidos por `@PreAuthorize` si es necesario
+
+---
+
+## 🏆 Próximas funcionalidades
+
+- [ ] Reloj de turnos visual (UI) (frontend)
+- [ ] Sistema de chat in-game
+- [ ] Integración UI con estadísticas (frontend)
 - [ ] Perfil público de jugador con ranking
-- [ ] Sala de espera en torneos
+- [ ] Sala de espera en torneos 
 
----
-
-## 📅 Historial de manos
-
-Cada showdown se guarda por jugador:
-
-* Cartas que tenía
-* Mano ganadora
-* Fase final
-* Fecha y hora
-* Fichas ganadas o perdidas
-
-Esto permite un análisis post-partida o ranking general.
-
----
-
-## 🔧 WebSocket (eventos en tiempo real)
-
-Eventos enviados desde servidor a mesa:
-
-* `turno`: nuevo jugador en turno
-* `accion`: acción tomada
-* `fase`: cambio de fase
-* `ganador`: resultado final
-
----
 
 ## 💼 Consideraciones de despliegue
 
@@ -590,4 +632,4 @@ MIT License. Libre uso con crédito al autor original.
 
 ## 📅 Última actualización
 
-2025-07-02 18:01:00
+2025-07-22 14:01:00

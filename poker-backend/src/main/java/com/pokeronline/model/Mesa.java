@@ -2,6 +2,7 @@ package com.pokeronline.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.Date;
 
 import java.util.List;
 
@@ -46,4 +47,7 @@ public class Mesa {
 
     @ManyToOne
     private User creador;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date inicioMano;
 }
