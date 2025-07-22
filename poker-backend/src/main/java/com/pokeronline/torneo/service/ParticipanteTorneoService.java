@@ -7,6 +7,7 @@ import com.pokeronline.torneo.model.ParticipanteTorneo;
 import com.pokeronline.torneo.model.Torneo;
 import com.pokeronline.torneo.model.TorneoEstado;
 import com.pokeronline.torneo.repository.ParticipanteTorneoRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -79,6 +80,14 @@ public class ParticipanteTorneoService {
             p.setEliminado(true);
             participanteTorneoRepository.save(p);
         });
+    }
+
+    @Transactional
+    public void eliminarParticipante(ParticipanteTorneo participante) {
+        participante.setEliminado(true);
+        participante.setMesa(null); // Para evitar que quede asociado a alguna mesa
+        participante.setFichasActuales(0);
+        participanteTorneoRepository.save(participante);
     }
 
     public void guardarParticipante(ParticipanteTorneo participante) {

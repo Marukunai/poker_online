@@ -11,6 +11,28 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<?> handleNotFound(ResourceNotFoundException ex, WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "error", ex.getMessage(),
+                        "status", 404,
+                        "timestamp", LocalDateTime.now()
+                ));
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<?> handleUnauthorized(UnauthorizedException ex, WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of(
+                        "error", ex.getMessage(),
+                        "status", 401,
+                        "timestamp", LocalDateTime.now()
+                ));
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleRuntime(RuntimeException ex, WebRequest request) {
         return ResponseEntity
@@ -30,17 +52,6 @@ public class GlobalExceptionHandler {
                         "error", "Error interno del servidor",
                         "message", ex.getMessage(),
                         "status", 500,
-                        "timestamp", LocalDateTime.now()
-                ));
-    }
-
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<?> handleUnauthorized(UnauthorizedException ex, WebRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of(
-                        "error", ex.getMessage(),
-                        "status", 401,
                         "timestamp", LocalDateTime.now()
                 ));
     }

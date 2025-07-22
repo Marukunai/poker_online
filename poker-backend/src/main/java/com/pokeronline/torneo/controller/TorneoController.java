@@ -1,5 +1,7 @@
 package com.pokeronline.torneo.controller;
 
+import com.pokeronline.estadisticas.dto.TorneoHistorialDTO;
+import com.pokeronline.estadisticas.service.EstadisticasService;
 import com.pokeronline.torneo.dto.CrearTorneoDTO;
 import com.pokeronline.torneo.model.*;
 import com.pokeronline.torneo.service.TorneoService;
@@ -16,6 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TorneoController {
 
+    private final EstadisticasService estadisticasService;
     private final TorneoService torneoService;
 
     @GetMapping
@@ -36,6 +39,16 @@ public class TorneoController {
     @GetMapping("/encurso")
     public List<Torneo> listarEnCurso() {
         return torneoService.listarTorneosEnCurso();
+    }
+
+    @GetMapping("/finalizados")
+    public List<Torneo> listarFinalizados() {
+        return torneoService.listarTorneosFinalizados(); // Asegúrate de tenerlo en el servicio
+    }
+
+    @GetMapping("/usuario/{userId}/historial")
+    public List<TorneoHistorialDTO> historialUsuario(@PathVariable Long userId) {
+        return estadisticasService.obtenerHistorialTorneos(userId); // ya tienes este servicio definido
     }
 
     @GetMapping("/{id}/estado")

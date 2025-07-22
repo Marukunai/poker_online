@@ -25,6 +25,9 @@ public class Torneo {
     private int buyIn;
     private int fichasIniciales;
     private int premioTotal;
+
+    @Column(name = "min_participantes")
+    private Integer minParticipantes;
     private int maxParticipantes;
     private boolean eliminacionDirecta;
 

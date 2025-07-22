@@ -1,11 +1,14 @@
 package com.pokeronline.estadisticas.service;
 
 import com.pokeronline.estadisticas.dto.*;
+import com.pokeronline.exception.ResourceNotFoundException;
 import com.pokeronline.model.User;
 import com.pokeronline.repository.HistorialManoRepository;
 import com.pokeronline.repository.UserRepository;
 import com.pokeronline.torneo.equipos.repository.MiembroEquipoTorneoRepository;
 import com.pokeronline.torneo.model.ParticipanteTorneo;
+import com.pokeronline.torneo.model.Torneo;
+import com.pokeronline.torneo.model.TorneoEstado;
 import com.pokeronline.torneo.repository.ParticipanteTorneoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -203,5 +206,42 @@ public class EstadisticasService {
 
         resultado.sort(Comparator.comparingInt(RankingUsuarioDTO::getPuntosTotales).reversed());
         return resultado;
+    }
+
+    public List<TorneoHistorialDTO> obtenerHistorialTorneos(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        List<ParticipanteTorneo> participaciones = participanteTorneoRepository.findByUser(user);
+
+
+        return participaciones.stream()
+                .filter(p -> p.getTorneo().getEstado() == TorneoEstado.FINALIZADO)
+                .map(p -> {
+                    int posicion = calcularPosicionUsuario(p.getTorneo(), p.getUser().getId());
+                    return TorneoHistorialDTO.builder()
+                            .torneoId(p.getTorneo().getId())
+                            .nombreTorneo(p.getTorneo().getNombre())
+                            .fechaInicio(p.getTorneo().getFechaInicio())
+                            .posicion(posicion)
+                            .ganado(posicion == 1)
+                            .puntosObtenidos(p.getPuntos())
+                            .build();
+                })
+                .toList();
+    }
+
+    private int calcularPosicionUsuario(Torneo torneo, Long userId) {
+        List<ParticipanteTorneo> participantes = participanteTorneoRepository.findByTorneo(torneo);
+
+        // Ordenamos por puntos de mayor a menor
+        participantes.sort((a, b) -> Integer.compare(b.getPuntos(), a.getPuntos()));
+
+        for (int i = 0; i < participantes.size(); i++) {
+            if (participantes.get(i).getUser().getId().equals(userId)) {
+                return i + 1; // posiciones comienzan en 1
+            }
+        }
+
+        return -1; // no encontrado (error)
     }
 }

@@ -1,5 +1,6 @@
 package com.pokeronline.torneo.service;
 
+import com.pokeronline.exception.ResourceNotFoundException;
 import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.User;
 import com.pokeronline.model.UserMesa;
@@ -9,6 +10,7 @@ import com.pokeronline.torneo.model.ParticipanteTorneo;
 import com.pokeronline.torneo.model.Torneo;
 import com.pokeronline.torneo.model.TorneoEstado;
 import com.pokeronline.torneo.model.TorneoMesa;
+import com.pokeronline.torneo.repository.EsperaTorneoRepository;
 import com.pokeronline.torneo.repository.ParticipanteTorneoRepository;
 import com.pokeronline.torneo.repository.TorneoRepository;
 import jakarta.transaction.Transactional;
@@ -24,6 +26,7 @@ import java.util.Optional;
 @Slf4j
 public class TorneoService {
 
+    private final EsperaTorneoRepository esperaTorneoRepository;
     private final ParticipanteTorneoRepository participanteTorneoRepository;
     private final LogroService logroService;
     private final ParticipanteTorneoService participanteTorneoService;
@@ -79,6 +82,10 @@ public class TorneoService {
 
     public List<Torneo> listarTorneosPendientes() {
         return torneoRepository.findByEstado(TorneoEstado.PENDIENTE);
+    }
+
+    public List<Torneo> listarTorneosFinalizados() {
+        return torneoRepository.findByEstado(TorneoEstado.FINALIZADO);
     }
 
     @Transactional
@@ -155,5 +162,13 @@ public class TorneoService {
         }
 
         log.info("Torneo '{}' finalizado. Se asignaron posiciones a {} jugadores.", torneo.getNombre(), ranking.size());
+    }
+
+    public boolean torneoPuedeIniciar(Long torneoId) {
+        Torneo torneo = torneoRepository.findById(torneoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Torneo no encontrado"));
+
+        long presentes = esperaTorneoRepository.countByTorneo_Id(torneoId);
+        return presentes >= torneo.getMinParticipantes();
     }
 }

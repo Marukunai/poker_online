@@ -2,6 +2,7 @@ package com.pokeronline.torneo.scheduler;
 
 import com.pokeronline.model.Mesa;
 import com.pokeronline.torneo.model.*;
+import com.pokeronline.torneo.repository.EsperaTorneoRepository;
 import com.pokeronline.torneo.repository.TorneoMesaRepository;
 import com.pokeronline.torneo.service.ParticipanteTorneoService;
 import com.pokeronline.torneo.service.TorneoService;
@@ -18,6 +19,7 @@ import java.util.*;
 @Slf4j
 public class TorneoScheduler {
 
+    private final EsperaTorneoRepository esperaTorneoRepository;
     private final TorneoService torneoService;
     private final ParticipanteTorneoService participanteService;
     private final TorneoMesaRepository torneoMesaRepository;
@@ -36,6 +38,29 @@ public class TorneoScheduler {
 
         for (Torneo torneo : pendientes) {
             if (torneo.getFechaInicio().before(ahora)) {
+
+                // Descalificar ausentes
+                List<ParticipanteTorneo> participantes = participanteService.obtenerParticipantes(torneo);
+                List<Long> idsPresentes = esperaTorneoRepository.findByTorneo(torneo).stream()
+                        .map(e -> e.getUser().getId())
+                        .toList();
+
+                for (ParticipanteTorneo p : participantes) {
+                    if (!idsPresentes.contains(p.getUser().getId())) {
+                        participanteService.eliminarParticipante(p);
+                        log.warn("Usuario '{}' fue descalificado del torneo '{}' por no presentarse.",
+                                p.getUser().getUsername(), torneo.getNombre());
+                    }
+                }
+
+                // Verificar si se puede iniciar
+                long presentes = esperaTorneoRepository.countByTorneo_Id(torneo.getId());
+                if (presentes < torneo.getMinParticipantes()) {
+                    log.warn("Torneo '{}' no puede iniciar: solo hay {} jugadores presentes (mínimo requerido: {})",
+                            torneo.getNombre(), presentes, torneo.getMinParticipantes());
+                    continue;
+                }
+
                 iniciarTorneo(torneo);
             }
         }
@@ -76,7 +101,6 @@ public class TorneoScheduler {
                     .filter(p -> !p.isEliminado())
                     .toList();
 
-            // Nueva condición: finalizar si ha pasado la fechaFin
             if (torneo.getFechaFin() != null && torneo.getFechaFin().before(ahora)) {
                 torneoService.finalizarTorneo(torneo);
                 log.info("Torneo '{}' finalizado automáticamente por fechaFin.", torneo.getNombre());
@@ -169,7 +193,7 @@ public class TorneoScheduler {
                 String resumen = "Nivel " + (actual + 1) + " (SB: " + nivelActual.getSmallBlind()
                         + ", BB: " + nivelActual.getBigBlind() + ")";
 
-                log.info("🏁 Torneo '{}' avanzó a {}", torneo.getNombre(), resumen);
+                log.info("Torneo '{}' avanzó a {}", torneo.getNombre(), resumen);
             }
         }
     }
