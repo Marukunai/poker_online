@@ -32,4 +32,6 @@ public interface HistorialManoRepository extends JpaRepository<HistorialMano, Lo
 
     @Query("SELECT h.fecha FROM HistorialMano h WHERE h.jugador = :user AND h.fecha >= :desde")
     List<Date> obtenerDiasConPartida(@Param("user") User user, @Param("desde") Date desde);
+
+    List<HistorialMano> findTop5ByJugadorOrderByFechaDesc(User user);
 }

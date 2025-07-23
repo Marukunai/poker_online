@@ -14,6 +14,7 @@ public class EsperaTorneoController {
 
     private final EsperaTorneoService esperaTorneoService;
 
+    // TODO (postman)
     @PostMapping("/registrar")
     public EsperaTorneo registrar(@RequestParam Long torneoId, @RequestParam Long userId) {
         return esperaTorneoService.registrarPresencia(torneoId, userId);

@@ -16,13 +16,14 @@ public class MesaPrivadaController {
     private final MesaPrivadaService mesaPrivadaService;
 
     @PostMapping("/crearPrivada")
-    public Mesa crearMesaPrivada(@RequestParam String nombre,
+    public Mesa crearMesaPrivada(@RequestParam String emailCreador,
+                                 @RequestParam String nombre,
                                  @RequestParam int maxJugadores,
                                  @RequestParam String codigoAcceso,
                                  @RequestParam boolean fichasTemporales,
                                  @RequestParam int smallBlind,
                                  @RequestParam int bigBlind) {
-        return mesaPrivadaService.crearMesaPrivada(nombre, maxJugadores, codigoAcceso, fichasTemporales, smallBlind, bigBlind);
+        return mesaPrivadaService.crearMesaPrivada(emailCreador, nombre, maxJugadores, codigoAcceso, fichasTemporales, smallBlind, bigBlind);
     }
 
     @PostMapping("/unirsePrivada")

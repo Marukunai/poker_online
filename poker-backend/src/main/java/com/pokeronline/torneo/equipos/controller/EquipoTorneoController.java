@@ -58,6 +58,7 @@ public class EquipoTorneoController {
         equipoTorneoService.eliminarEquipo(equipoId);
     }
 
+    // TODO (postman)
     @PutMapping("/actualizar-capitan")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> actualizarCapitan(
@@ -98,4 +99,6 @@ public class EquipoTorneoController {
     public List<HistorialEquipoDTO> historialEquipo(@PathVariable Long equipoId) {
         return equipoTorneoService.obtenerHistorialEquipo(equipoId);
     }
+
+    // end
 }

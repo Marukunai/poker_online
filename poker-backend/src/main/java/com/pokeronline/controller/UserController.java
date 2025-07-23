@@ -1,8 +1,13 @@
 package com.pokeronline.controller;
 
 import com.pokeronline.dto.HistorialManoDTO;
+import com.pokeronline.dto.PerfilCompletoDTO;
 import com.pokeronline.dto.UserDTO;
+import com.pokeronline.estadisticas.dto.TorneoHistorialDTO;
+import com.pokeronline.estadisticas.service.EstadisticasService;
 import com.pokeronline.exception.UnauthorizedException;
+import com.pokeronline.logros.dto.LogroUsuarioDTO;
+import com.pokeronline.logros.service.LogroUsuarioService;
 import com.pokeronline.model.HistorialMano;
 import com.pokeronline.model.User;
 import com.pokeronline.repository.HistorialManoRepository;
@@ -22,6 +27,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final EstadisticasService estadisticasService;
+    private final LogroUsuarioService logroUsuarioService;
     private final HistorialManoRepository historialManoRepository;
     private final UserRepository userRepository;
 
@@ -95,5 +102,79 @@ public class UserController {
                 .build()).toList();
 
         return ResponseEntity.ok(dtoList);
+    }
+
+    @GetMapping("/public-profile/{userId}")
+    public ResponseEntity<UserDTO> getPublicProfile(@PathVariable Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        UserDTO dto = UserDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .avatarUrl(user.getAvatarUrl())
+                .fichas(user.getFichas())
+                .partidasGanadas(user.getPartidasGanadas())
+                .manosJugadas(user.getManosJugadas())
+                .manosGanadas(user.getManosGanadas())
+                .fichasGanadasHistoricas(user.getFichasGanadasHistoricas())
+                .vecesAllIn(user.getVecesAllIn())
+                .vecesHizoBluff(user.getVecesHizoBluff())
+                .nivelBot(user.isEsIA() ? user.getNivelBot() : null)
+                .estiloBot(user.isEsIA() ? user.getEstiloBot() : null)
+                .build();
+
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/{userId}/resumen-completo")
+    public ResponseEntity<PerfilCompletoDTO> resumenCompleto(@PathVariable Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // DTO público
+        UserDTO dto = UserDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .avatarUrl(user.getAvatarUrl())
+                .fichas(user.getFichas())
+                .partidasGanadas(user.getPartidasGanadas())
+                .manosJugadas(user.getManosJugadas())
+                .manosGanadas(user.getManosGanadas())
+                .fichasGanadasHistoricas(user.getFichasGanadasHistoricas())
+                .vecesAllIn(user.getVecesAllIn())
+                .vecesHizoBluff(user.getVecesHizoBluff())
+                .nivelBot(user.isEsIA() ? user.getNivelBot() : null)
+                .estiloBot(user.isEsIA() ? user.getEstiloBot() : null)
+                .build();
+
+        // Logros
+        List<LogroUsuarioDTO> logros = logroUsuarioService.obtenerLogrosUsuario(userId);
+
+        // Torneos
+        List<TorneoHistorialDTO> historialTorneos = estadisticasService.obtenerHistorialTorneos(userId);
+
+        // Últimas 5 manos
+        List<HistorialManoDTO> ultimasPartidas = historialManoRepository.findTop5ByJugadorOrderByFechaDesc(user)
+                .stream()
+                .map(mano -> HistorialManoDTO.builder()
+                        .fecha(mano.getFecha())
+                        .fichasGanadas(mano.getFichasGanadas())
+                        .cartasGanadoras(mano.getCartasGanadoras())
+                        .cartasJugador(mano.getCartasJugador())
+                        .contraJugadores(mano.getContraJugadores())
+                        .tipoManoGanadora(mano.getTipoManoGanadora())
+                        .faseFinal(String.valueOf(mano.getFaseFinal()))
+                        .build()
+                ).toList();
+
+        PerfilCompletoDTO perfil = PerfilCompletoDTO.builder()
+                .user(dto)
+                .logros(logros)
+                .historialTorneos(historialTorneos)
+                .ultimasPartidas(ultimasPartidas)
+                .build();
+
+        return ResponseEntity.ok(perfil);
     }
 }

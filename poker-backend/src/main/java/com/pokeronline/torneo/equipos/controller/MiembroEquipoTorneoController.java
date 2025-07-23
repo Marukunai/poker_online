@@ -23,6 +23,7 @@ public class MiembroEquipoTorneoController {
     private final EquipoTorneoService equipoService;
     private final UserService userService;
 
+    // TODO (postman)
     @PostMapping
     public MiembroEquipoDTO agregarMiembro(@RequestBody AgregarMiembroDTO dto,
                                            @AuthenticationPrincipal UserDetails userDetails) {
