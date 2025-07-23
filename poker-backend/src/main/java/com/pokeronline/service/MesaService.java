@@ -3,6 +3,7 @@ package com.pokeronline.service;
 import com.pokeronline.dto.ResultadoShowdownInterno;
 import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.*;
+import com.pokeronline.moderacion.model.MotivoSancion;
 import com.pokeronline.repository.*;
 import com.pokeronline.websocket.WebSocketService;
 import jakarta.transaction.Transactional;
@@ -461,5 +462,12 @@ public class MesaService {
         }
 
         return false;
+    }
+
+    private boolean tieneSancionGrave(User user) {
+        return user.getSanciones().stream().anyMatch(s -> {
+            MotivoSancion m = s.getMotivo();
+            return s.getFechaFin() == null || s.getFechaFin().after(new Date());
+        });
     }
 }

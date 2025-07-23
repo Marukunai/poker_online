@@ -4,6 +4,9 @@ import com.pokeronline.bot.BotEngineService;
 import com.pokeronline.bot.BotService;
 import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.*;
+import com.pokeronline.moderacion.model.MotivoSancion;
+import com.pokeronline.moderacion.model.TipoSancion;
+import com.pokeronline.moderacion.service.ModeracionService;
 import com.pokeronline.repository.*;
 import com.pokeronline.websocket.WebSocketService;
 import jakarta.transaction.Transactional;
@@ -20,6 +23,7 @@ import java.util.List;
 @Service
 public class TurnoService implements BotEngineService {
 
+    private final ModeracionService moderacionService;
     private final LogroService logroService;
     private final BotService botService;
     private final WebSocketService webSocketService;
@@ -39,7 +43,8 @@ public class TurnoService implements BotEngineService {
             UserMesaRepository userMesaRepository,
             UserRepository userRepository,
             MesaRepository mesaRepository,
-            LogroService logroService
+            LogroService logroService,
+            ModeracionService moderacionService
     ) {
         this.botService = botService;
         this.webSocketService = webSocketService;
@@ -50,6 +55,7 @@ public class TurnoService implements BotEngineService {
         this.userRepository = userRepository;
         this.mesaRepository = mesaRepository;
         this.logroService = logroService;
+        this.moderacionService = moderacionService;
     }
 
     @Transactional
@@ -146,13 +152,22 @@ public class TurnoService implements BotEngineService {
                 userMesa.setLastSeen(new Date());
                 userMesaRepository.save(userMesa);
 
-                System.out.printf("⏱️ Jugador %s está desconectado desde %s → FOLD forzado.%n",
+                System.out.printf("⏱Jugador %s está desconectado desde %s → FOLD forzado.%n",
                         userMesa.getUser().getUsername(), userMesa.getLastSeen());
 
                 turno.setAccion(Accion.FOLD);
                 turno.setEliminado(true);
                 turno.setActivo(false);
                 turnoRepository.save(turno);
+
+                moderacionService.registrarSancion(
+                        userMesa.getUser().getId(),
+                        MotivoSancion.INACTIVIDAD_EN_PARTIDAS,
+                        TipoSancion.ADVERTENCIA,
+                        "Fold forzado por desconexión prolongada (inactividad)",
+                        mesa.getId(),
+                        null
+                );
 
                 avanzarTurno(mesa);
                 return getTurnoActual(mesa); // Buscar siguiente jugador activo

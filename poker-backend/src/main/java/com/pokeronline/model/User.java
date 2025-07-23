@@ -2,8 +2,12 @@ package com.pokeronline.model;
 
 import com.pokeronline.bot.DificultadBot;
 import com.pokeronline.bot.EstiloBot;
+import com.pokeronline.moderacion.model.Sancion;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -60,4 +64,23 @@ public class User {
 
     private int rachaVictorias;
     private int rachaDerrotas;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Sancion> sanciones = new ArrayList<>();
+
+    @Column(nullable = false)
+    private boolean bloqueado = false;
+
+    @Column(nullable = false)
+    private boolean chatBloqueado = false;
+
+    // auxiliar para filtro
+    public boolean estaBloqueado() {
+        return bloqueado;
+    }
+
+    // auxiliar para filtro
+    public boolean tieneChatBloqueado() {
+        return chatBloqueado;
+    }
 }
