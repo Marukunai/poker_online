@@ -103,4 +103,24 @@ public class ModeracionService {
             userRepository.save(user);
         }
     }
+
+    public void sancionarAutomaticamente(User user, String motivoTexto) {
+        MotivoSancion motivo;
+
+        switch (motivoTexto) {
+            case "ABANDONO_REITERADO" -> motivo = MotivoSancion.ABANDONO_REITERADO;
+            case "DESCONEXIONES_SOSPECHOSAS" -> motivo = MotivoSancion.DESCONEXIONES_SOSPECHOSAS;
+            default -> throw new IllegalArgumentException("Motivo no reconocido: " + motivoTexto);
+        }
+
+        Sancion sancion = Sancion.builder()
+                .user(user)
+                .motivo(motivo)
+                .fechaInicio(new Date())
+                .fechaFin(null) // Puedes establecer duración automática si quieres
+                .descripcion("Sanción automática por: " + motivoTexto)
+                .build();
+
+        sancionRepository.save(sancion);
+    }
 }

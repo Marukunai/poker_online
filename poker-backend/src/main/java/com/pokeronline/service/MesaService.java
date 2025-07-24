@@ -4,6 +4,7 @@ import com.pokeronline.dto.ResultadoShowdownInterno;
 import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.*;
 import com.pokeronline.moderacion.model.MotivoSancion;
+import com.pokeronline.moderacion.service.ModeracionService;
 import com.pokeronline.repository.*;
 import com.pokeronline.websocket.WebSocketService;
 import jakarta.transaction.Transactional;
@@ -17,6 +18,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MesaService {
 
+    private final RegistroAbandonoRepository registroAbandonoRepository;
+    private final ModeracionService moderacionService;
     private final LogroService logroService;
     private final WebSocketService webSocketService;
     private final HistorialManoRepository historialManoRepository;
@@ -498,5 +501,23 @@ public class MesaService {
                     MotivoSancion.USO_DE_BOTS
             ).contains(m);
         });
+    }
+
+    private void registrarAbandono(User user, Mesa mesa) {
+        RegistroAbandono abandono = RegistroAbandono.builder()
+                .user(user)
+                .mesa(mesa)
+                .fecha(new Date())
+                .build();
+        registroAbandonoRepository.save(abandono);
+
+        // Comprobar si ha abandonado demasiadas veces en los últimos días
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_YEAR, -3); // últimos 3 días
+        long totalAbandonos = registroAbandonoRepository.contarAbandonosRecientes(user, cal.getTime());
+
+        if (totalAbandonos >= 3) {
+            moderacionService.sancionarAutomaticamente(user, "ABANDONO_REITERADO");
+        }
     }
 }

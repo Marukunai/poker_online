@@ -1,5 +1,6 @@
 package com.pokeronline.service;
 
+import com.pokeronline.exception.ResourceNotFoundException;
 import com.pokeronline.model.User;
 import com.pokeronline.moderacion.model.MotivoSancion;
 import com.pokeronline.moderacion.model.TipoSancion;
@@ -10,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Set;
+import com.pokeronline.util.FiltroPalabrasService;
 
 @Service
 @RequiredArgsConstructor
@@ -18,41 +19,34 @@ public class UserService {
 
     private final ModeracionService moderacionService;
     private final UserRepository userRepository;
-
-    private static final Set<String> PALABRAS_PROHIBIDAS = Set.of(
-            "idiota", "imbecil", "tonto", "estupido", "capullo", "inutil", "gilipollas", "payaso", "anormal",
-            "mierda", "joder", "puta", "puto", "coño", "zorra", "polla", "culiao", "cabron", "maricon", "nazi",
-            "negro", "sidoso", "mongolo", "retardado", "cancer", "malparido",
-            "fuck", "bitch", "asshole", "dick", "faggot", "cunt", "shit", "motherfucker", "whore", "slut"
-    );
+    private final FiltroPalabrasService filtroPalabrasService;
 
     public User getById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
-    public void actualizarPerfil(Long userId, String nuevoUsername) {
-        User user = userRepository.findById(userId).orElseThrow();
+    public void actualizarPerfil(Long userId, String nuevoNombre) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        if (esNombreInapropiado(nuevoUsername)) {
+        if (filtroPalabrasService.contienePalabraGrave(nuevoNombre)) {
             moderacionService.registrarSancion(
                     userId,
                     MotivoSancion.NOMBRE_INAPROPIADO,
                     TipoSancion.ADVERTENCIA,
-                    "Intento de cambio a nombre de usuario inapropiado",
+                    "Intento de usar nombre ofensivo: " + nuevoNombre,
                     null,
                     null
             );
-            throw new RuntimeException("Nombre de usuario inapropiado. Has recibido una advertencia.");
+            throw new RuntimeException("Nombre ofensivo no permitido.");
         }
 
-        user.setUsername(nuevoUsername);
+        if (filtroPalabrasService.contienePalabraLeve(nuevoNombre)) {
+            throw new RuntimeException("Nombre inapropiado. Elige otro.");
+        }
+
+        user.setUsername(nuevoNombre);
         userRepository.save(user);
-    }
-
-
-    private boolean esNombreInapropiado(String username) {
-        String texto = username.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
-        return PALABRAS_PROHIBIDAS.stream().anyMatch(texto::contains);
     }
 
     public Optional<User> buscarPorEmail(String email) {

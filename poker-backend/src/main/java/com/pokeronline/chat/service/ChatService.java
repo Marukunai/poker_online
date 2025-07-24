@@ -12,26 +12,28 @@ import com.pokeronline.websocket.WebSocketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.net.http.WebSocket;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class ChatService {
 
-    private static final Set<String> PALABRAS_PROHIBIDAS = Set.of(
-            // Español
-            "idiota", "imbecil", "tonto", "estupido", "capullo", "inutil", "gilipollas", "payaso", "anormal", "retrasado",
-            "mierda", "joder", "puta", "puto", "coño", "zorra", "polla", "culiao", "cabron", "maricon", "maricón",
-            "nazi", "negro de mierda", "sidoso", "mongolo", "retardado", "moromierda", "cancerigeno", "malparido",
-            "p1nche", "m1erda", "pvt@", "hpt@", "c@bron", "g1l1p0llas",
+    private static final Set<String> PALABRAS_OBSCENAS = Set.of(
+            "mierda", "joder", "puto", "coño", "zorra", "polla", "culiao", "nazi",
+            "fuck", "asshole", "dick", "cunt", "shit", "verga", "pene", "cojones",
+            "maldito", "cabrón", "puta madre", "chingar", "pendejo", "huevón",
+            "damn", "bitch", "bastard", "motherfucker", "whore", "slut", "ass",
+            "cock", "pussy", "tits", "bollocks", "wanker", "prick", "sod off"
+    );
 
-            // Inglés
-            "fuck", "bitch", "asshole", "dick", "faggot", "cunt", "shithead", "motherfucker", "bastard", "retard", "whore",
-            "douchebag", "slut", "prick", "twat", "moron", "jerk", "nutjob", "pussy", "suck my", "kill yourself"
+    private static final Set<String> PALABRAS_INSULTOS = Set.of(
+            "idiota", "imbecil", "puta", "tonto", "bitch", "estupido", "capullo", "inutil", "gilipollas", "payaso", "anormal",
+            "sidoso", "mongolo", "retardado", "malparido", "faggot", "retard", "bastard", "motherfucker", "whore", "slut",
+            "cretino", "desgraciado", "cobarde", "cerdo", "gusano", "víbora", "hipócrita", "mentiroso", "traidor", "lerdo",
+            "bobazo", "cabeza hueca", "engendro", "patán", "necio", "majadero",
+            "moron", "dumbass", "jerk", "loser", "idiot", "cretin", "asshat",
+            "scum", "pig", "worm", "snake", "hypocrite", "liar", "traitor", "dimwit",
+            "nincompoop", "blockhead", "buffoon", "ignorant", "charlatan", "weasel"
     );
 
     private final WebSocketService webSocketService;
@@ -49,13 +51,16 @@ public class ChatService {
             throw new RuntimeException("No puedes enviar mensajes. Estás bloqueado del chat.");
         }
 
-        // Lenguaje ofensivo
-        if (contieneLenguajeOfensivo(contenido)) {
+        // Lenguaje ofensivo o insultos
+        MotivoSancion motivo = detectarMotivoLenguaje(contenido);
+        if (motivo != null) {
             moderacionService.registrarSancion(
                     remitenteId,
-                    MotivoSancion.LENGUAJE_OBSCENO,
+                    motivo,
                     TipoSancion.ADVERTENCIA,
-                    "Lenguaje inapropiado en el chat",
+                    motivo == MotivoSancion.LENGUAJE_OBSCENO ?
+                            "Lenguaje obsceno en el chat" :
+                            "Insultos o amenazas en el chat",
                     mesaId,
                     null
             );
@@ -63,10 +68,11 @@ public class ChatService {
             webSocketService.enviarMensajeJugador(
                     remitenteId,
                     "advertencia_chat",
-                    Map.of(
-                            "mensaje", "⚠️ Has recibido una advertencia por mal uso del chat."
-                    )
+                    Map.of("mensaje", motivo == MotivoSancion.LENGUAJE_OBSCENO ?
+                            "⚠️ Has recibido una advertencia por lenguaje obsceno." :
+                            "⚠️ Has recibido una advertencia por insultos o amenazas.")
             );
+
             moderacionService.evaluarProhibicionChat(remitenteId, mesaId);
             throw new RuntimeException("Tu mensaje contiene lenguaje inapropiado.");
         }
@@ -116,11 +122,18 @@ public class ChatService {
                 .toList();
     }
 
-    private boolean contieneLenguajeOfensivo(String contenido) {
+    private MotivoSancion detectarMotivoLenguaje(String contenido) {
         String texto = contenido.toLowerCase().replaceAll("[^a-zA-Z0-9áéíóúüñ]", "");
 
-        return PALABRAS_PROHIBIDAS.stream()
-                .anyMatch(palabra -> texto.contains(palabra.replaceAll("[^a-zA-Z0-9áéíóúüñ]", "")));
+        if (PALABRAS_INSULTOS.stream().anyMatch(texto::contains)) {
+            return MotivoSancion.INSULTOS_O_AMENAZAS;
+        }
+
+        if (PALABRAS_OBSCENAS.stream().anyMatch(texto::contains)) {
+            return MotivoSancion.LENGUAJE_OBSCENO;
+        }
+
+        return null;
     }
 
     private boolean estaSpameando(User remitente, Long mesaId) {

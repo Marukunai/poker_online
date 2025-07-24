@@ -9,6 +9,10 @@ import com.pokeronline.config.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.pokeronline.util.FiltroPalabrasService;
+import com.pokeronline.moderacion.model.MotivoSancion;
+import com.pokeronline.moderacion.model.TipoSancion;
+import com.pokeronline.moderacion.service.ModeracionService;
 
 import java.util.Set;
 
@@ -19,6 +23,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
+    private final FiltroPalabrasService filtroPalabrasService;
+    private final ModeracionService moderacionService;
 
     private static final Set<String> PALABRAS_PROHIBIDAS = Set.of(
             "idiota", "imbecil", "tonto", "estupido", "capullo", "inutil", "gilipollas", "payaso", "anormal",
@@ -32,8 +38,20 @@ public class AuthService {
             throw new RuntimeException("El email ya está registrado");
         }
 
-        if (esNombreInapropiado(dto.getUsername())) {
-            throw new RuntimeException("El nombre de usuario contiene lenguaje inapropiado");
+        if (filtroPalabrasService.contienePalabraGrave(dto.getUsername())) {
+            moderacionService.registrarSancion(
+                    null,
+                    MotivoSancion.NOMBRE_INAPROPIADO,
+                    TipoSancion.ADVERTENCIA,
+                    "Intento de registrar nombre ofensivo: " + dto.getUsername(),
+                    null,
+                    null
+            );
+            throw new RuntimeException("Nombre de usuario prohibido por contenido ofensivo.");
+        }
+
+        if (filtroPalabrasService.contienePalabraLeve(dto.getUsername())) {
+            throw new RuntimeException("Nombre de usuario inapropiado. Elige otro.");
         }
 
         User user = User.builder()
@@ -61,10 +79,5 @@ public class AuthService {
         }
 
         return jwtUtils.generateToken(user);
-    }
-
-    private boolean esNombreInapropiado(String username) {
-        String normalizado = username.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
-        return PALABRAS_PROHIBIDAS.stream().anyMatch(normalizado::contains);
     }
 }
