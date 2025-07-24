@@ -304,9 +304,21 @@ public class MesaService {
         // Marcar jugadores como en juego
         List<UserMesa> jugadores = userMesaRepository.findByMesa(mesa);
         for (UserMesa jm : jugadores) {
+            User user = jm.getUser();
+
+            if (tieneSancionGrave(user)) {
+                // Evitar que participe en la mano
+                jm.setEnJuego(false);
+                webSocketService.enviarMensajeJugador(user.getId(), "sancion", Map.of(
+                        "mensaje", "No puedes participar en esta mano debido a una sanción activa."
+                ));
+                continue;
+            }
+
             jm.setEnJuego(true);
             userMesaRepository.save(jm);
         }
+
 
         mesa.setInicioMano(new Date());
         mesaRepository.save(mesa);
@@ -335,6 +347,12 @@ public class MesaService {
                 .filter(UserMesa::isEnJuego)
                 .sorted(Comparator.comparing(um -> um.getUser().getId()))
                 .toList();
+
+        for (UserMesa jm : jugadores) {
+            if (tieneSancionGrave(jm.getUser())) {
+                throw new IllegalStateException("El jugador " + jm.getUser().getUsername() + " tiene una sanción activa y no puede jugar.");
+            }
+        }
 
         if (jugadores.size() < 2) {
             throw new RuntimeException("Se necesitan al menos 2 jugadores para asignar posiciones.");
@@ -467,7 +485,18 @@ public class MesaService {
     private boolean tieneSancionGrave(User user) {
         return user.getSanciones().stream().anyMatch(s -> {
             MotivoSancion m = s.getMotivo();
-            return s.getFechaFin() == null || s.getFechaFin().after(new Date());
+            boolean activa = s.getFechaFin() == null || s.getFechaFin().after(new Date());
+
+            return activa && Set.of(
+                    MotivoSancion.INFRACCIONES_GRAVES,
+                    MotivoSancion.REITERACION_INFRACCIONES,
+                    MotivoSancion.FRAUDE_DE_FICHAS,
+                    MotivoSancion.MANIPULACION_RESULTADOS,
+                    MotivoSancion.TRAMPAS_EN_PARTIDAS_PRIVADAS,
+                    MotivoSancion.COLUSION_ENTRE_JUGADORES,
+                    MotivoSancion.MULTICUENTA,
+                    MotivoSancion.USO_DE_BOTS
+            ).contains(m);
         });
     }
 }

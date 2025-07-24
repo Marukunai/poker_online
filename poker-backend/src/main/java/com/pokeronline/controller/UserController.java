@@ -12,6 +12,7 @@ import com.pokeronline.model.HistorialMano;
 import com.pokeronline.model.User;
 import com.pokeronline.repository.HistorialManoRepository;
 import com.pokeronline.repository.UserRepository;
+import com.pokeronline.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public class UserController {
     private final LogroUsuarioService logroUsuarioService;
     private final HistorialManoRepository historialManoRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
@@ -58,6 +60,12 @@ public class UserController {
                 .build();
 
         return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping("/updateUsername")
+    public ResponseEntity<?> actualizarNombre(@RequestParam Long userId, @RequestParam String nuevoUsername) {
+        userService.actualizarPerfil(userId, nuevoUsername);
+        return ResponseEntity.ok("Nombre actualizado correctamente");
     }
 
     @GetMapping("/ranking")

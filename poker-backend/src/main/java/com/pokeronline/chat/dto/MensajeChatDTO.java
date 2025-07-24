@@ -14,4 +14,5 @@ public class MensajeChatDTO {
     private String remitenteUsername;
     private String contenido;
     private Date timestamp;
+    private Long torneoId;
 }

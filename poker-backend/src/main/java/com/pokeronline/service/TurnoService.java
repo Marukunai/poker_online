@@ -155,19 +155,7 @@ public class TurnoService implements BotEngineService {
                 System.out.printf("⏱Jugador %s está desconectado desde %s → FOLD forzado.%n",
                         userMesa.getUser().getUsername(), userMesa.getLastSeen());
 
-                turno.setAccion(Accion.FOLD);
-                turno.setEliminado(true);
-                turno.setActivo(false);
-                turnoRepository.save(turno);
-
-                moderacionService.registrarSancion(
-                        userMesa.getUser().getId(),
-                        MotivoSancion.INACTIVIDAD_EN_PARTIDAS,
-                        TipoSancion.ADVERTENCIA,
-                        "Fold forzado por desconexión prolongada (inactividad)",
-                        mesa.getId(),
-                        null
-                );
+                forzarFoldPorInactividad(userMesa, mesa, "Jugador inactivo durante más de 120 segundos");
 
                 avanzarTurno(mesa);
                 return getTurnoActual(mesa); // Buscar siguiente jugador activo
@@ -186,8 +174,11 @@ public class TurnoService implements BotEngineService {
         Runnable tarea = () -> {
             try {
                 Turno turno = getTurnoActual(mesa);
-                realizarAccion(mesa, turno.getUser(), Accion.FOLD, 0);
-                System.out.println("Turno forzado: FOLD por timeout.");
+                UserMesa userMesa = userMesaRepository.findByUserAndMesa(turno.getUser(), mesa).orElse(null);
+                if (userMesa != null) {
+                    forzarFoldPorInactividad(userMesa, mesa, "Timeout del turno (60s sin actuar)");
+                    avanzarTurno(mesa);
+                }
             } catch (Exception e) {
                 System.err.println("Error forzando FOLD automático: " + e.getMessage());
             }
@@ -499,5 +490,41 @@ public class TurnoService implements BotEngineService {
     @Override
     public void ejecutarAccionBot(Mesa mesa, User bot, Accion accion, int cantidad) {
         realizarAccion(mesa, bot, accion, cantidad);
+    }
+
+    private void forzarFoldPorInactividad(UserMesa userMesa, Mesa mesa, String motivo) {
+        userMesa.setEnJuego(false);
+        userMesaRepository.save(userMesa);
+
+        Turno turno = turnoRepository.findByMesaAndUser(mesa, userMesa.getUser())
+                .orElse(null);
+
+        if (turno != null) {
+            turno.setAccion(Accion.FOLD);
+            turno.setEliminado(true);
+            turno.setActivo(false);
+            turnoRepository.save(turno);
+        }
+
+        moderacionService.registrarSancion(
+                userMesa.getUser().getId(),
+                MotivoSancion.INACTIVIDAD_EN_PARTIDAS,
+                TipoSancion.ADVERTENCIA,
+                motivo,
+                mesa.getId(),
+                null // no es un torneo
+        );
+
+        webSocketService.enviarMensajeJugador(
+                userMesa.getUser().getId(),
+                "sancion",
+                Map.of(
+                        "motivo", motivo,
+                        "tipo", MotivoSancion.INACTIVIDAD_EN_PARTIDAS.name()
+                )
+        );
+
+        System.out.printf("Fold forzado por inactividad: %s (%s)%n",
+                userMesa.getUser().getUsername(), motivo);
     }
 }

@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -18,9 +20,20 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
+    private static final Set<String> PALABRAS_PROHIBIDAS = Set.of(
+            "idiota", "imbecil", "tonto", "estupido", "capullo", "inutil", "gilipollas", "payaso", "anormal",
+            "mierda", "joder", "puta", "puto", "coño", "zorra", "polla", "culiao", "cabron", "maricon", "nazi",
+            "negro", "sidoso", "mongolo", "retardado", "cancer", "malparido",
+            "fuck", "bitch", "asshole", "dick", "faggot", "cunt", "shit", "motherfucker", "whore", "slut"
+    );
+
     public String register(RegisterDTO dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new RuntimeException("El email ya está registrado");
+        }
+
+        if (esNombreInapropiado(dto.getUsername())) {
+            throw new RuntimeException("El nombre de usuario contiene lenguaje inapropiado");
         }
 
         User user = User.builder()
@@ -48,5 +61,10 @@ public class AuthService {
         }
 
         return jwtUtils.generateToken(user);
+    }
+
+    private boolean esNombreInapropiado(String username) {
+        String normalizado = username.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
+        return PALABRAS_PROHIBIDAS.stream().anyMatch(normalizado::contains);
     }
 }

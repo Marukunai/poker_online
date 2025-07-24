@@ -29,7 +29,7 @@ public class ModeracionService {
                 .motivo(motivo)
                 .tipo(tipo)
                 .descripcion(detalle)
-                .fechaInicio(new Date())
+                .fechaFin(new Date(System.currentTimeMillis() + 86400000))
                 .fechaFin(new Date())
                 .partidaId(partidaId)
                 .torneoId(torneoId)
@@ -70,6 +70,37 @@ public class ModeracionService {
         if (suspensiones >= 2) {
             registrarSancion(user.getId(), MotivoSancion.INFRACCIONES_GRAVES, TipoSancion.SUSPENSION_PERMANENTE,
                     "Suspensión permanente por conducta reiterada o grave", null, null);
+        }
+    }
+
+    public long contarAdvertenciasChat(Long userId) {
+        List<Sancion> sanciones = sancionRepository.findByUsuario_IdAndMotivoInAndTipo(
+                userId,
+                List.of(MotivoSancion.LENGUAJE_OBSCENO, MotivoSancion.ABUSO_DEL_CHAT),
+                TipoSancion.ADVERTENCIA
+        );
+
+        return sanciones.stream()
+                .filter(s -> s.getFechaFin() == null || s.getFechaFin().after(new Date()))
+                .count();
+    }
+
+    public void evaluarProhibicionChat(Long userId, Long mesaId) {
+        long advertencias = contarAdvertenciasChat(userId);
+        if (advertencias >= 3) {
+            registrarSancion(
+                    userId,
+                    MotivoSancion.ABUSO_DEL_CHAT,
+                    TipoSancion.PROHIBICION_CHAT,
+                    "Has recibido 3 advertencias por mal uso del chat",
+                    mesaId,
+                    null
+            );
+
+            // Bloquear el chat del usuario
+            User user = userRepository.findById(userId).orElseThrow();
+            user.setChatBloqueado(true);
+            userRepository.save(user);
         }
     }
 }

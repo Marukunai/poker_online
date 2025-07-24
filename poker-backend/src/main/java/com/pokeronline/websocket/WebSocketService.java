@@ -22,4 +22,13 @@ public class WebSocketService {
 
         // logger.info("Simulación de envío de mensaje tipo '{}' a la mesa {}.", tipo, mesaId);
     }
+
+    public void enviarMensajeJugador(Long userId, String tipo, Object payload) {
+        // WebSocket desactivado temporalmente (se usará cuando el frontend esté listo)
+
+        // MesaMessage message = new MesaMessage(tipo, null, payload);
+        // messagingTemplate.convertAndSend("/user/" + userId + "/queue/notificaciones", message);
+
+        // logger.info("Simulación de envío de mensaje tipo '{}' al jugador {}.", tipo, userId);
+    }
 }
