@@ -22,7 +22,8 @@ public class EspectadorMesa {
     @ManyToOne
     private Mesa mesa;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     private Date fechaEntrada;

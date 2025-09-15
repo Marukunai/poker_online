@@ -20,7 +20,7 @@ public interface HistorialManoRepository extends JpaRepository<HistorialMano, Lo
 
     int countByJugadorAndEmpateFalse(User jugador);
 
-    @Query("SELECT SUM(h.fichasGanadas) FROM Historial_Mano h WHERE h.jugador = :jugador")
+    @Query("SELECT SUM(h.fichasGanadas) FROM HistorialMano h WHERE h.jugador = :jugador")
     Optional<Integer> sumFichasGanadasByJugador(User jugador);
 
     @Query("SELECT COUNT(h) FROM HistorialMano h " +

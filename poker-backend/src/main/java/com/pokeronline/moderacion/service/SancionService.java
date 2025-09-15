@@ -41,7 +41,7 @@ public class SancionService {
     }
 
     public List<SancionDTO> obtenerSancionesUsuario(Long userId) {
-        return sancionRepository.findByUsuarioId(userId)
+        return sancionRepository.findByUser_Id(userId)
                 .stream().map(this::toDTO)
                 .collect(Collectors.toList());
     }

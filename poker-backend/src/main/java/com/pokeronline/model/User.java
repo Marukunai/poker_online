@@ -66,12 +66,15 @@ public class User {
     private int rachaDerrotas;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Sancion> sanciones = new ArrayList<>();
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean bloqueado = false;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean chatBloqueado = false;
 
     // auxiliar para filtro

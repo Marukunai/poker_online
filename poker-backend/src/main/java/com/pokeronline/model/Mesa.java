@@ -45,7 +45,8 @@ public class Mesa {
 
     private boolean fichasTemporales;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User creador;
 
     @Temporal(TemporalType.TIMESTAMP)

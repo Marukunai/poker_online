@@ -9,8 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface SancionRepository extends JpaRepository<Sancion, Long> {
-    List<Sancion> findByUsuario(User usuario);
-    List<Sancion> findByUsuarioId(Long userId);
+    List<Sancion> findByUser(User user);
+    List<Sancion> findByUser_Id(Long userId);
     List<Sancion> findByActivoTrue();
-    List<Sancion> findByUsuario_IdAndMotivoInAndTipo(Long userId, List<MotivoSancion> motivos, TipoSancion tipo);
-}
+    List<Sancion> findByUser_IdAndMotivoInAndTipo(
+            Long userId,
+            List<MotivoSancion> motivos,
+            TipoSancion tipo
+    );}

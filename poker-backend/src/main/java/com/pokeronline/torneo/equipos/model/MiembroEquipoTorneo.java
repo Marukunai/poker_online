@@ -18,7 +18,8 @@ public class MiembroEquipoTorneo {
     @ManyToOne
     private EquipoTorneo equipo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     private boolean esCapitan;

@@ -17,8 +17,8 @@ public class Sancion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
@@ -40,6 +40,7 @@ public class Sancion {
 
     private boolean activo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "admin_id", nullable = true)
     private User adminQueSanciona; // o null si es automático
 }

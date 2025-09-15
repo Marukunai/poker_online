@@ -30,5 +30,7 @@ public class EquipoTorneo {
 
     private boolean eliminado;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User capitan;
 }

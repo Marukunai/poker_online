@@ -40,7 +40,7 @@ public class ModeracionService {
     }
 
     public void aplicarSancionesProgresivas(User user) {
-        List<Sancion> historial = sancionRepository.findByUsuario(user);
+        List<Sancion> historial = sancionRepository.findByUser(user);
 
         long advertenciasRecientes = historial.stream()
                 .filter(s -> s.getTipo() == TipoSancion.ADVERTENCIA)
@@ -74,7 +74,7 @@ public class ModeracionService {
     }
 
     public long contarAdvertenciasChat(Long userId) {
-        List<Sancion> sanciones = sancionRepository.findByUsuario_IdAndMotivoInAndTipo(
+        List<Sancion> sanciones = sancionRepository.findByUser_IdAndMotivoInAndTipo(
                 userId,
                 List.of(MotivoSancion.LENGUAJE_OBSCENO, MotivoSancion.ABUSO_DEL_CHAT),
                 TipoSancion.ADVERTENCIA

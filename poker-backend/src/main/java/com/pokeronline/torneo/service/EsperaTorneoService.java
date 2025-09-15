@@ -28,7 +28,7 @@ public class EsperaTorneoService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        return esperaTorneoRepository.findByTorneoAndUsuario(torneo, user)
+        return esperaTorneoRepository.findByTorneoAndUser(torneo, user)
                 .orElseGet(() -> esperaTorneoRepository.save(
                         EsperaTorneo.builder()
                                 .torneo(torneo)

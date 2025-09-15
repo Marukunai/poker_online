@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EsperaTorneoRepository extends JpaRepository<EsperaTorneo, Long> {
-    Optional<EsperaTorneo> findByTorneoAndUsuario(Torneo torneo, User usuario);
+    Optional<EsperaTorneo> findByTorneoAndUser(Torneo torneo, User usuario);
     List<EsperaTorneo> findByTorneo(Torneo torneo);
     void deleteByTorneo(Torneo torneo);
     long countByTorneo_Id(Long torneoId);
