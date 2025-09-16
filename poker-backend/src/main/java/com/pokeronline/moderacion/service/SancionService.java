@@ -9,6 +9,7 @@ import com.pokeronline.moderacion.repository.SancionRepository;
 import com.pokeronline.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,21 @@ public class SancionService {
     public SancionDTO asignarSancion(CrearSancionDTO dto) {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        // Validaciones de coherencia
+        switch (dto.getTipo()) {
+            case SUSPENSION_PERMANENTE, BLOQUEO_CUENTA -> {
+                if (dto.getFechaFin() != null) {
+                    throw new IllegalArgumentException("Las sanciones permanentes no deben tener fechaFin.");
+                }
+            }
+            default -> {
+                // Sanciones temporales deben traer fechaFin
+                if (dto.getFechaFin() == null) {
+                    throw new IllegalArgumentException("Las sanciones temporales requieren fechaFin.");
+                }
+            }
+        }
 
         Sancion sancion = Sancion.builder()
                 .user(user)
@@ -46,12 +62,31 @@ public class SancionService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional()
+    public List<Sancion> listarCaducadasPendientes() {
+        return sancionRepository.findByActivoTrueAndFechaFinBefore(new Date());
+    }
+
     public void desactivarSancion(Long sancionId) {
         Sancion sancion = sancionRepository.findById(sancionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Sanción no encontrada"));
 
         sancion.setActivo(false);
         sancionRepository.save(sancion);
+    }
+
+    @Transactional
+    public int desactivarCaducadas(Date now) {
+        now = new Date();
+        return sancionRepository.desactivarCaducadas(now);
+    }
+
+    @Transactional
+    public int desactivarCaducadasConDetalle() {
+        List<Sancion> caducadas = listarCaducadasPendientes();
+        caducadas.forEach(s -> s.setActivo(false));
+        sancionRepository.saveAll(caducadas);
+        return caducadas.size();
     }
 
     private SancionDTO toDTO(Sancion s) {

@@ -3,6 +3,7 @@ package com.pokeronline.torneo.controller;
 import com.pokeronline.estadisticas.dto.TorneoHistorialDTO;
 import com.pokeronline.estadisticas.service.EstadisticasService;
 import com.pokeronline.torneo.dto.CrearTorneoDTO;
+import com.pokeronline.torneo.dto.TorneoDTO;
 import com.pokeronline.torneo.model.*;
 import com.pokeronline.torneo.service.TorneoService;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,9 @@ public class TorneoController {
     private final TorneoService torneoService;
 
     @GetMapping
-    public List<Torneo> listarTorneos() {
-        return torneoService.listarTorneos();
+    public List<TorneoDTO> listarTorneos() {
+        return torneoService.listarTorneos()
+                .stream().map(TorneoDTO::toDTO).toList();
     }
 
     @GetMapping("/torneo")
@@ -32,18 +34,18 @@ public class TorneoController {
     }
 
     @GetMapping("/pendientes")
-    public List<Torneo> listarPendientes() {
-        return torneoService.listarTorneosPendientes();
+    public List<TorneoDTO> listarPendientes() {
+        return torneoService.listarTorneosPendientes().stream().map(TorneoDTO::toDTO).toList();
     }
 
     @GetMapping("/encurso")
-    public List<Torneo> listarEnCurso() {
-        return torneoService.listarTorneosEnCurso();
+    public List<TorneoDTO> listarEnCurso() {
+        return torneoService.listarTorneosEnCurso().stream().map(TorneoDTO::toDTO).toList();
     }
 
     @GetMapping("/finalizados")
-    public List<Torneo> listarFinalizados() {
-        return torneoService.listarTorneosFinalizados(); // Asegúrate de tenerlo en el servicio
+    public List<TorneoDTO> listarFinalizados() {
+        return torneoService.listarTorneosFinalizados().stream().map(TorneoDTO::toDTO).toList(); // Asegúrate de tenerlo en el servicio
     }
 
     @GetMapping("/usuario/{userId}/historial")
@@ -101,7 +103,9 @@ public class TorneoController {
     }
 
     @GetMapping("/{id}")
-    public Torneo obtener(@PathVariable Long id) {
-        return torneoService.obtenerTorneoPorId(id).orElseThrow(() -> new RuntimeException("Torneo no encontrado"));
+    public TorneoDTO obtener(@PathVariable Long id) {
+        var torneo = torneoService.obtenerTorneoPorId(id)
+                .orElseThrow(() -> new RuntimeException("Torneo no encontrado"));
+        return TorneoDTO.toDTO(torneo);
     }
 }

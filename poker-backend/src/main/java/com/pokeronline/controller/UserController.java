@@ -4,6 +4,7 @@ import com.pokeronline.dto.HistorialManoDTO;
 import com.pokeronline.dto.PerfilCompletoDTO;
 import com.pokeronline.dto.UserDTO;
 import com.pokeronline.estadisticas.dto.TorneoHistorialDTO;
+import com.pokeronline.moderacion.dto.SancionDTO;
 import com.pokeronline.estadisticas.service.EstadisticasService;
 import com.pokeronline.exception.UnauthorizedException;
 import com.pokeronline.logros.dto.LogroUsuarioDTO;
@@ -33,6 +34,7 @@ public class UserController {
     private final HistorialManoRepository historialManoRepository;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final com.pokeronline.moderacion.service.SancionService sancionService;
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@AuthenticationPrincipal UserDetails userDetails) {
@@ -42,6 +44,8 @@ public class UserController {
         if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
 
         User user = userOpt.get();
+
+        var sancionesDto = sancionService.obtenerSancionesUsuario(user.getId());
 
         UserDTO dto = UserDTO.builder()
                 .id(user.getId())
@@ -57,6 +61,9 @@ public class UserController {
                 .vecesHizoBluff(user.getVecesHizoBluff())
                 .nivelBot(user.isEsIA() ? user.getNivelBot() : null)
                 .estiloBot(user.isEsIA() ? user.getEstiloBot() : null)
+                .sanciones(sancionesDto)
+                .bloqueado(user.isBloqueado())
+                .chatBloqueado(user.isChatBloqueado())
                 .build();
 
         return ResponseEntity.ok(dto);

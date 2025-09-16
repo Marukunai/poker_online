@@ -2,7 +2,10 @@ package com.pokeronline.dto;
 
 import com.pokeronline.bot.DificultadBot;
 import com.pokeronline.bot.EstiloBot;
+import com.pokeronline.moderacion.dto.SancionDTO;
 import lombok.*;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -24,4 +27,7 @@ public class UserDTO {
     private int vecesHizoBluff;
     private DificultadBot nivelBot;
     private EstiloBot estiloBot;
+    private List<SancionDTO> sanciones;
+    private boolean bloqueado;
+    private boolean chatBloqueado;
 }
