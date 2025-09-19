@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "23e20060-f4d3-4898-99de-2943362aa00d",
 		"name": "PokerApp",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "40466533"
 	},
 	"item": [
@@ -16,14 +16,24 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"maruku@email.com\",\r\n  \"password\": \"123456\"\r\n}",
+							"raw": "{\r\n  \"email\": \"maruku@gmail.com\",\r\n  \"password\": \"admin\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "http://localhost:8080/api/auth/login"
+						"url": {
+							"raw": "{{baseURL}}/api/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
 					},
 					"response": []
 				},
@@ -47,7 +57,17 @@
 								}
 							}
 						},
-						"url": "http://localhost:8080/api/auth/register"
+						"url": {
+							"raw": "{{baseURL}}/api/auth/register",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
 					},
 					"response": []
 				}
@@ -66,7 +86,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA5MjgxMjYsImV4cCI6MTc1MTAxNDUyNn0.aeIP7Jd6knhgvQ_QdO14Uf6A4igr6EVQa-PdwVeSTJ7yTX_soFJb-BPcixB0qlQ29uk712sdpyT5u4Hvgq5-mA",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1ODAxNzM3MCwiZXhwIjoxNzU4MTAzNzcwfQ.WMmSRcbc_avqis5HX1Yqc3h4Hsw9lix-cOaVr_cxGq8MOfXNBoo23Rn1-O_skBnvzdYogHpkVP2I69XtMIYvbA",
 								"type": "text"
 							}
 						],
@@ -79,7 +99,17 @@
 								}
 							}
 						},
-						"url": "http://localhost:8080/api/user/profile"
+						"url": {
+							"raw": "{{baseURL}}/api/user/profile",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"profile"
+							]
+						}
 					},
 					"response": []
 				},
@@ -94,7 +124,17 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/user/ranking"
+						"url": {
+							"raw": "{{baseURL}}/api/user/ranking",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"ranking"
+							]
+						}
 					},
 					"response": []
 				},
@@ -109,7 +149,17 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/user/historial"
+						"url": {
+							"raw": "{{baseURL}}/api/user/historial",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"historial"
+							]
+						}
 					},
 					"response": []
 				}
@@ -129,7 +179,16 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas"
+							]
+						}
 					},
 					"response": []
 				},
@@ -169,7 +228,16 @@
 								}
 							]
 						},
-						"url": "http://localhost:8080/api/mesas"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas"
+							]
+						}
 					},
 					"response": []
 				},
@@ -180,13 +248,18 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTI5MDExOCwiZXhwIjoxNzUxMzc2NTE4fQ.ANMR8wL7Xkj1krGxbvYCrSQQLmYL1pILjp53oFQTaQKLS_RxP-db0X-HTRlURPDYkg9_r8-tfgdy5vQ7mEqwKA",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE0NjUxMDgsImV4cCI6MTc1MTU1MTUwOH0.zeo7lhu78ugWXosL0ZGUT6oOX8n5ilDKaXhRtWFFtgjh8OodVzzQZTJbJxH_s1g0FF1P8BD-TGN94o5bGnGulw",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "urlencoded",
 							"urlencoded": [
+								{
+									"key": "emailCreador",
+									"value": "alice@gmail.com",
+									"type": "text"
+								},
 								{
 									"key": "nombre",
 									"value": "Partida privada de test",
@@ -219,7 +292,17 @@
 								}
 							]
 						},
-						"url": "http://localhost:8080/api/mesas/crearPrivada"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/crearPrivada",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"crearPrivada"
+							]
+						}
 					},
 					"response": []
 				},
@@ -234,7 +317,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/unirse"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/1/unirse",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"1",
+								"unirse"
+							]
+						}
 					},
 					"response": []
 				},
@@ -245,7 +339,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTI5MDExOCwiZXhwIjoxNzUxMzc2NTE4fQ.ANMR8wL7Xkj1krGxbvYCrSQQLmYL1pILjp53oFQTaQKLS_RxP-db0X-HTRlURPDYkg9_r8-tfgdy5vQ7mEqwKA",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE0NjUxMDgsImV4cCI6MTc1MTU1MTUwOH0.zeo7lhu78ugWXosL0ZGUT6oOX8n5ilDKaXhRtWFFtgjh8OodVzzQZTJbJxH_s1g0FF1P8BD-TGN94o5bGnGulw",
 								"type": "text"
 							}
 						],
@@ -254,7 +348,7 @@
 							"urlencoded": [
 								{
 									"key": "email",
-									"value": "alice@email.com",
+									"value": "maruku@email.com",
 									"type": "text"
 								},
 								{
@@ -269,7 +363,17 @@
 								}
 							]
 						},
-						"url": "http://localhost:8080/api/mesas/unirsePrivada"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/unirsePrivada",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"unirsePrivada"
+							]
+						}
 					},
 					"response": []
 				},
@@ -280,7 +384,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTI5MDExOCwiZXhwIjoxNzUxMzc2NTE4fQ.ANMR8wL7Xkj1krGxbvYCrSQQLmYL1pILjp53oFQTaQKLS_RxP-db0X-HTRlURPDYkg9_r8-tfgdy5vQ7mEqwKA",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE0NjUxMDgsImV4cCI6MTc1MTU1MTUwOH0.zeo7lhu78ugWXosL0ZGUT6oOX8n5ilDKaXhRtWFFtgjh8OodVzzQZTJbJxH_s1g0FF1P8BD-TGN94o5bGnGulw",
 								"type": "text"
 							}
 						],
@@ -299,13 +403,29 @@
 								},
 								{
 									"key": "nivelDificultad",
-									"value": "3",
-									"description": "si se deja nulo será default 1",
+									"value": "NORMAL",
+									"description": "si se deja nulo será default FACIL",
+									"type": "text"
+								},
+								{
+									"key": "estilo",
+									"value": "AGRESIVO",
+									"description": "si se deja nulo será default DEFAULT",
 									"type": "text"
 								}
 							]
 						},
-						"url": "http://localhost:8080/api/mesas/agregar-bot"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/agregar-bot",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"agregar-bot"
+							]
+						}
 					},
 					"response": []
 				},
@@ -325,7 +445,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/salir"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/1/salir",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"1",
+								"salir"
+							]
+						}
 					},
 					"response": []
 				},
@@ -345,7 +476,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/abandonar"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/1/abandonar",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"1",
+								"abandonar"
+							]
+						}
 					},
 					"response": []
 				},
@@ -360,7 +502,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/jugadores"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/1/jugadores",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"1",
+								"jugadores"
+							]
+						}
 					},
 					"response": []
 				},
@@ -384,7 +537,18 @@
 							"mode": "urlencoded",
 							"urlencoded": []
 						},
-						"url": "http://localhost:8080/api/mesas/1/reconectar"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/1/reconectar",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"1",
+								"reconectar"
+							]
+						}
 					},
 					"response": []
 				},
@@ -399,7 +563,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/keepalive"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/1/keepalive",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"1",
+								"keepalive"
+							]
+						}
 					},
 					"response": []
 				}
@@ -419,7 +594,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/4/repartir"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/4/repartir",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"4",
+								"repartir"
+							]
+						}
 					},
 					"response": []
 				},
@@ -434,7 +620,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/4/nueva-mano"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/4/nueva-mano",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"4",
+								"nueva-mano"
+							]
+						}
 					},
 					"response": []
 				},
@@ -449,7 +646,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/comunitarias"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/1/comunitarias",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"1",
+								"comunitarias"
+							]
+						}
 					},
 					"response": []
 				},
@@ -469,7 +677,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/finalizar-mano"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/1/finalizar-mano",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"1",
+								"finalizar-mano"
+							]
+						}
 					},
 					"response": []
 				},
@@ -484,7 +703,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/resolver-showdown"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/1/resolver-showdown",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"1",
+								"resolver-showdown"
+							]
+						}
 					},
 					"response": []
 				},
@@ -504,7 +734,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/ganador"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/1/ganador",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"1",
+								"ganador"
+							]
+						}
 					},
 					"response": []
 				}
@@ -524,7 +765,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/turnos/iniciar/1"
+						"url": {
+							"raw": "{{baseURL}}/api/turnos/iniciar/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"turnos",
+								"iniciar",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
@@ -539,7 +791,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/turnos/actual/1"
+						"url": {
+							"raw": "{{baseURL}}/api/turnos/actual/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"turnos",
+								"actual",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
@@ -559,7 +822,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/turnos/avanzar/1"
+						"url": {
+							"raw": "{{baseURL}}/api/turnos/avanzar/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"turnos",
+								"avanzar",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
@@ -594,7 +868,18 @@
 								}
 							]
 						},
-						"url": "http://localhost:8080/api/turnos/accion/1"
+						"url": {
+							"raw": "{{baseURL}}/api/turnos/accion/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"turnos",
+								"accion",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
@@ -609,7 +894,19 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/turnos/fase/1/siguiente"
+						"url": {
+							"raw": "{{baseURL}}/api/turnos/fase/1/siguiente",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"turnos",
+								"fase",
+								"1",
+								"siguiente"
+							]
+						}
 					},
 					"response": []
 				}
@@ -629,7 +926,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/estado"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/1/estado",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"1",
+								"estado"
+							]
+						}
 					},
 					"response": []
 				},
@@ -644,7 +952,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesas/1/acciones"
+						"url": {
+							"raw": "{{baseURL}}/api/mesas/1/acciones",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesas",
+								"1",
+								"acciones"
+							]
+						}
 					},
 					"response": []
 				}
@@ -669,7 +988,19 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesa/espectadores/1/unirse"
+						"url": {
+							"raw": "{{baseURL}}/api/mesa/espectadores/1/unirse",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesa",
+								"espectadores",
+								"1",
+								"unirse"
+							]
+						}
 					},
 					"response": []
 				},
@@ -689,7 +1020,19 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesa/espectadores/1/salir"
+						"url": {
+							"raw": "{{baseURL}}/api/mesa/espectadores/1/salir",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesa",
+								"espectadores",
+								"1",
+								"salir"
+							]
+						}
 					},
 					"response": []
 				},
@@ -709,7 +1052,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/mesa/espectadores/1"
+						"url": {
+							"raw": "{{baseURL}}/api/mesa/espectadores/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"mesa",
+								"espectadores",
+								"1"
+							]
+						}
 					},
 					"response": []
 				}
@@ -725,11 +1079,20 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTQ2NjM5NCwiZXhwIjoxNzUxNTUyNzk0fQ.pADNp7sXw64Db-DvFz3-E0o6I4v0Lv0BHLRDoCxEdIexgAaX4kRvT2sDVWNnv2zynxVJReFlccSozf_FSDi_bw",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MDA5Mzg3LCJleHAiOjE3NTgwOTU3ODd9.fZbsEIKnGxhWZYvv8i6GSGCbSG-ZhxhLKxWu45reNPuPJIeY6b0-S4kOr37RixM2fUREqOk_DCeEW3_oU_o0LQ",
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos"
+							]
+						}
 					},
 					"response": []
 				},
@@ -757,7 +1120,17 @@
 								}
 							]
 						},
-						"url": "http://localhost:8080/api/torneos/torneo"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/torneo",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"torneo"
+							]
+						}
 					},
 					"response": []
 				},
@@ -779,7 +1152,17 @@
 							"mode": "urlencoded",
 							"urlencoded": []
 						},
-						"url": "http://localhost:8080/api/torneos/1"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
@@ -790,11 +1173,21 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MDA5Mzg3LCJleHAiOjE3NTgwOTU3ODd9.fZbsEIKnGxhWZYvv8i6GSGCbSG-ZhxhLKxWu45reNPuPJIeY6b0-S4kOr37RixM2fUREqOk_DCeEW3_oU_o0LQ",
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/pendientes"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/pendientes",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"pendientes"
+							]
+						}
 					},
 					"response": []
 				},
@@ -809,7 +1202,17 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/encurso"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/encurso",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"encurso"
+							]
+						}
 					},
 					"response": []
 				},
@@ -824,7 +1227,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/1/estado"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1/estado",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1",
+								"estado"
+							]
+						}
 					},
 					"response": []
 				},
@@ -849,7 +1263,18 @@
 								}
 							]
 						},
-						"url": "http://localhost:8080/api/torneos/1/estado"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1/estado",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1",
+								"estado"
+							]
+						}
 					},
 					"response": []
 				},
@@ -864,7 +1289,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/1/nivel-ciegas"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1/nivel-ciegas",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1",
+								"nivel-ciegas"
+							]
+						}
 					},
 					"response": []
 				},
@@ -893,7 +1329,16 @@
 								}
 							}
 						},
-						"url": "http://localhost:8080/api/torneos"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos"
+							]
+						}
 					},
 					"response": []
 				},
@@ -913,7 +1358,17 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/1"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
@@ -928,7 +1383,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/1/inscribirse"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1/inscribirse",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1",
+								"inscribirse"
+							]
+						}
 					},
 					"response": []
 				},
@@ -939,11 +1405,22 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTQ2NjM5NCwiZXhwIjoxNzUxNTUyNzk0fQ.pADNp7sXw64Db-DvFz3-E0o6I4v0Lv0BHLRDoCxEdIexgAaX4kRvT2sDVWNnv2zynxVJReFlccSozf_FSDi_bw",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MDA5Mzg3LCJleHAiOjE3NTgwOTU3ODd9.fZbsEIKnGxhWZYvv8i6GSGCbSG-ZhxhLKxWu45reNPuPJIeY6b0-S4kOr37RixM2fUREqOk_DCeEW3_oU_o0LQ",
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/1/participantes"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1/participantes",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1",
+								"participantes"
+							]
+						}
 					},
 					"response": []
 				},
@@ -973,7 +1450,18 @@
 								}
 							]
 						},
-						"url": "http://localhost:8080/api/torneos/1/sumarpuntos"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1/sumarpuntos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1",
+								"sumarpuntos"
+							]
+						}
 					},
 					"response": []
 				},
@@ -988,7 +1476,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/1/asignarPuntosRendimiento"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1/asignarPuntosRendimiento",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1",
+								"asignarPuntosRendimiento"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1003,7 +1502,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/1/ranking"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1/ranking",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1",
+								"ranking"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1018,12 +1528,26 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/1/participantes"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1/participantes",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1",
+								"participantes"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "🧾 Ver tus datos",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1033,7 +1557,27 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/1/datos"
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1/datos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1",
+								"datos"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1048,7 +1592,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/mesas/1"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/mesas/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"mesas",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1073,7 +1628,19 @@
 								}
 							]
 						},
-						"url": "http://localhost:8080/api/torneos/mesas/1/vincular"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/mesas/1/vincular",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"mesas",
+								"1",
+								"vincular"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1088,7 +1655,19 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/mesas/desvincular/1"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/mesas/desvincular/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"mesas",
+								"desvincular",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1121,7 +1700,18 @@
 								}
 							]
 						},
-						"url": "http://localhost:8080/api/torneos/mesas/buscar"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/mesas/buscar",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"mesas",
+								"buscar"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1136,7 +1726,18 @@
 								"type": "text"
 							}
 						],
-						"url": "http://localhost:8080/api/torneos/1/blinds"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1/blinds",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1",
+								"blinds"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1160,11 +1761,465 @@
 								}
 							}
 						},
-						"url": "http://localhost:8080/api/torneos/1/blinds"
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/1/blinds",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"1",
+								"blinds"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Estadísticas por jugador",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/estadisticas",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"estadisticas"
+							]
+						}
 					},
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Equipos",
+			"item": [
+				{
+					"name": "Miembros",
+					"item": []
+				},
+				{
+					"name": "Crear Equipo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1ODI2NzM4NCwiZXhwIjoxNzU4MzUzNzg0fQ.Au0aw4YDR-b4bwjV8EKvOKRAmQTfq8P40xIHKRREfxHwWhXfjtL9r7Lgl1b6u4GMl1Hb7YQqJbdJBrapywbQKQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"torneoId\": 1,\r\n    \"nombreEquipo\": \"Big Dogs\",\r\n    \"capitanId\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/equipos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"equipos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Equipos",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/equipos/torneo/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"equipos",
+								"torneo",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Equipo",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE1MzA3MDYsImV4cCI6MTc1MTYxNzEwNn0.Am16l3JXeEMxZG-a9fe2cIabja4F-khwBsBMHIaCN_Fp3ho66r7BP6UXPfW896bLld57ITeS_tZWGrLhA2iDhA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/equipos/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"equipos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Puntos",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/equipos/1/puntos/10",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"equipos",
+								"1",
+								"puntos",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Equipo",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/equipos/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"equipos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Capitán",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjY3NjA1LCJleHAiOjE3NTgzNTQwMDV9.vpJ6pF6AjaoR2jrY4nDMctpDF_l27EOJVC6lPzdNOmayEY8zPsGryCxaWswgmZPB3TozwJs_s9h8jcJrIerPgw"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"equipoId\": 1,\n  \"nuevoCapitanId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/torneos/equipos/actualizar-capitan",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"torneos",
+								"equipos",
+								"actualizar-capitan"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Estadisticas",
+			"item": [
+				{
+					"name": "Obtener Estadísticas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/estadisticas/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"estadisticas",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Progreso Mensual en Torneos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/estadisticas/1/progreso-mensual-torneos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"estadisticas",
+								"1",
+								"progreso-mensual-torneos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Progreso Mensual en Partidas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/estadisticas/1/progreso-mensual-partidas",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"estadisticas",
+								"1",
+								"progreso-mensual-partidas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ranking Global",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/estadisticas/ranking/global",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"estadisticas",
+								"ranking",
+								"global"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ranking Mensual",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "year",
+									"value": "2025",
+									"type": "text"
+								},
+								{
+									"key": "mes",
+									"value": "7",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/estadisticas/ranking/mensual",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"estadisticas",
+								"ranking",
+								"mensual"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sanciones",
+			"item": [
+				{
+					"name": "Crear sanción",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MDA5Mzg3LCJleHAiOjE3NTgwOTU3ODd9.fZbsEIKnGxhWZYvv8i6GSGCbSG-ZhxhLKxWu45reNPuPJIeY6b0-S4kOr37RixM2fUREqOk_DCeEW3_oU_o0LQ",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": 5,\r\n  \"tipo\": \"SUSPENSION_TEMPORAL\",\r\n  \"motivo\": \"COMPORTAMIENTO_TOXICO_EN_TORNEOS\",\r\n  \"descripcion\": \"Lenguaje tóxico reiterado durante el torneo.\",\r\n  \"fechaFin\": \"2025-09-17T11:40:00+02:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/sanciones",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"sanciones"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Espera",
+			"item": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
 		}
 	]
 }

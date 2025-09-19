@@ -23,7 +23,6 @@ public class MiembroEquipoTorneoController {
     private final EquipoTorneoService equipoService;
     private final UserService userService;
 
-    // TODO (postman)
     @PostMapping
     public MiembroEquipoDTO agregarMiembro(@RequestBody AgregarMiembroDTO dto,
                                            @AuthenticationPrincipal UserDetails userDetails) {
@@ -47,8 +46,8 @@ public class MiembroEquipoTorneoController {
                 .toList();
     }
 
-    @DeleteMapping("/{miembroId}")
-    public void eliminarMiembro(@PathVariable Long miembroId,
+    @DeleteMapping("/{equipoId}/{miembroId}")
+    public void eliminarMiembro(@PathVariable Long equipoId, @PathVariable Long miembroId,
                                 @AuthenticationPrincipal UserDetails userDetails) {
         Long userIdSolicitante = userService.getUserIdFromUserDetails(userDetails);
         miembroService.eliminarMiembro(miembroId, userIdSolicitante);

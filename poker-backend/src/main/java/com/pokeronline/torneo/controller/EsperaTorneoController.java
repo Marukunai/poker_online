@@ -1,5 +1,6 @@
 package com.pokeronline.torneo.controller;
 
+import com.pokeronline.torneo.dto.EsperaTorneoDTO;
 import com.pokeronline.torneo.model.EsperaTorneo;
 import com.pokeronline.torneo.service.EsperaTorneoService;
 import lombok.RequiredArgsConstructor;
@@ -14,15 +15,18 @@ public class EsperaTorneoController {
 
     private final EsperaTorneoService esperaTorneoService;
 
-    // TODO (postman)
     @PostMapping("/registrar")
-    public EsperaTorneo registrar(@RequestParam Long torneoId, @RequestParam Long userId) {
-        return esperaTorneoService.registrarPresencia(torneoId, userId);
+    public EsperaTorneoDTO registrar(@RequestParam Long torneoId, @RequestParam Long userId) {
+        EsperaTorneo e = esperaTorneoService.registrarPresencia(torneoId, userId);
+        return EsperaTorneoDTO.fromEntity(e);
     }
 
     @GetMapping("/{torneoId}")
-    public List<EsperaTorneo> getEsperando(@PathVariable Long torneoId) {
-        return esperaTorneoService.obtenerEsperando(torneoId);
+    public List<EsperaTorneoDTO> getEsperando(@PathVariable Long torneoId) {
+        return esperaTorneoService.obtenerEsperando(torneoId)
+                .stream()
+                .map(EsperaTorneoDTO::fromEntity)
+                .toList();
     }
 
     @DeleteMapping("/{torneoId}")

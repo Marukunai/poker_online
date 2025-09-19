@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Calendar;
@@ -38,6 +39,7 @@ public class EquipoTorneoService {
     private final UserRepository userRepository;
     private final UserService userService;
 
+    @Transactional
     public EquipoTorneo crearEquipo(Torneo torneo, String nombreEquipo, User capitan) {
         EquipoTorneo equipo = EquipoTorneo.builder()
                 .torneo(torneo)
@@ -46,7 +48,27 @@ public class EquipoTorneoService {
                 .puntosTotales(0)
                 .build();
 
-        return equipoTorneoRepository.save(equipo);
+        equipo = equipoTorneoRepository.save(equipo);
+
+        // Crear el registro de miembro para el capitán con esCapitan = true
+        if (!miembroEquipoTorneoRepository.existsByEquipoAndUser(equipo, capitan)) {
+            MiembroEquipoTorneo miembroCapitan = MiembroEquipoTorneo.builder()
+                    .equipo(equipo)
+                    .user(capitan)
+                    .esCapitan(true)   // <<< IMPORTANTE
+                    .build();
+            miembroEquipoTorneoRepository.save(miembroCapitan);
+        } else {
+            // Si ya existiese como miembro por cualquier motivo, asegúrate del flag
+            miembroEquipoTorneoRepository.findByEquipoAndUser(equipo, capitan).ifPresent(m -> {
+                if (!m.isEsCapitan()) {
+                    m.setEsCapitan(true);
+                    miembroEquipoTorneoRepository.save(m);
+                }
+            });
+        }
+
+        return equipo;
     }
 
     public List<EquipoTorneo> listarEquiposDeTorneo(Long torneoId) {
@@ -68,12 +90,12 @@ public class EquipoTorneoService {
         equipoTorneoRepository.deleteById(equipoId);
     }
 
+    @Transactional
     public void actualizarCapitan(UpdateCapitanDTO dto, Long userIdSolicitante) {
         EquipoTorneo equipo = obtenerEquipo(dto.getEquipoId());
 
         boolean esCapitan = equipo.getCapitan().getId().equals(userIdSolicitante);
         boolean esAdmin = userService.isAdmin(userIdSolicitante);
-
         if (!esCapitan && !esAdmin) {
             throw new AccessDeniedException("No tienes permisos para cambiar el capitán");
         }
@@ -81,11 +103,23 @@ public class EquipoTorneoService {
         User nuevoCapitan = userRepository.findById(dto.getNuevoCapitanId())
                 .orElseThrow(() -> new RuntimeException("Usuario nuevo capitán no encontrado"));
 
-        boolean esMiembro = miembroEquipoTorneoRepository.existsByEquipoAndUser(equipo, nuevoCapitan);
-        if (!esMiembro) {
-            throw new IllegalArgumentException("El nuevo capitán debe ser miembro del equipo");
-        }
+        // Debe ser miembro
+        MiembroEquipoTorneo miembroNuevo = miembroEquipoTorneoRepository
+                .findByEquipo_IdAndUser_Id(equipo.getId(), nuevoCapitan.getId())
+                .orElseThrow(() -> new IllegalArgumentException("El nuevo capitán debe ser miembro del equipo"));
 
+        // Desmarcar capitán actual (si lo hay)
+        miembroEquipoTorneoRepository.findByEquipo_IdAndEsCapitanTrue(equipo.getId())
+                .ifPresent(actual -> {
+                    actual.setEsCapitan(false);
+                    miembroEquipoTorneoRepository.save(actual);
+                });
+
+        // Marcar nuevo capitán
+        miembroNuevo.setEsCapitan(true);
+        miembroEquipoTorneoRepository.save(miembroNuevo);
+
+        // Sincronizar campo en Equipo
         equipo.setCapitan(nuevoCapitan);
         equipoTorneoRepository.save(equipo);
     }

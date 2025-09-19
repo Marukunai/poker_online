@@ -14,4 +14,6 @@ public interface MiembroEquipoTorneoRepository extends JpaRepository<MiembroEqui
     boolean existsByEquipoAndUser(EquipoTorneo equipo, User user);
     Optional<MiembroEquipoTorneo> findByEquipoAndUser(EquipoTorneo equipo, User user);
     boolean existsByUserAndEquipo_Torneo(User user, Torneo torneo);
+    Optional<MiembroEquipoTorneo> findByEquipo_IdAndEsCapitanTrue(Long equipoId);
+    Optional<MiembroEquipoTorneo> findByEquipo_IdAndUser_Id(Long equipoId, Long userId);
 }

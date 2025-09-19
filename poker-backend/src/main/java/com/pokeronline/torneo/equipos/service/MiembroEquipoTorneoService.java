@@ -29,9 +29,12 @@ public class MiembroEquipoTorneoService {
             throw new RuntimeException("El usuario ya es miembro del equipo");
         }
 
+        boolean esCapitan = equipo.getCapitan() != null && equipo.getCapitan().getId().equals(user.getId());
+
         MiembroEquipoTorneo miembro = MiembroEquipoTorneo.builder()
                 .equipo(equipo)
                 .user(user)
+                .esCapitan(esCapitan) // <<< si el que añades es el capitán, déjalo marcado
                 .build();
 
         logroService.otorgarLogroSiNoTiene(user.getId(), "Jugador en equipo");

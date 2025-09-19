@@ -4,9 +4,11 @@ import com.pokeronline.model.User;
 import com.pokeronline.torneo.equipos.dto.*;
 import com.pokeronline.torneo.equipos.model.EquipoTorneo;
 import com.pokeronline.torneo.equipos.service.EquipoTorneoService;
+import com.pokeronline.torneo.model.Torneo;
 import com.pokeronline.torneo.service.TorneoService;
 import com.pokeronline.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,14 +27,13 @@ public class EquipoTorneoController {
     private final TorneoService torneoService;
 
     @PostMapping
-    public EquipoTorneo crearEquipo(@RequestBody CrearEquipoDTO dto) {
+    public ResponseEntity<EquipoTorneoDTO> crearEquipo(@RequestBody CrearEquipoDTO dto) {
         User capitan = userService.getById(dto.getCapitanId());
-        return equipoTorneoService.crearEquipo(
-                torneoService.obtenerTorneoPorId(dto.getTorneoId())
-                        .orElseThrow(() -> new RuntimeException("Torneo no encontrado")),
-                dto.getNombreEquipo(),
-                capitan
-        );
+        Torneo torneo = torneoService.obtenerTorneoPorId(dto.getTorneoId())
+                .orElseThrow(() -> new RuntimeException("Torneo no encontrado"));
+
+        var equipo = equipoTorneoService.crearEquipo(torneo, dto.getNombreEquipo(), capitan);
+        return ResponseEntity.status(HttpStatus.CREATED).body(EquipoTorneoDTO.fromEntity(equipo));
     }
 
     @GetMapping("/torneo/{torneoId}")
@@ -58,7 +59,6 @@ public class EquipoTorneoController {
         equipoTorneoService.eliminarEquipo(equipoId);
     }
 
-    // TODO (postman)
     @PutMapping("/actualizar-capitan")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> actualizarCapitan(
@@ -99,6 +99,4 @@ public class EquipoTorneoController {
     public List<HistorialEquipoDTO> historialEquipo(@PathVariable Long equipoId) {
         return equipoTorneoService.obtenerHistorialEquipo(equipoId);
     }
-
-    // end
 }
