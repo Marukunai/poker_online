@@ -55,4 +55,15 @@ public class GlobalExceptionHandler {
                         "timestamp", LocalDateTime.now()
                 ));
     }
+
+    @ExceptionHandler(AlreadyInactiveException.class)
+    public ResponseEntity<?> handleAlreadyInactive(AlreadyInactiveException ex, WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT) // 409
+                .body(Map.of(
+                        "error", ex.getMessage(),
+                        "status", 409,
+                        "timestamp", LocalDateTime.now()
+                ));
+    }
 }

@@ -1,10 +1,12 @@
 package com.pokeronline.moderacion.service;
 
+import com.pokeronline.exception.AlreadyInactiveException;
 import com.pokeronline.exception.ResourceNotFoundException;
 import com.pokeronline.model.User;
 import com.pokeronline.moderacion.dto.CrearSancionDTO;
 import com.pokeronline.moderacion.dto.SancionDTO;
 import com.pokeronline.moderacion.model.Sancion;
+import com.pokeronline.moderacion.model.TipoSancion;
 import com.pokeronline.moderacion.repository.SancionRepository;
 import com.pokeronline.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import jakarta.transaction.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,7 +65,7 @@ public class SancionService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional()
+    @Transactional(Transactional.TxType.SUPPORTS)
     public List<Sancion> listarCaducadasPendientes() {
         return sancionRepository.findByActivoTrueAndFechaFinBefore(new Date());
     }
@@ -71,21 +74,38 @@ public class SancionService {
         Sancion sancion = sancionRepository.findById(sancionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Sanción no encontrada"));
 
+        if (!sancion.isActivo()) {
+            throw new AlreadyInactiveException("La sanción ya está desactivada");
+        }
+
         sancion.setActivo(false);
         sancionRepository.save(sancion);
     }
 
     @Transactional
-    public int desactivarCaducadas(Date now) {
-        now = new Date();
-        return sancionRepository.desactivarCaducadas(now);
-    }
-
-    @Transactional
     public int desactivarCaducadasConDetalle() {
-        List<Sancion> caducadas = listarCaducadasPendientes();
+        List<Sancion> caducadas = sancionRepository.findByActivoTrueAndFechaFinBefore(new Date());
+        if (caducadas.isEmpty()) return 0;
+
+        // Desactivar sanciones vencidas
         caducadas.forEach(s -> s.setActivo(false));
         sancionRepository.saveAll(caducadas);
+
+        // Revertir flags en User si ya no quedan sanciones activas del mismo tipo
+        Map<User, List<Sancion>> porUsuario = caducadas.stream().collect(Collectors.groupingBy(Sancion::getUser));
+        for (var entry : porUsuario.entrySet()) {
+            User u = entry.getKey();
+
+            boolean quedaChatBan = sancionRepository.existsByUser_IdAndActivoTrueAndTipoIn(
+                    u.getId(), List.of(TipoSancion.PROHIBICION_CHAT));
+            if (!quedaChatBan) u.setChatBloqueado(false);
+
+            boolean quedaBloqueo = sancionRepository.existsByUser_IdAndActivoTrueAndTipoIn(
+                    u.getId(), List.of(TipoSancion.BLOQUEO_CUENTA, TipoSancion.SUSPENSION_TEMPORAL));
+            if (!quedaBloqueo) u.setBloqueado(false);
+
+            userRepository.save(u);
+        }
         return caducadas.size();
     }
 

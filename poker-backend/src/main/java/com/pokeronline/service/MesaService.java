@@ -487,10 +487,8 @@ public class MesaService {
 
     private boolean tieneSancionGrave(User user) {
         return user.getSanciones().stream().anyMatch(s -> {
-            MotivoSancion m = s.getMotivo();
-            boolean activa = s.getFechaFin() == null || s.getFechaFin().after(new Date());
-
-            return activa && Set.of(
+            boolean activa = s.isActivo() && (s.getFechaFin() == null || s.getFechaFin().after(new Date()));
+            return activa && java.util.Set.of(
                     MotivoSancion.INFRACCIONES_GRAVES,
                     MotivoSancion.REITERACION_INFRACCIONES,
                     MotivoSancion.FRAUDE_DE_FICHAS,
@@ -499,7 +497,7 @@ public class MesaService {
                     MotivoSancion.COLUSION_ENTRE_JUGADORES,
                     MotivoSancion.MULTICUENTA,
                     MotivoSancion.USO_DE_BOTS
-            ).contains(m);
+            ).contains(s.getMotivo());
         });
     }
 

@@ -4,9 +4,11 @@ import com.pokeronline.moderacion.dto.CrearSancionDTO;
 import com.pokeronline.moderacion.dto.SancionDTO;
 import com.pokeronline.moderacion.service.SancionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sanciones")
@@ -26,7 +28,8 @@ public class SancionController {
     }
 
     @DeleteMapping("/{sancionId}")
-    public void desactivarSancion(@PathVariable Long sancionId) {
+    public ResponseEntity<?> desactivarSancion(@PathVariable Long sancionId) {
         sancionService.desactivarSancion(sancionId);
+        return ResponseEntity.ok(Map.of("message", "Sanción desactivada correctamente"));
     }
 }

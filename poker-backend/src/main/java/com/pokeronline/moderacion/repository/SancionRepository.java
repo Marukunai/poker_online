@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.awt.print.Pageable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public interface SancionRepository extends JpaRepository<Sancion, Long> {
     List<Sancion> findByUser_Id(Long userId);
     List<Sancion> findByActivoTrue();
     List<Sancion> findByActivoTrueAndFechaFinBefore(Date now);
+    boolean existsByUser_IdAndActivoTrueAndTipoIn(Long userId, Collection<TipoSancion> tipos);
     List<Sancion> findByUser_IdAndMotivoInAndTipo(
             Long userId,
             List<MotivoSancion> motivos,

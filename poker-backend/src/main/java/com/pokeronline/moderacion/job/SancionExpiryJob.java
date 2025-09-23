@@ -16,23 +16,16 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class SancionExpiryJob {
 
-    private final SancionRepository sancionRepository;
     private final SancionService sancionService;
 
-    // Cada minuto
-    @Scheduled(fixedDelay = 60_000)
+    @Scheduled(fixedDelayString = "${jobs.sanciones.delay:60000}")
     @Transactional
     public void desactivarSancionesCaducadas() {
-        Date now = new Date();
-
-        var candidatas = sancionService.listarCaducadasPendientes();
-        if (candidatas.isEmpty()) {
+        int n = sancionService.desactivarCaducadasConDetalle();
+        if (n > 0) {
+            log.info("Sanciones caducadas desactivadas: {}", n);
+        } else {
             log.info("No hay sanciones caducadas para desactivar en este ciclo.");
-            return;
         }
-        int afectados = sancionService.desactivarCaducadas(now);
-        log.info("Sanciones caducadas desactivadas: {} (ids={})",
-                afectados,
-                candidatas.stream().map(Sancion::getId).toList());
     }
 }

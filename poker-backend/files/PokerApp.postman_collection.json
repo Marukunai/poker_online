@@ -1073,6 +1073,651 @@
 			"name": "Torneos",
 			"item": [
 				{
+					"name": "Equipos",
+					"item": [
+						{
+							"name": "Miembros",
+							"item": [
+								{
+									"name": "Añadir miembro al equipo",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"equipoId\": 1,\n  \"userId\": 4\n}"
+										},
+										"url": {
+											"raw": "{{baseURL}}/api/torneos/equipos/miembros",
+											"host": [
+												"{{baseURL}}"
+											],
+											"path": [
+												"api",
+												"torneos",
+												"equipos",
+												"miembros"
+											]
+										},
+										"description": "Requiere autenticación. El usuario autenticado se toma como solicitante (capitán)."
+									},
+									"response": []
+								},
+								{
+									"name": "Listar miembros de un equipo",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseURL}}/api/torneos/equipos/miembros/equipo/1",
+											"host": [
+												"{{baseURL}}"
+											],
+											"path": [
+												"api",
+												"torneos",
+												"equipos",
+												"miembros",
+												"equipo",
+												"1"
+											]
+										},
+										"description": "Devuelve la lista de miembros del equipo."
+									},
+									"response": []
+								},
+								{
+									"name": "Eliminar miembro por ID",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseURL}}/api/torneos/equipos/miembros/1/4",
+											"host": [
+												"{{baseURL}}"
+											],
+											"path": [
+												"api",
+												"torneos",
+												"equipos",
+												"miembros",
+												"1",
+												"4"
+											]
+										},
+										"description": "Requiere autenticación. El solicitante debe tener permisos (p. ej., capitán)."
+									},
+									"response": []
+								},
+								{
+									"name": "Eliminar todos los miembros de un equipo",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseURL}}/api/torneos/equipos/miembros/equipo/1",
+											"host": [
+												"{{baseURL}}"
+											],
+											"path": [
+												"api",
+												"torneos",
+												"equipos",
+												"miembros",
+												"equipo",
+												"1"
+											]
+										},
+										"description": "Requiere autenticación. El solicitante debe tener permisos (p. ej., capitán)."
+									},
+									"response": []
+								},
+								{
+									"name": "Obtener miembro específico",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{baseURL}}/api/torneos/equipos/miembros/equipo/1/user/4",
+											"host": [
+												"{{baseURL}}"
+											],
+											"path": [
+												"api",
+												"torneos",
+												"equipos",
+												"miembros",
+												"equipo",
+												"1",
+												"user",
+												"4"
+											]
+										},
+										"description": "Busca un miembro concreto por equipo y userId."
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Crear Equipo",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1ODI2NzM4NCwiZXhwIjoxNzU4MzUzNzg0fQ.Au0aw4YDR-b4bwjV8EKvOKRAmQTfq8P40xIHKRREfxHwWhXfjtL9r7Lgl1b6u4GMl1Hb7YQqJbdJBrapywbQKQ",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"torneoId\": 1,\r\n    \"nombreEquipo\": \"Big Dogs\",\r\n    \"capitanId\": 3\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/equipos",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"equipos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Equipos",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/equipos/torneo/1",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"equipos",
+										"torneo",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Equipo",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE1MzA3MDYsImV4cCI6MTc1MTYxNzEwNn0.Am16l3JXeEMxZG-a9fe2cIabja4F-khwBsBMHIaCN_Fp3ho66r7BP6UXPfW896bLld57ITeS_tZWGrLhA2iDhA",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/equipos/1",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"equipos",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Puntos",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/equipos/1/puntos/10",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"equipos",
+										"1",
+										"puntos",
+										"10"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar Equipo",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/equipos/1",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"equipos",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Capitán",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjY3NjA1LCJleHAiOjE3NTgzNTQwMDV9.vpJ6pF6AjaoR2jrY4nDMctpDF_l27EOJVC6lPzdNOmayEY8zPsGryCxaWswgmZPB3TozwJs_s9h8jcJrIerPgw"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"equipoId\": 1,\n  \"nuevoCapitanId\": 1\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/equipos/actualizar-capitan",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"equipos",
+										"actualizar-capitan"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Ranking por torneo",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1ODI2NzM4NCwiZXhwIjoxNzU4MzUzNzg0fQ.Au0aw4YDR-b4bwjV8EKvOKRAmQTfq8P40xIHKRREfxHwWhXfjtL9r7Lgl1b6u4GMl1Hb7YQqJbdJBrapywbQKQ"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/equipos/torneo/1/ranking",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"equipos",
+										"torneo",
+										"1",
+										"ranking"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Ranking global",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1ODI2NzM4NCwiZXhwIjoxNzU4MzUzNzg0fQ.Au0aw4YDR-b4bwjV8EKvOKRAmQTfq8P40xIHKRREfxHwWhXfjtL9r7Lgl1b6u4GMl1Hb7YQqJbdJBrapywbQKQ"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/equipos/ranking/global",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"equipos",
+										"ranking",
+										"global"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Ranking anual",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1ODI2NzM4NCwiZXhwIjoxNzU4MzUzNzg0fQ.Au0aw4YDR-b4bwjV8EKvOKRAmQTfq8P40xIHKRREfxHwWhXfjtL9r7Lgl1b6u4GMl1Hb7YQqJbdJBrapywbQKQ"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/equipos/ranking/anual/2025",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"equipos",
+										"ranking",
+										"anual",
+										"2025"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Ranking mensual",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1ODI2NzM4NCwiZXhwIjoxNzU4MzUzNzg0fQ.Au0aw4YDR-b4bwjV8EKvOKRAmQTfq8P40xIHKRREfxHwWhXfjtL9r7Lgl1b6u4GMl1Hb7YQqJbdJBrapywbQKQ"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/equipos/ranking/mensual/2025/9",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"equipos",
+										"ranking",
+										"mensual",
+										"2025",
+										"9"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Estadisticas equipo",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1ODI2NzM4NCwiZXhwIjoxNzU4MzUzNzg0fQ.Au0aw4YDR-b4bwjV8EKvOKRAmQTfq8P40xIHKRREfxHwWhXfjtL9r7Lgl1b6u4GMl1Hb7YQqJbdJBrapywbQKQ"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/equipos/1/estadisticas",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"equipos",
+										"1",
+										"estadisticas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Historial equipo",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1ODI2NzM4NCwiZXhwIjoxNzU4MzUzNzg0fQ.Au0aw4YDR-b4bwjV8EKvOKRAmQTfq8P40xIHKRREfxHwWhXfjtL9r7Lgl1b6u4GMl1Hb7YQqJbdJBrapywbQKQ"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/equipos/1/historial",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"equipos",
+										"1",
+										"historial"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Espera",
+					"item": [
+						{
+							"name": "Registrar presencia",
+							"request": {
+								"auth": {
+									"type": "inherit"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "torneoId",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "userId",
+											"value": "4",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/espera/registrar",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"espera",
+										"registrar"
+									]
+								},
+								"description": "Registra la presencia de un usuario en la lista de espera del torneo."
+							},
+							"response": []
+						},
+						{
+							"name": "Listar esperando por torneo",
+							"request": {
+								"auth": {
+									"type": "inherit"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/espera/1",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"espera",
+										"1"
+									]
+								},
+								"description": "Obtiene la lista de usuarios esperando para el torneo indicado."
+							},
+							"response": []
+						},
+						{
+							"name": "Limpiar lista de espera",
+							"request": {
+								"auth": {
+									"type": "inherit"
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/torneos/espera/1",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"torneos",
+										"espera",
+										"1"
+									]
+								},
+								"description": "Limpia por completo la lista de espera del torneo."
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "📋 Listar torneos",
 					"request": {
 						"method": "GET",
@@ -1811,211 +2456,6 @@
 			]
 		},
 		{
-			"name": "Equipos",
-			"item": [
-				{
-					"name": "Miembros",
-					"item": []
-				},
-				{
-					"name": "Crear Equipo",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1ODI2NzM4NCwiZXhwIjoxNzU4MzUzNzg0fQ.Au0aw4YDR-b4bwjV8EKvOKRAmQTfq8P40xIHKRREfxHwWhXfjtL9r7Lgl1b6u4GMl1Hb7YQqJbdJBrapywbQKQ",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"torneoId\": 1,\r\n    \"nombreEquipo\": \"Big Dogs\",\r\n    \"capitanId\": 3\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseURL}}/api/torneos/equipos",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"api",
-								"torneos",
-								"equipos"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Listar Equipos",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{baseURL}}/api/torneos/equipos/torneo/1",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"api",
-								"torneos",
-								"equipos",
-								"torneo",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Obtener Equipo",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE1MzA3MDYsImV4cCI6MTc1MTYxNzEwNn0.Am16l3JXeEMxZG-a9fe2cIabja4F-khwBsBMHIaCN_Fp3ho66r7BP6UXPfW896bLld57ITeS_tZWGrLhA2iDhA",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": {
-							"raw": "{{baseURL}}/api/torneos/equipos/1",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"api",
-								"torneos",
-								"equipos",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Actualizar Puntos",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": {
-							"raw": "{{baseURL}}/api/torneos/equipos/1/puntos/10",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"api",
-								"torneos",
-								"equipos",
-								"1",
-								"puntos",
-								"10"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Eliminar Equipo",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": {
-							"raw": "{{baseURL}}/api/torneos/equipos/1",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"api",
-								"torneos",
-								"equipos",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Actualizar Capitán",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjY3NjA1LCJleHAiOjE3NTgzNTQwMDV9.vpJ6pF6AjaoR2jrY4nDMctpDF_l27EOJVC6lPzdNOmayEY8zPsGryCxaWswgmZPB3TozwJs_s9h8jcJrIerPgw"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"equipoId\": 1,\n  \"nuevoCapitanId\": 1\n}"
-						},
-						"url": {
-							"raw": "{{baseURL}}/api/torneos/equipos/actualizar-capitan",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"api",
-								"torneos",
-								"equipos",
-								"actualizar-capitan"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "Estadisticas",
 			"item": [
 				{
@@ -2207,12 +2647,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Listar sanciones de usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4NjI0NTYxLCJleHAiOjE3NTg3MTA5NjF9.yMK0uUndXyrgI7sqwRDXFB2NKFv82qAX-sLSr8NUSbFhqvP9eX-gxQOqiRmP1Z88OgNZ_10E14nF0sec0mP_Hg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/sanciones/usuario/4",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"sanciones",
+								"usuario",
+								"4"
+							]
+						},
+						"description": "Devuelve lista de SancionDTO del usuario indicado."
+					},
+					"response": []
 				}
 			]
-		},
-		{
-			"name": "Espera",
-			"item": []
 		}
 	],
 	"variable": [

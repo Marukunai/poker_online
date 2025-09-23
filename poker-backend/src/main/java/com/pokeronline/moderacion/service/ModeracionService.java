@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -24,18 +25,38 @@ public class ModeracionService {
         User usuario = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        Sancion sancion = Sancion.builder()
+        Date now = new Date();
+        Date fin = switch (tipo) {
+            case ADVERTENCIA -> new Date(now.getTime() + TimeUnit.DAYS.toMillis(1));
+            case PROHIBICION_CHAT -> new Date(now.getTime() + TimeUnit.DAYS.toMillis(3));
+            case SUSPENSION_TEMPORAL -> new Date(now.getTime() + TimeUnit.DAYS.toMillis(7));
+            case SUSPENSION_PERMANENTE, BLOQUEO_CUENTA -> null;
+            default -> null;
+        };
+
+        if (tipo == TipoSancion.PROHIBICION_CHAT) {
+            usuario.setChatBloqueado(true);
+        }
+        if (tipo == TipoSancion.BLOQUEO_CUENTA
+                || tipo == TipoSancion.SUSPENSION_TEMPORAL
+                || tipo == TipoSancion.SUSPENSION_PERMANENTE) {
+            usuario.setBloqueado(true);
+        }
+        userRepository.save(usuario);
+
+        Sancion s = Sancion.builder()
                 .user(usuario)
                 .motivo(motivo)
                 .tipo(tipo)
                 .descripcion(detalle)
-                .fechaFin(new Date(System.currentTimeMillis() + 86400000))
-                .fechaFin(new Date())
+                .fechaInicio(now)
+                .fechaFin(fin)
                 .partidaId(partidaId)
                 .torneoId(torneoId)
+                .activo(true)
                 .build();
 
-        sancionRepository.save(sancion);
+        sancionRepository.save(s);
         aplicarSancionesProgresivas(usuario);
     }
 
@@ -119,6 +140,7 @@ public class ModeracionService {
                 .fechaInicio(new Date())
                 .fechaFin(null) // Puedes establecer duración automática si quieres
                 .descripcion("Sanción automática por: " + motivoTexto)
+                .activo(true)
                 .build();
 
         sancionRepository.save(sancion);
