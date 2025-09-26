@@ -35,13 +35,17 @@ public class LogroUsuarioService {
 
         return todos.stream().map(logro -> {
             LogroUsuario lu = mapaObtenidos.get(logro.getId());
+            String fecha = (lu != null && lu.getFechaObtencion() != null)
+                    ? sdf.format(lu.getFechaObtencion())
+                    : null;
+
             return LogroUsuarioDTO.builder()
                     .id(logro.getId())
                     .nombre(logro.getNombre())
                     .descripcion(logro.getDescripcion())
                     .iconoLogro(logro.getIconoLogro())
                     .obtenido(lu != null)
-                    .fechaObtencion(lu != null ? sdf.format(lu.getFechaObtencion()) : null)
+                    .fechaObtencion(fecha)
                     .build();
         }).toList();
     }

@@ -86,7 +86,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbGljZUBlbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1ODAxNzM3MCwiZXhwIjoxNzU4MTAzNzcwfQ.WMmSRcbc_avqis5HX1Yqc3h4Hsw9lix-cOaVr_cxGq8MOfXNBoo23Rn1-O_skBnvzdYogHpkVP2I69XtMIYvbA",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4NjI0NTYxLCJleHAiOjE3NTg3MTA5NjF9.yMK0uUndXyrgI7sqwRDXFB2NKFv82qAX-sLSr8NUSbFhqvP9eX-gxQOqiRmP1Z88OgNZ_10E14nF0sec0mP_Hg",
 								"type": "text"
 							}
 						],
@@ -1089,13 +1089,13 @@
 											},
 											{
 												"key": "Authorization",
-												"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
+												"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4NjI0NTYxLCJleHAiOjE3NTg3MTA5NjF9.yMK0uUndXyrgI7sqwRDXFB2NKFv82qAX-sLSr8NUSbFhqvP9eX-gxQOqiRmP1Z88OgNZ_10E14nF0sec0mP_Hg",
 												"type": "text"
 											}
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"equipoId\": 1,\n  \"userId\": 4\n}"
+											"raw": "{\n  \"equipoId\": 1,\n  \"userId\": 5\n}"
 										},
 										"url": {
 											"raw": "{{baseURL}}/api/torneos/equipos/miembros",
@@ -1311,7 +1311,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTE1MzA3MDYsImV4cCI6MTc1MTYxNzEwNn0.Am16l3JXeEMxZG-a9fe2cIabja4F-khwBsBMHIaCN_Fp3ho66r7BP6UXPfW896bLld57ITeS_tZWGrLhA2iDhA",
+										"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MjcxNjQwLCJleHAiOjE3NTgzNTgwNDB9.l8Q640x61zmfqrsomOtSt4RaHQhJXukthfiiKpqLiMlPzB61BSImzx_jcQW6Y8_Buo5-h-JUpDYcFlGVGCCJ5w",
 										"type": "text"
 									}
 								],
@@ -2465,7 +2465,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTA4MzYwMzAsImV4cCI6MTc1MDkyMjQzMH0.UsLmupmp1EOb09sGG90IHvje0uL63U1vALTEES3IINffyrBlhNFfPDtfEHGZqOFMC8UEVPvHg8XWhSTS30od8g",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4NjI0NTYxLCJleHAiOjE3NTg3MTA5NjF9.yMK0uUndXyrgI7sqwRDXFB2NKFv82qAX-sLSr8NUSbFhqvP9eX-gxQOqiRmP1Z88OgNZ_10E14nF0sec0mP_Hg",
 								"type": "text"
 							}
 						],
@@ -2617,7 +2617,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4MDA5Mzg3LCJleHAiOjE3NTgwOTU3ODd9.fZbsEIKnGxhWZYvv8i6GSGCbSG-ZhxhLKxWu45reNPuPJIeY6b0-S4kOr37RixM2fUREqOk_DCeEW3_oU_o0LQ",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4NjI0NTYxLCJleHAiOjE3NTg3MTA5NjF9.yMK0uUndXyrgI7sqwRDXFB2NKFv82qAX-sLSr8NUSbFhqvP9eX-gxQOqiRmP1Z88OgNZ_10E14nF0sec0mP_Hg",
 								"type": "text"
 							},
 							{
@@ -2628,7 +2628,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"userId\": 5,\r\n  \"tipo\": \"SUSPENSION_TEMPORAL\",\r\n  \"motivo\": \"COMPORTAMIENTO_TOXICO_EN_TORNEOS\",\r\n  \"descripcion\": \"Lenguaje tóxico reiterado durante el torneo.\",\r\n  \"fechaFin\": \"2025-09-17T11:40:00+02:00\"\r\n}",
+							"raw": "{\r\n  \"userId\": 4,\r\n  \"tipo\": \"ADVERTENCIA\",\r\n  \"motivo\": \"LENGUAJE_OBSCENO\",\r\n  \"descripcion\": \"Uso de lenguaje obsceno durante la partida.\",\r\n  \"fechaFin\": \"2025-09-23T16:50:00+02:00\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2660,7 +2660,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseURL}}/api/sanciones/usuario/4",
+							"raw": "{{baseURL}}/api/sanciones/usuario/5",
 							"host": [
 								"{{baseURL}}"
 							],
@@ -2668,14 +2668,44 @@
 								"api",
 								"sanciones",
 								"usuario",
-								"4"
+								"5"
 							]
 						},
 						"description": "Devuelve lista de SancionDTO del usuario indicado."
 					},
 					"response": []
+				},
+				{
+					"name": "Desactivar sanción por ID",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4NjI0NTYxLCJleHAiOjE3NTg3MTA5NjF9.yMK0uUndXyrgI7sqwRDXFB2NKFv82qAX-sLSr8NUSbFhqvP9eX-gxQOqiRmP1Z88OgNZ_10E14nF0sec0mP_Hg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/sanciones/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"sanciones",
+								"1"
+							]
+						},
+						"description": "Marca la sanción como inactiva (no la borra)."
+					},
+					"response": []
 				}
 			]
+		},
+		{
+			"name": "Logros",
+			"item": []
 		}
 	],
 	"variable": [

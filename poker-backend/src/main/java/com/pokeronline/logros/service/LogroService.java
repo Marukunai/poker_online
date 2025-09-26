@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,7 @@ public class LogroService {
             LogroUsuario lu = LogroUsuario.builder()
                     .logro(logro)
                     .user(user)
+                    .fechaObtencion(new Date())
                     .build();
             logroUsuarioRepository.save(lu);
         }
@@ -54,6 +56,7 @@ public class LogroService {
                 .nombre(logro.getNombre())
                 .descripcion(logro.getDescripcion())
                 .iconoLogro(logro.getIconoLogro())
+                .categoria(logro.getCategoria() != null ? logro.getCategoria().name() : null)
                 .build();
     }
 }
