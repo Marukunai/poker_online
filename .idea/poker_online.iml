@@ -30,15 +30,6 @@
     <orderEntry type="library" name="Gradle: jakarta.transaction:jakarta.transaction-api:2.0.1" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:2.0.13" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-web:6.1.6" level="project" />
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="Gradle: org.springframework.data:spring-data-jpa:3.2.5" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.security:spring-security-core:6.2.4" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-context:6.1.6" level="project" />
@@ -53,5 +44,14 @@
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot:3.2.5" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-autoconfigure:3.2.5" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-tx:6.1.6" level="project" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

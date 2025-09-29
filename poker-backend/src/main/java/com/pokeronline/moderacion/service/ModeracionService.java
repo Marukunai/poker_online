@@ -1,5 +1,6 @@
 package com.pokeronline.moderacion.service;
 
+import com.pokeronline.exception.ActiveSanctionExistsException;
 import com.pokeronline.exception.ResourceNotFoundException;
 import com.pokeronline.model.User;
 import com.pokeronline.moderacion.model.MotivoSancion;
@@ -25,6 +26,23 @@ public class ModeracionService {
         User usuario = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
+        // Anti-duplicado
+        if (tipo == TipoSancion.PROHIBICION_CHAT &&
+                sancionRepository.existsByUser_IdAndActivoTrueAndTipo(usuario.getId(), TipoSancion.PROHIBICION_CHAT)) {
+            throw new ActiveSanctionExistsException("El usuario ya tiene una PROHIBICION_CHAT activa.");
+        }
+        if (tipo == TipoSancion.BLOQUEO_CUENTA
+                || tipo == TipoSancion.SUSPENSION_TEMPORAL
+                || tipo == TipoSancion.SUSPENSION_PERMANENTE) {
+            boolean yaBloqueado = sancionRepository.existsByUser_IdAndActivoTrueAndTipoIn(
+                    usuario.getId(),
+                    List.of(TipoSancion.BLOQUEO_CUENTA, TipoSancion.SUSPENSION_TEMPORAL, TipoSancion.SUSPENSION_PERMANENTE)
+            );
+            if (yaBloqueado) {
+                throw new ActiveSanctionExistsException("El usuario ya tiene una sanción de bloqueo/suspensión activa.");
+            }
+        }
+
         Date now = new Date();
         Date fin = switch (tipo) {
             case ADVERTENCIA -> new Date(now.getTime() + TimeUnit.DAYS.toMillis(1));
@@ -34,6 +52,7 @@ public class ModeracionService {
             default -> null;
         };
 
+        // Flags de usuario
         if (tipo == TipoSancion.PROHIBICION_CHAT) {
             usuario.setChatBloqueado(true);
         }
@@ -118,7 +137,6 @@ public class ModeracionService {
                     null
             );
 
-            // Bloquear el chat del usuario
             User user = userRepository.findById(userId).orElseThrow();
             user.setChatBloqueado(true);
             userRepository.save(user);
@@ -127,7 +145,6 @@ public class ModeracionService {
 
     public void sancionarAutomaticamente(User user, String motivoTexto) {
         MotivoSancion motivo;
-
         switch (motivoTexto) {
             case "ABANDONO_REITERADO" -> motivo = MotivoSancion.ABANDONO_REITERADO;
             case "DESCONEXIONES_SOSPECHOSAS" -> motivo = MotivoSancion.DESCONEXIONES_SOSPECHOSAS;
@@ -138,7 +155,7 @@ public class ModeracionService {
                 .user(user)
                 .motivo(motivo)
                 .fechaInicio(new Date())
-                .fechaFin(null) // Puedes establecer duración automática si quieres
+                .fechaFin(null) // Duración opcional para automáticas
                 .descripcion("Sanción automática por: " + motivoTexto)
                 .activo(true)
                 .build();

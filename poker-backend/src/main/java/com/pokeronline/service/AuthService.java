@@ -1,5 +1,6 @@
 package com.pokeronline.service;
 
+import com.pokeronline.dto.AuthResponseDTO;
 import com.pokeronline.dto.LoginDTO;
 import com.pokeronline.dto.RegisterDTO;
 import com.pokeronline.model.Role;
@@ -10,11 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.pokeronline.util.FiltroPalabrasService;
-import com.pokeronline.moderacion.model.MotivoSancion;
-import com.pokeronline.moderacion.model.TipoSancion;
-import com.pokeronline.moderacion.service.ModeracionService;
-
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -24,39 +20,29 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final FiltroPalabrasService filtroPalabrasService;
-    private final ModeracionService moderacionService;
 
-    private static final Set<String> PALABRAS_PROHIBIDAS = Set.of(
-            "idiota", "imbecil", "tonto", "estupido", "capullo", "inutil", "gilipollas", "payaso", "anormal",
-            "mierda", "joder", "puta", "puto", "coño", "zorra", "polla", "culiao", "cabron", "maricon", "nazi",
-            "negro", "sidoso", "mongolo", "retardado", "cancer", "malparido",
-            "fuck", "bitch", "asshole", "dick", "faggot", "cunt", "shit", "motherfucker", "whore", "slut"
-    );
+    public AuthResponseDTO register(RegisterDTO dto) {
+        String email = dto.getEmail().trim().toLowerCase();
+        String username = dto.getUsername().trim();
 
-    public String register(RegisterDTO dto) {
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(email).isPresent()) {
             throw new RuntimeException("El email ya está registrado");
         }
-
-        if (filtroPalabrasService.contienePalabraGrave(dto.getUsername())) {
-            moderacionService.registrarSancion(
-                    null,
-                    MotivoSancion.NOMBRE_INAPROPIADO,
-                    TipoSancion.ADVERTENCIA,
-                    "Intento de registrar nombre ofensivo: " + dto.getUsername(),
-                    null,
-                    null
-            );
-            throw new RuntimeException("Nombre de usuario prohibido por contenido ofensivo.");
+        if (userRepository.findByUsername(username).isPresent()) {
+            throw new RuntimeException("El nombre de usuario ya está en uso");
         }
 
-        if (filtroPalabrasService.contienePalabraLeve(dto.getUsername())) {
+        if (filtroPalabrasService.contienePalabraGrave(username)) {
+            // No intentes sancionar a alguien que aún no existe
+            throw new RuntimeException("Nombre de usuario prohibido por contenido ofensivo.");
+        }
+        if (filtroPalabrasService.contienePalabraLeve(username)) {
             throw new RuntimeException("Nombre de usuario inapropiado. Elige otro.");
         }
 
         User user = User.builder()
-                .username(dto.getUsername())
-                .email(dto.getEmail())
+                .username(username)
+                .email(email)
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .fichas(1000)
                 .avatarUrl(null)
@@ -67,17 +53,36 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
-        return jwtUtils.generateToken(user);
+        String token = jwtUtils.generateToken(user);
+
+        return AuthResponseDTO.builder()
+                .token(token)
+                .userId(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .avatarUrl(user.getAvatarUrl())
+                .role(user.getRole().name())
+                .build();
     }
 
-    public String login(LoginDTO dto) {
-        User user = userRepository.findByEmail(dto.getEmail())
+    public AuthResponseDTO login(LoginDTO dto) {
+        String email = dto.getEmail().trim().toLowerCase();
+
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new RuntimeException("Contraseña incorrecta");
         }
 
-        return jwtUtils.generateToken(user);
+        String token = jwtUtils.generateToken(user);
+        return AuthResponseDTO.builder()
+                .token(token)
+                .userId(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .avatarUrl(user.getAvatarUrl())
+                .role(user.getRole().name())
+                .build();
     }
 }

@@ -1,10 +1,12 @@
 package com.pokeronline.controller;
 
-import com.pokeronline.dto.LoginDTO;
-import com.pokeronline.dto.RegisterDTO;
+import com.pokeronline.dto.*;
 import com.pokeronline.service.AuthService;
+import com.pokeronline.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,16 +15,31 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterDTO dto) {
-        String token = authService.register(dto);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<AuthResponseDTO> register(@RequestBody RegisterDTO dto) {
+        return ResponseEntity.ok(authService.register(dto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDTO dto) {
-        String token = authService.login(dto);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO dto) {
+        return ResponseEntity.ok(authService.login(dto));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<AuthResponseDTO> me(@AuthenticationPrincipal UserDetails principal) {
+        var user = userService.buscarPorEmail(principal.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return ResponseEntity.ok(
+                AuthResponseDTO.builder()
+                        .token(null)
+                        .userId(user.getId())
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .avatarUrl(user.getAvatarUrl())
+                        .role(user.getRole().name())
+                        .build()
+        );
     }
 }

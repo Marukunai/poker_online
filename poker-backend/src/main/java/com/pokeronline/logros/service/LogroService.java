@@ -1,5 +1,7 @@
 package com.pokeronline.logros.service;
 
+import com.pokeronline.exception.AlreadyHasAchievementException;
+import com.pokeronline.exception.ResourceNotFoundException;
 import com.pokeronline.logros.dto.LogroDTO;
 import com.pokeronline.logros.model.Logro;
 import com.pokeronline.logros.model.LogroUsuario;
@@ -10,7 +12,6 @@ import com.pokeronline.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 
 import java.util.Date;
 import java.util.List;
@@ -30,22 +31,33 @@ public class LogroService {
 
     /**
      * Otorga un logro a un usuario si aún no lo tiene.
+     * Lanza AlreadyHasAchievementException si ya lo tenía.
+     * Lanza ResourceNotFoundException si el logro no existe.
      */
     @Transactional
     public void otorgarLogroSiNoTiene(Long userId, String nombreLogro) {
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException("Usuario no encontrado: " + userId)
+        );
+
         Logro logro = logroRepository.findByNombre(nombreLogro);
-        if (logro == null) return;
+        if (logro == null) {
+            throw new ResourceNotFoundException("Logro no encontrado: " + nombreLogro);
+        }
 
         boolean yaTiene = logroUsuarioRepository.existsByUserAndLogro(user, logro);
-        if (!yaTiene) {
-            LogroUsuario lu = LogroUsuario.builder()
-                    .logro(logro)
-                    .user(user)
-                    .fechaObtencion(new Date())
-                    .build();
-            logroUsuarioRepository.save(lu);
+        if (yaTiene) {
+            throw new AlreadyHasAchievementException(
+                    "El usuario ya obtuvo el logro: " + logro.getNombre()
+            );
         }
+
+        LogroUsuario lu = LogroUsuario.builder()
+                .logro(logro)
+                .user(user)
+                .fechaObtencion(new Date())
+                .build();
+        logroUsuarioRepository.save(lu);
     }
 
     // ================== Mapeos ===================

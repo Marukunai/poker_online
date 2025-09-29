@@ -1,6 +1,7 @@
 package com.pokeronline.moderacion.service;
 
 import com.pokeronline.exception.AlreadyInactiveException;
+import com.pokeronline.exception.ActiveSanctionExistsException;
 import com.pokeronline.exception.ResourceNotFoundException;
 import com.pokeronline.model.User;
 import com.pokeronline.moderacion.dto.CrearSancionDTO;
@@ -11,8 +12,8 @@ import com.pokeronline.moderacion.repository.SancionRepository;
 import com.pokeronline.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
 
+import jakarta.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,12 +38,41 @@ public class SancionService {
                 }
             }
             default -> {
-                // Sanciones temporales deben traer fechaFin
                 if (dto.getFechaFin() == null) {
                     throw new IllegalArgumentException("Las sanciones temporales requieren fechaFin.");
                 }
             }
         }
+
+        // Anti-duplicado: PROHIBICION_CHAT
+        if (dto.getTipo() == TipoSancion.PROHIBICION_CHAT &&
+                sancionRepository.existsByUser_IdAndActivoTrueAndTipo(dto.getUserId(), TipoSancion.PROHIBICION_CHAT)) {
+            throw new ActiveSanctionExistsException("El usuario ya tiene una PROHIBICION_CHAT activa.");
+        }
+
+        // Anti-duplicado: bloqueos/suspensiones
+        if (dto.getTipo() == TipoSancion.BLOQUEO_CUENTA
+                || dto.getTipo() == TipoSancion.SUSPENSION_TEMPORAL
+                || dto.getTipo() == TipoSancion.SUSPENSION_PERMANENTE) {
+            boolean yaBloqueado = sancionRepository.existsByUser_IdAndActivoTrueAndTipoIn(
+                    dto.getUserId(),
+                    List.of(TipoSancion.BLOQUEO_CUENTA, TipoSancion.SUSPENSION_TEMPORAL, TipoSancion.SUSPENSION_PERMANENTE)
+            );
+            if (yaBloqueado) {
+                throw new ActiveSanctionExistsException("El usuario ya tiene una sanción de bloqueo/suspensión activa.");
+            }
+        }
+
+        // Actualizar flags de User
+        if (dto.getTipo() == TipoSancion.PROHIBICION_CHAT) {
+            user.setChatBloqueado(true);
+        }
+        if (dto.getTipo() == TipoSancion.BLOQUEO_CUENTA
+                || dto.getTipo() == TipoSancion.SUSPENSION_TEMPORAL
+                || dto.getTipo() == TipoSancion.SUSPENSION_PERMANENTE) {
+            user.setBloqueado(true);
+        }
+        userRepository.save(user);
 
         Sancion sancion = Sancion.builder()
                 .user(user)
@@ -55,7 +85,6 @@ public class SancionService {
                 .build();
 
         sancionRepository.save(sancion);
-
         return toDTO(sancion);
     }
 

@@ -4,6 +4,7 @@ import com.pokeronline.dto.ResultadoShowdownInterno;
 import com.pokeronline.logros.service.LogroService;
 import com.pokeronline.model.*;
 import com.pokeronline.moderacion.model.MotivoSancion;
+import com.pokeronline.moderacion.model.TipoSancion;
 import com.pokeronline.moderacion.service.ModeracionService;
 import com.pokeronline.repository.*;
 import com.pokeronline.websocket.WebSocketService;
@@ -486,9 +487,25 @@ public class MesaService {
     }
 
     private boolean tieneSancionGrave(User user) {
+        if (user.isBloqueado()) return true;
+
+        Date now = new Date();
+
         return user.getSanciones().stream().anyMatch(s -> {
-            boolean activa = s.isActivo() && (s.getFechaFin() == null || s.getFechaFin().after(new Date()));
-            return activa && java.util.Set.of(
+            boolean activa = s.isActivo() && (s.getFechaFin() == null || s.getFechaFin().after(now));
+            if (!activa) return false;
+
+            // Tipos que impiden jugar
+            boolean porTipo = java.util.EnumSet.of(
+                    TipoSancion.BLOQUEO_CUENTA,
+                    TipoSancion.SUSPENSION_TEMPORAL,
+                    TipoSancion.SUSPENSION_PERMANENTE,
+                    TipoSancion.EXPULSION_PARTIDA,
+                    TipoSancion.EXPULSION_TORNEO
+            ).contains(s.getTipo());
+
+            // Motivos “graves” (por si se creó una sanción con tipo genérico pero motivo crítico)
+            boolean porMotivo = java.util.EnumSet.of(
                     MotivoSancion.INFRACCIONES_GRAVES,
                     MotivoSancion.REITERACION_INFRACCIONES,
                     MotivoSancion.FRAUDE_DE_FICHAS,
@@ -498,6 +515,8 @@ public class MesaService {
                     MotivoSancion.MULTICUENTA,
                     MotivoSancion.USO_DE_BOTS
             ).contains(s.getMotivo());
+
+            return porTipo || porMotivo;
         });
     }
 

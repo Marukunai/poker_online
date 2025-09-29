@@ -1,10 +1,7 @@
 package com.pokeronline.controller;
 
-import com.pokeronline.dto.HistorialManoDTO;
-import com.pokeronline.dto.PerfilCompletoDTO;
-import com.pokeronline.dto.UserDTO;
+import com.pokeronline.dto.*;
 import com.pokeronline.estadisticas.dto.TorneoHistorialDTO;
-import com.pokeronline.moderacion.dto.SancionDTO;
 import com.pokeronline.estadisticas.service.EstadisticasService;
 import com.pokeronline.exception.UnauthorizedException;
 import com.pokeronline.logros.dto.LogroUsuarioDTO;
@@ -44,7 +41,6 @@ public class UserController {
         if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
 
         User user = userOpt.get();
-
         var sancionesDto = sancionService.obtenerSancionesUsuario(user.getId());
 
         UserDTO dto = UserDTO.builder()
@@ -69,10 +65,22 @@ public class UserController {
         return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/updateUsername")
-    public ResponseEntity<?> actualizarNombre(@RequestParam Long userId, @RequestParam String nuevoUsername) {
-        userService.actualizarPerfil(userId, nuevoUsername);
-        return ResponseEntity.ok("Nombre actualizado correctamente");
+    @PutMapping("/me")
+    public ResponseEntity<?> actualizarMiPerfil(
+            @AuthenticationPrincipal UserDetails principal,
+            @RequestBody UpdateProfileDTO dto) {
+        if (principal == null) throw new UnauthorizedException("Debes iniciar sesión");
+        userService.actualizarPerfilAutenticado(principal.getUsername(), dto);
+        return ResponseEntity.ok("Perfil actualizado correctamente");
+    }
+
+   @PostMapping("/me/change-password")
+    public ResponseEntity<?> cambiarPassword(
+            @AuthenticationPrincipal UserDetails principal,
+            @RequestBody UpdatePasswordDTO dto) {
+        if (principal == null) throw new UnauthorizedException("Debes iniciar sesión");
+        userService.cambiarPassword(principal.getUsername(), dto.getCurrentPassword(), dto.getNewPassword());
+        return ResponseEntity.ok("Contraseña actualizada correctamente");
     }
 
     @GetMapping("/ranking")

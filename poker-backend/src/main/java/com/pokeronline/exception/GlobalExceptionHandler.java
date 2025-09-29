@@ -66,4 +66,25 @@ public class GlobalExceptionHandler {
                         "timestamp", LocalDateTime.now()
                 ));
     }
+
+    @ExceptionHandler(AlreadyHasAchievementException.class)
+    public ResponseEntity<?> handleAlreadyHasAchievement(AlreadyHasAchievementException ex, WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "error", ex.getMessage(),
+                        "status", 410,
+                        "timestamp", LocalDateTime.now()
+                ));
+    }
+    @ExceptionHandler(ActiveSanctionExistsException.class)
+    public ResponseEntity<?> handleActiveSanctionExists(ActiveSanctionExistsException ex, WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "error", ex.getMessage(),
+                        "status", 411,
+                        "timestamp", LocalDateTime.now()
+                ));
+    }
 }

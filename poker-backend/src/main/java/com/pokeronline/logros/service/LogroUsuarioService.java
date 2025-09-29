@@ -1,5 +1,6 @@
 package com.pokeronline.logros.service;
 
+import com.pokeronline.exception.AlreadyHasAchievementException;
 import com.pokeronline.logros.dto.LogroUsuarioDTO;
 import com.pokeronline.logros.model.Logro;
 import com.pokeronline.logros.model.LogroUsuario;
@@ -7,6 +8,7 @@ import com.pokeronline.logros.repository.LogroRepository;
 import com.pokeronline.logros.repository.LogroUsuarioRepository;
 import com.pokeronline.model.User;
 import com.pokeronline.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,17 +56,22 @@ public class LogroUsuarioService {
         return logroUsuarioRepository.existsByUserAndLogro(user, logro);
     }
 
+    @Transactional
     public void asignarLogroSiNoTiene(User user, Logro logro) {
-        if (!tieneLogro(user, logro)) {
-            LogroUsuario logroUsuario = LogroUsuario.builder()
-                    .user(user)
-                    .logro(logro)
-                    .fechaObtencion(new Date())
-                    .build();
-            logroUsuarioRepository.save(logroUsuario);
+        if (tieneLogro(user, logro)) {
+            throw new AlreadyHasAchievementException(
+                    "El usuario ya obtuvo el logro: " + logro.getNombre()
+            );
         }
+        LogroUsuario logroUsuario = LogroUsuario.builder()
+                .user(user)
+                .logro(logro)
+                .fechaObtencion(new Date())
+                .build();
+        logroUsuarioRepository.save(logroUsuario);
     }
 
+    @Transactional
     public void asignarLogroPorIdSiNoTiene(Long userId, Long logroId) {
         User user = userRepository.findById(userId).orElseThrow();
         Logro logro = logroRepository.findById(logroId).orElseThrow();
