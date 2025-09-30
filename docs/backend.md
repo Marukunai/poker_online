@@ -252,7 +252,7 @@ Los endpoints administrativos están protegidos con:
 {
   "error": "Mensaje legible del error",
   "status": 400,
-  "timestamp": "2025-09-30T10:40:47.4738403"
+  "timestamp": "2025-09-30T10:40:47.4738402"
 }
 ```
 
