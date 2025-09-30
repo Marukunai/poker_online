@@ -22,15 +22,15 @@
 10. [WebSocket: comunicación en tiempo real](#-websocket-comunicación-en-tiempo-real)
 11. [Sistema de bots con IA](#-sistema-de-bots-con-ia)
 12. [Sistema de torneos](#-sistema-de-torneos)
-13. [Sistema de logros](#-sistema-de-logros)
-14. [Moderación y sanciones](#-moderación-y-sanciones)
+13. [Sistema de logros](#sistema-de-logros)
+14. [Moderación y sanciones](#moderacion-y-sanciones)
 15. [Estadísticas y ranking](#-estadísticas-y-ranking)
-16. [Modo espectador](#-modo-espectador)
+16. [Modo espectador](#modo-espectador)
 17. [Datos y persistencia](#-datos-y-persistencia)
 18. [Jobs programados](#-jobs-programados)
 19. [Pruebas con Postman](#-pruebas-con-postman)
 20. [Consideraciones de despliegue](#-consideraciones-de-despliegue)
-21. [Roadmap](#-roadmap)
+21. [Roadmap](#roadmap)
 
 ---
 
@@ -961,6 +961,7 @@ El sistema `TorneoScheduler` (@Scheduled):
 
 ---
 
+<a id="sistema-de-logros"></a>
 ## 🎖️ Sistema de logros
 
 Más de **50 logros** clasificados por categoría, otorgados automáticamente desde los servicios.
@@ -1008,6 +1009,7 @@ Iconos asociados en `/files/images/logros/`
 
 ---
 
+<a id="moderacion-y-sanciones"></a>
 ## 🛡️ Moderación y sanciones
 
 ### Sistema automático
@@ -1060,6 +1062,7 @@ El sistema registra automáticamente el progreso mensual de cada usuario para an
 
 ---
 
+<a id="modo-espectador"></a>
 ## 👁️ Modo espectador
 
 ### Funcionalidades
@@ -1353,6 +1356,7 @@ volumes:
 
 ---
 
+<a id="roadmap"></a>
 ## 🗺️ Roadmap
 
 ### ✅ Funcionalidades completadas
