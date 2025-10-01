@@ -11,38 +11,73 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> handleNotFound(ResourceNotFoundException ex, WebRequest request) {
+    /* Utilidad para construir respuestas homogéneas */
+    private ResponseEntity<?> build(HttpStatus status, String message) {
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
+                .status(status)
                 .body(Map.of(
-                        "error", ex.getMessage(),
-                        "status", 404,
+                        "error", message,
+                        "status", status.value(),
                         "timestamp", LocalDateTime.now()
                 ));
+    }
+
+    /* 4xx específicos */
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<?> handleNotFound(ResourceNotFoundException ex, WebRequest request) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<?> handleUnauthorized(UnauthorizedException ex, WebRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of(
-                        "error", ex.getMessage(),
-                        "status", 401,
-                        "timestamp", LocalDateTime.now()
-                ));
+        return build(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> handleBadRequest(BadRequestException ex, WebRequest request) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<?> handleForbidden(ForbiddenException ex, WebRequest request) {
+        return build(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<?> handleTooManyRequests(TooManyRequestsException ex, WebRequest request) {
+        return build(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
+    }
+
+    @ExceptionHandler(AlreadyInactiveException.class)
+    public ResponseEntity<?> handleAlreadyInactive(AlreadyInactiveException ex, WebRequest request) {
+        return build(HttpStatus.CONFLICT, ex.getMessage()); // 409
+    }
+
+    @ExceptionHandler(AlreadyHasAchievementException.class)
+    public ResponseEntity<?> handleAlreadyHasAchievement(AlreadyHasAchievementException ex, WebRequest request) {
+        return build(HttpStatus.CONFLICT, ex.getMessage()); // 409
+    }
+
+    @ExceptionHandler(ActiveSanctionExistsException.class)
+    public ResponseEntity<?> handleActiveSanctionExists(ActiveSanctionExistsException ex, WebRequest request) {
+        return build(HttpStatus.CONFLICT, ex.getMessage()); // 409
+    }
+
+    /* Comodines útiles */
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException ex, WebRequest request) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleRuntime(RuntimeException ex, WebRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of(
-                        "error", ex.getMessage(),
-                        "status", 400,
-                        "timestamp", LocalDateTime.now()
-                ));
+        // Última red de seguridad para errores de negocio no tipificados
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
+
+    /* 5xx genérico */
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception ex, WebRequest request) {
@@ -51,39 +86,7 @@ public class GlobalExceptionHandler {
                 .body(Map.of(
                         "error", "Error interno del servidor",
                         "message", ex.getMessage(),
-                        "status", 500,
-                        "timestamp", LocalDateTime.now()
-                ));
-    }
-
-    @ExceptionHandler(AlreadyInactiveException.class)
-    public ResponseEntity<?> handleAlreadyInactive(AlreadyInactiveException ex, WebRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT) // 409
-                .body(Map.of(
-                        "error", ex.getMessage(),
-                        "status", 409,
-                        "timestamp", LocalDateTime.now()
-                ));
-    }
-
-    @ExceptionHandler(AlreadyHasAchievementException.class)
-    public ResponseEntity<?> handleAlreadyHasAchievement(AlreadyHasAchievementException ex, WebRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of(
-                        "error", ex.getMessage(),
-                        "status", 410,
-                        "timestamp", LocalDateTime.now()
-                ));
-    }
-    @ExceptionHandler(ActiveSanctionExistsException.class)
-    public ResponseEntity<?> handleActiveSanctionExists(ActiveSanctionExistsException ex, WebRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of(
-                        "error", ex.getMessage(),
-                        "status", 411,
+                        "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         "timestamp", LocalDateTime.now()
                 ));
     }

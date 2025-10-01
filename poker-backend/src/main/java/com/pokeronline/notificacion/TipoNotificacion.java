@@ -1,0 +1,16 @@
+package com.pokeronline.notificacion;
+
+public enum TipoNotificacion {
+    SOLICITUD_AMISTAD,
+    SOLICITUD_ACEPTADA,
+    SOLICITUD_RECHAZADA,
+
+    INVITACION_PARTIDA,
+    INVITACION_CANCELADA,
+
+    TRANSFERENCIA_RECIBIDA,
+
+    MENSAJE_CHAT,
+    AMIGO_ELIMINADO,
+    CAMBIO_ESTADO_AMIGO
+}

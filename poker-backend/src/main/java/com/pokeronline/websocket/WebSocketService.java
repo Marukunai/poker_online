@@ -3,7 +3,6 @@ package com.pokeronline.websocket;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -30,5 +29,11 @@ public class WebSocketService {
         // messagingTemplate.convertAndSend("/user/" + userId + "/queue/notificaciones", message);
 
         // logger.info("Simulación de envío de mensaje tipo '{}' al jugador {}.", tipo, userId);
+    }
+
+    /* === ALIAS DE COMPATIBILIDAD ===
+       Algunos servicios del módulo de amigos lo llaman así. */
+    public void enviarMensajeUsuario(Long userId, String tipo, Object payload) {
+        enviarMensajeJugador(userId, tipo, payload);
     }
 }
