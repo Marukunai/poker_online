@@ -2,7 +2,7 @@
 
 # 📋 Índice
 
-1. [Introducción](#introducción)
+1. [Introducción](#introduccion)
 2. [Arquitectura del sistema](#arquitectura-del-sistema)
 3. [Modelo de datos](#modelo-de-datos)
 4. [Funcionalidades principales](#funcionalidades-principales)
@@ -13,12 +13,13 @@
 9. [Invitaciones a partidas](#invitaciones-a-partidas)
 10. [Sistema de presencia](#sistema-de-presencia)
 11. [Notificaciones](#notificaciones)
-12. [Privacidad y configuración](#privacidad-y-configuración)
-13. [Límites y restricciones](#límites-y-restricciones)
-14. [Implementación técnica](#implementación-técnica)
+12. [Privacidad y configuración](#privacidad-y-configuracion)
+13. [Límites y restricciones](#limites-y-restricciones)
+14. [Implementación técnica](#implementacion-tecnica)
 
 ---
 
+<a id="introduccion"></a>
 ## 🎯 Introducción
 
 El sistema de amigos permite a los jugadores:
@@ -36,6 +37,7 @@ El sistema de amigos permite a los jugadores:
 
 ---
 
+<a id="arquitectura-del-sistema"></a>
 ## 🏗️ Arquitectura del sistema
 
 ```
@@ -76,6 +78,7 @@ El sistema de amigos permite a los jugadores:
 
 ---
 
+<a id="modelo-de-datos"></a>
 ## 💾 Modelo de datos
 
 ### Entidad: Amistad
@@ -399,6 +402,7 @@ public enum NivelPrivacidad {
 
 ---
 
+<a id="funcionalidades-principales"></a>
 ## 🎮 Funcionalidades principales
 
 ### 1. Gestión de amistades
@@ -469,6 +473,7 @@ public enum EstadoConexion {
 
 ---
 
+<a id="endpoints-rest"></a>
 ## 🌐 Endpoints REST
 
 ### Gestión de amistades
@@ -667,7 +672,7 @@ Response:
 
 ---
 
-### Invitaciones a partidas
+## Invitaciones a partidas
 
 ```http
 # Invitar a partida
@@ -787,6 +792,7 @@ Authorization: Bearer {token}
 
 ---
 
+<a id="websocket-eventos-en-tiempo-real"></a>
 ## 🔌 WebSocket: eventos en tiempo real
 
 ### Suscripciones
@@ -842,6 +848,7 @@ stompClient.subscribe('/user/queue/amigos/transferencias', (message) => {
 
 ---
 
+<a id="sistema-de-chat-privado"></a>
 ## 💬 Sistema de chat privado
 
 ### Características
@@ -890,6 +897,7 @@ stompClient.subscribe('/user/queue/amigos/transferencias', (message) => {
 
 ---
 
+<a id="transferencia-de-fichas"></a>
 ## 💰 Transferencia de fichas
 
 ### Límites y restricciones
@@ -963,6 +971,7 @@ stompClient.subscribe('/user/queue/amigos/transferencias', (message) => {
 
 ---
 
+<a id="invitaciones-a-partidas"></a>
 ## 🎮 Invitaciones a partidas
 
 ### Tipos de invitación
@@ -1009,7 +1018,7 @@ POST /api/amigos/{userId}/quick-join
 
 Genera un código temporal de 5 minutos que permite acceso directo.
 
-### Notificaciones
+### Notificaciones web
 
 Las invitaciones aparecen como:
 - Notificación push (móvil)
@@ -1019,6 +1028,7 @@ Las invitaciones aparecen como:
 
 ---
 
+<a id="sistema-de-presencia"></a>
 ## 🟢 Sistema de presencia
 
 ### Estados disponibles
@@ -1069,6 +1079,7 @@ Los usuarios pueden configurar:
 
 ---
 
+<a id="notificaciones"></a>
 ## 🔔 Notificaciones
 
 ### Tipos de notificación
@@ -1144,6 +1155,7 @@ Si hay múltiples notificaciones del mismo tipo:
 
 ---
 
+<a id="privacidad-y-configuracion"></a>
 ## 🔒 Privacidad y configuración
 
 ### Niveles de privacidad
@@ -1206,6 +1218,7 @@ Al bloquear un usuario:
 
 ---
 
+<a id="limites-y-restricciones"></a>
 ## ⚠️ Límites y restricciones
 
 ### Solicitudes de amistad
@@ -1260,6 +1273,7 @@ Al bloquear un usuario:
 
 ---
 
+<a id="implementacion-tecnica"></a>
 ## 💻 Implementación técnica
 
 ### Service: AmigosService
