@@ -284,65 +284,70 @@ public class AmigosService {
         return switch (filtro) {
             case TODOS -> true;
             case FAVORITOS -> Boolean.TRUE.equals(amigo.getEsFavorito());
-            case CONECTADOS -> amigo.getEstado() != EstadoConexion.OFFLINE && amigo.getEstado() != EstadoConexion.AUSENTE;
+            case CONECTADOS -> {
+                var e = amigo.getEstado();
+                // Conectados = cualquiera que no sea OFFLINE/ASUENTE/INVISIBLE (ajústalo a tu gusto)
+                yield e != EstadoConexion.OFFLINE
+                        && e != EstadoConexion.AUSENTE
+                        && e != EstadoConexion.INVISIBLE;
+            }
             case EN_PARTIDA -> amigo.getEstado() == EstadoConexion.EN_PARTIDA;
             case EN_TORNEO -> amigo.getEstado() == EstadoConexion.EN_TORNEO;
         };
     }
 
-    // TODO
-//    private Comparator<AmigoDTO> obtenerComparador(OrdenAmigos orden) {
-//        // Comparadores base por nombre (case-insensitive) con nulls al final
-//        Comparator<String> byNameAscRaw = Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER);
-//        Comparator<String> byNameDescRaw = byNameAscRaw.reversed();
-//
-//        Comparator<AmigoDTO> byNameAsc  = Comparator.comparing(AmigoDTO::getUsername, byNameAscRaw);
-//        Comparator<AmigoDTO> byNameDesc = Comparator.comparing(AmigoDTO::getUsername, byNameDescRaw);
-//
-//        // Última conexión DESC (más reciente primero), nulls al final; desempate por nombre asc
-//        Comparator<AmigoDTO> byLastSeenDesc = Comparator
-//                .comparing(AmigoDTO::getUltimaConexion, Comparator.nullsLast(Comparator.naturalOrder()))
-//                .reversed()
-//                .thenComparing(byNameAsc);
-//
-//        // Favoritos primero (true > false), luego nombre asc
-//        Comparator<AmigoDTO> favoritesFirst = Comparator
-//                .comparing((AmigoDTO a) -> !Boolean.TRUE.equals(a.getEsFavorito())) // false (favorito) va primero
-//                .thenComparing(byNameAsc);
-//
-//        // Por estado con ranking custom + nombre asc
-//        Comparator<AmigoDTO> byEstado = Comparator
-//                .comparingInt(a -> estadoRank(a.getEstado()))
-//                .thenComparing(byNameAsc);
-//
-//        if (orden == null) return byNameAsc;
-//
-//        return switch (orden) {
-//            case POR_NOMBRE, NOMBRE_ASC -> byNameAsc;
-//            case NOMBRE_DESC -> byNameDesc;
-//            case ULTIMA_CONEXION_DESC -> byLastSeenDesc;
-//            case FAVORITOS_PRIMERO -> favoritesFirst;
-//            case POR_ESTADO -> byEstado;
-//        };
-//    }
-//
-//    /**
-//     * Ranking de estado para ordenar por "disponibilidad":
-//     * 0 EN_PARTIDA, 1 EN_TORNEO, 2 ONLINE, 3 AUSENTE, 4 NO_MOLESTAR, 5 OFFLINE, 99 null
-//     * (ajústalo si quieres otra prioridad)
-//     */
-//    private int estadoRank(EstadoConexion e) {
-//        if (e == null) return 99;
-//        return switch (e) {
-//            case EN_PARTIDA -> 0;
-//            case EN_TORNEO -> 1;
-//            case ONLINE -> 2;
-//            case AUSENTE -> 3;
-//            case NO_MOLESTAR -> 4;
-//            case OFFLINE -> 5;
-//            case INVISIBLE -> 6;
-//        };
-//    }
+    private Comparator<AmigoDTO> obtenerComparador(OrdenAmigos orden) {
+        // Comparadores base por nombre (case-insensitive) con nulls al final
+        Comparator<String> byNameAscRaw  = Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER);
+        Comparator<String> byNameDescRaw = byNameAscRaw.reversed();
+
+        Comparator<AmigoDTO> byNameAsc  = Comparator.comparing(AmigoDTO::getUsername, byNameAscRaw);
+        Comparator<AmigoDTO> byNameDesc = Comparator.comparing(AmigoDTO::getUsername, byNameDescRaw);
+
+        // Última conexión DESC (más reciente primero), nulls al final; desempate por nombre asc
+        Comparator<AmigoDTO> byLastSeenDesc = Comparator
+                .comparing(AmigoDTO::getUltimaConexion, Comparator.nullsLast(Comparator.naturalOrder()))
+                .reversed()
+                .thenComparing(AmigoDTO::getUsername, byNameAscRaw);
+
+        // Favoritos primero (true > false), luego nombre asc
+        Comparator<AmigoDTO> favoritesFirst = Comparator
+                .comparing((AmigoDTO a) -> !Boolean.TRUE.equals(a.getEsFavorito())) // false (favorito) va primero
+                .thenComparing(AmigoDTO::getUsername, byNameAscRaw);
+
+        // Por estado con ranking custom + nombre asc
+        Comparator<AmigoDTO> byEstado = Comparator
+                .<AmigoDTO>comparingInt(a -> estadoRank(a.getEstado()))
+                .thenComparing(AmigoDTO::getUsername, byNameAscRaw);
+
+        if (orden == null) return byNameAsc;
+
+        return switch (orden) {
+            case POR_NOMBRE, NOMBRE_ASC -> byNameAsc;
+            case NOMBRE_DESC -> byNameDesc;
+            case ULTIMA_CONEXION_DESC -> byLastSeenDesc;
+            case FAVORITOS_PRIMERO -> favoritesFirst;
+            case POR_ESTADO -> byEstado;
+        };
+    }
+
+    /**
+     * Ranking de estado para ordenar por "disponibilidad".
+     * Ajusta prioridades a tu gusto:
+     * 0 EN_PARTIDA, 1 EN_TORNEO, 2 ONLINE, 3 NO_MOLESTAR, 4 AUSENTE, 5 INVISIBLE, 6 OFFLINE, 99 null
+     */
+    private int estadoRank(EstadoConexion e) {
+        if (e == null) return 99;
+        return switch (e) {
+            case EN_PARTIDA     -> 0;
+            case EN_TORNEO      -> 1;
+            case ONLINE         -> 2;
+            case NO_MOLESTAR    -> 3;
+            case AUSENTE        -> 4;
+            case INVISIBLE      -> 5;
+            case OFFLINE        -> 6;
+        };
+    }
 
     private String obtenerUsername(Long userId) {
         return userRepository.findById(userId).map(User::getUsername).orElse("Usuario");

@@ -53,6 +53,15 @@ public class InvitacionService {
         log.info("[INVITACIONES] Canceladas {} invitaciones entre {} y {}", pendientes.size(), userId, amigoId);
     }
 
+    public int expirarPendientes() {
+        var ahora = LocalDateTime.now();
+        var pendientes = invitacionRepository
+                .findByEstadoAndFechaExpiracionBefore(EstadoInvitacion.PENDIENTE, ahora);
+        pendientes.forEach(inv -> inv.setEstado(EstadoInvitacion.EXPIRADA));
+        invitacionRepository.saveAll(pendientes);
+        return pendientes.size();
+    }
+
     /* Hooks para futuro (crear/aceptar/rechazar/expirar)
     public InvitacionPartidaDTO crearInvitacion(...) { ... }
     public void aceptarInvitacion(Long invitacionId, Long userId) { ... }

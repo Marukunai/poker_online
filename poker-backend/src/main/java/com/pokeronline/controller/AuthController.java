@@ -1,5 +1,6 @@
 package com.pokeronline.controller;
 
+import com.pokeronline.amigos.service.PresenciaService;
 import com.pokeronline.dto.*;
 import com.pokeronline.service.AuthService;
 import com.pokeronline.service.UserService;
@@ -16,6 +17,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final UserService userService;
+    private final PresenciaService presenciaService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponseDTO> register(@RequestBody RegisterDTO dto) {
@@ -41,5 +43,12 @@ public class AuthController {
                         .role(user.getRole().name())
                         .build()
         );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@AuthenticationPrincipal UserDetails auth) {
+        Long userId = userService.getUserIdFromUserDetails(auth);
+        presenciaService.desconectar(userId);
+        return ResponseEntity.ok("Sesión cerrada");
     }
 }

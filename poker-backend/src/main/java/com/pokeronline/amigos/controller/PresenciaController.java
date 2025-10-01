@@ -6,6 +6,7 @@ import com.pokeronline.amigos.service.PresenciaService;
 import com.pokeronline.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -20,35 +21,66 @@ public class PresenciaController {
     private final PresenciaService presenciaService;
     private final UserService userService;
 
-    // Estados de mis amigos
-    @GetMapping("/amigos")
-    public List<EstadoPresencia> estadosAmigos(@AuthenticationPrincipal UserDetails userDetails) {
+    // === NUEVO: Mi estado actual (rápido)
+    @GetMapping("/me")
+    public ResponseEntity<EstadoPresencia> miEstado(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = userService.getUserIdFromUserDetails(userDetails);
-        return presenciaService.obtenerEstadosAmigos(userId);
+        return ResponseEntity.ok(presenciaService.obtenerEstado(userId));
     }
 
-    // Actualizar mi estado (ej. NO_MOLESTAR / AUSENTE / ONLINE con detalle)
+    // Estados de mis amigos (tu endpoint original, mantenemos ruta)
+    @GetMapping("/amigos")
+    public ResponseEntity<List<EstadoPresencia>> estadosAmigos(@AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = userService.getUserIdFromUserDetails(userDetails);
+        return ResponseEntity.ok(presenciaService.obtenerEstadosAmigos(userId));
+    }
+
+    // Actualizar mi estado (tu endpoint original). Si prefieres, puedes duplicar con @PutMapping("/estado")
     @PostMapping("/estado")
-    public String actualizarEstado(
+    public ResponseEntity<String> actualizarEstado(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody CambiarEstadoRequest req
     ) {
         Long userId = userService.getUserIdFromUserDetails(userDetails);
         presenciaService.actualizarEstado(userId, req.getEstado(), req.getDetalle());
-        return "Estado actualizado";
+
+        // Si en el futuro quieres admitir mesaId/torneoId aquí:
+        // var estado = presenciaService.obtenerEstado(userId);
+        // estado.setMesaId(req.getMesaId());
+        // estado.setTorneoId(req.getTorneoId());
+
+        return ResponseEntity.ok("Estado actualizado");
     }
 
-    // Heartbeat (actividad)
+    // Heartbeat (actividad) — tu endpoint original
     @PostMapping("/heartbeat")
-    public String heartbeat(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<String> heartbeat(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = userService.getUserIdFromUserDetails(userDetails);
         presenciaService.actualizarActividad(userId);
-        return "OK";
+        return ResponseEntity.ok("OK");
+    }
+
+    // === NUEVO: Toggle No Molestar rápido
+    @PostMapping("/no-molestar")
+    public ResponseEntity<String> setNoMolestar(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam boolean enabled
+    ) {
+        Long userId = userService.getUserIdFromUserDetails(userDetails);
+        presenciaService.actualizarEstado(
+                userId,
+                enabled ? EstadoConexion.NO_MOLESTAR : EstadoConexion.ONLINE,
+                enabled ? "No molestar" : "En línea"
+        );
+        return ResponseEntity.ok(enabled ? "No molestar activado" : "No molestar desactivado");
     }
 
     @Data
     public static class CambiarEstadoRequest {
         private EstadoConexion estado;
         private String detalle;
+        // Opcional si decides usarlos:
+        // private Long mesaId;
+        // private Long torneoId;
     }
 }

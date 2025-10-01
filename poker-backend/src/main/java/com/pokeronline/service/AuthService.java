@@ -1,5 +1,6 @@
 package com.pokeronline.service;
 
+import com.pokeronline.amigos.service.PresenciaService;
 import com.pokeronline.dto.AuthResponseDTO;
 import com.pokeronline.dto.LoginDTO;
 import com.pokeronline.dto.RegisterDTO;
@@ -16,6 +17,7 @@ import com.pokeronline.util.FiltroPalabrasService;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private final PresenciaService presenciaService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
@@ -75,6 +77,7 @@ public class AuthService {
             throw new RuntimeException("Contraseña incorrecta");
         }
 
+        presenciaService.conectar(user.getId());
         String token = jwtUtils.generateToken(user);
         return AuthResponseDTO.builder()
                 .token(token)
