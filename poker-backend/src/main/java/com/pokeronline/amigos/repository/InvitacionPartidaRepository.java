@@ -40,4 +40,11 @@ public interface InvitacionPartidaRepository extends JpaRepository<InvitacionPar
     /** Para limpiar expiradas si lo necesitas en un job o servicio */
     List<InvitacionPartida> findByEstadoAndFechaExpiracionBefore(EstadoInvitacion estado,
                                                                  LocalDateTime fecha);
+
+    @Query("""
+           select (count(i) > 0) from InvitacionPartida i
+           where (i.remitente.id = :a and i.destinatario.id = :b)
+              or (i.remitente.id = :b and i.destinatario.id = :a)
+           """)
+    boolean existsAnyBetween(Long a, Long b);
 }

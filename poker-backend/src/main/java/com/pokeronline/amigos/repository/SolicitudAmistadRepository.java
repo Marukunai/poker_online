@@ -5,6 +5,8 @@ import com.pokeronline.amigos.model.SolicitudAmistad;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 public interface SolicitudAmistadRepository extends JpaRepository<SolicitudAmistad, Long> {
 
     @Query("""
@@ -23,4 +25,6 @@ public interface SolicitudAmistadRepository extends JpaRepository<SolicitudAmist
              and function('DATE', s.fechaEnvio) = CURRENT_DATE
            """)
     long contarSolicitudesHoy(Long remitenteId);
+
+    Optional<SolicitudAmistad> findByRemitenteIdAndDestinatarioId(Long remitenteId, Long destinatarioId);
 }

@@ -12,4 +12,5 @@ public interface MesaRepository extends JpaRepository<Mesa, Long> {
     Optional<Mesa> findByCodigoAcceso(String codigoAcceso);
     List<Mesa> findByPrivada(boolean privada);
     List<Mesa> findByCreadorAndPrivadaTrue(User creador);
+    Optional<Mesa> findByNombre(String nombre);
 }

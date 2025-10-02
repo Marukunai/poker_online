@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MensajePrivadoRepository extends JpaRepository<MensajePrivado, Long> {
@@ -58,5 +57,12 @@ public interface MensajePrivadoRepository extends JpaRepository<MensajePrivado, 
               AND (destinatario_id IN (:userId, :amigoId))
             """, nativeQuery = true)
 
-    int eliminarConversacion(@Param("userId") Long userId, @Param("amigoId") Long amigoId);
+    void eliminarConversacion(@Param("userId") Long userId, @Param("amigoId") Long amigoId);
+
+    @Query("""
+           select (count(m) > 0) from MensajePrivado m
+           where (m.remitente.id = :a and m.destinatario.id = :b)
+              or (m.remitente.id = :b and m.destinatario.id = :a)
+           """)
+    boolean existsAnyBetween(Long a, Long b);
 }

@@ -32,4 +32,11 @@ public interface TransferenciaFichasRepository extends JpaRepository<Transferenc
             WHERE t.remitente_id = :userId
             """, nativeQuery = true)
     LocalDateTime findUltimaTransferencia(Long userId);
+
+    @Query("""
+           select (count(t) > 0) from TransferenciaFichas t
+           where (t.remitente.id = :a and t.destinatario.id = :b)
+              or (t.remitente.id = :b and t.destinatario.id = :a)
+           """)
+    boolean existsAnyBetween(Long a, Long b);
 }

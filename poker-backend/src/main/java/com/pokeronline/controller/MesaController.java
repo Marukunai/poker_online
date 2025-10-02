@@ -10,6 +10,7 @@ import com.pokeronline.repository.UserRepository;
 import com.pokeronline.service.BarajaService;
 import com.pokeronline.service.EvaluadorManoService;
 import com.pokeronline.service.MesaService;
+import com.pokeronline.amigos.service.PresenciaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,6 +24,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class MesaController {
 
+    private final PresenciaService presenciaService;
     private final AccionPartidaRepository accionPartidaRepository;
     private final EvaluadorManoService evaluadorManoService;
     private final MesaRepository mesaRepository;
@@ -69,6 +71,9 @@ public class MesaController {
             um.setConectado(false);
             um.setLastSeen(new Date());
             userMesaRepository.save(um);
+
+            presenciaService.salirDePartida(user.getId());
+
             fueDesconectadoDeOtraMesa = true;
         }
 
@@ -88,6 +93,9 @@ public class MesaController {
                 um.setConectado(true);
                 um.setLastSeen(null); // opcional, limpiar última desconexión
                 userMesaRepository.save(um);
+
+                presenciaService.entrarAPartida(user.getId(), mesa.getId(), mesa.getNombre());
+
                 return ResponseEntity.ok("Te has reconectado a la mesa");
             }
         }
@@ -112,6 +120,8 @@ public class MesaController {
                 .build();
 
         userMesaRepository.save(userMesa);
+
+        presenciaService.entrarAPartida(user.getId(), mesa.getId(), mesa.getNombre());
 
         String mensaje = fueDesconectadoDeOtraMesa
                 ? "Te desconectamos de otra(s) mesa(s) activa(s) y te unimos correctamente a esta mesa."
@@ -245,6 +255,8 @@ public class MesaController {
         userMesa.setConectado(true);
         userMesaRepository.save(userMesa);
 
+        presenciaService.entrarAPartida(user.getId(), mesa.getId(), mesa.getNombre());
+
         return ResponseEntity.ok("Reconectado con éxito");
     }
 
@@ -265,6 +277,8 @@ public class MesaController {
         userMesa.setLastSeen(new Date());
         userMesaRepository.save(userMesa);
 
+        presenciaService.salirDePartida(user.getId());
+
         return ResponseEntity.ok("Abandonaste la mesa");
     }
 
@@ -283,6 +297,8 @@ public class MesaController {
 
         userMesa.setLastSeen(new Date());
         userMesaRepository.save(userMesa);
+
+        presenciaService.actualizarActividad(user.getId());
 
         return ResponseEntity.ok("OK");
     }
@@ -383,6 +399,8 @@ public class MesaController {
         }
 
         userMesaRepository.delete(userMesa);
+
+        presenciaService.salirDePartida(user.getId());
 
         String mensaje = mesa.isFichasTemporales()
                 ? "Saliste de una mesa privada. Las fichas eran temporales, no se suman a tu cuenta."
