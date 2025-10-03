@@ -8,6 +8,7 @@ import com.pokeronline.model.Role;
 import com.pokeronline.model.User;
 import com.pokeronline.repository.UserRepository;
 import com.pokeronline.config.JwtUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class AuthService {
     private final JwtUtils jwtUtils;
     private final FiltroPalabrasService filtroPalabrasService;
 
+    @Transactional
     public AuthResponseDTO register(RegisterDTO dto) {
         String email = dto.getEmail().trim().toLowerCase();
         String username = dto.getUsername().trim();
@@ -67,6 +69,7 @@ public class AuthService {
                 .build();
     }
 
+    @Transactional
     public AuthResponseDTO login(LoginDTO dto) {
         String email = dto.getEmail().trim().toLowerCase();
 
@@ -79,6 +82,7 @@ public class AuthService {
 
         presenciaService.conectar(user.getId());
         String token = jwtUtils.generateToken(user);
+
         return AuthResponseDTO.builder()
                 .token(token)
                 .userId(user.getId())

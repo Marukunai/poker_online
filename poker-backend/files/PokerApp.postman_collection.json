@@ -11,6 +11,29 @@
 			"item": [
 				{
 					"name": "🔐 Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {\r",
+									"  try {\r",
+									"    const data = pm.response.json();\r",
+									"    if (data && data.token) {\r",
+									"      pm.collectionVariables.set('token', data.token);\r",
+									"      console.log('Token guardado en colección');\r",
+									"    }\r",
+									"  } catch (e) {\r",
+									"    console.warn('No se pudo parsear la respuesta.');\r",
+									"  }\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -70,6 +93,30 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Me (perfil autenticado)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU5MTU4MzAxLCJleHAiOjE3NTkyNDQ3MDF9.PrV5VrkutbtASkZSk-jzOGF6PHMsI42uPukxZCYzpNYkJnuI3sbglosXTNhpvxAlwEJni44tsHz6FrG7GmBcUA"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/auth/me",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -108,6 +155,71 @@
 								"api",
 								"user",
 								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update perfil",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU5MTU5MzU1LCJleHAiOjE3NTkyNDU3NTV9.kLgoWWLYGoP0gpJdoW9JqhmKetC1MyJSI0Jio_Jl1n-MEfNDfrtqlv_m8q184UPKV8AO5WLXkdUjT6l8RYYW4Q"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"maruku\",\n  \"avatarUrl\": \"https://e01-marca.uecdn.es/assets/multimedia/imagenes/2021/10/18/16345689435964.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/user/me",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU5MTU4MzAxLCJleHAiOjE3NTkyNDQ3MDF9.PrV5VrkutbtASkZSk-jzOGF6PHMsI42uPukxZCYzpNYkJnuI3sbglosXTNhpvxAlwEJni44tsHz6FrG7GmBcUA"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currentPassword\": \"admin\",\n  \"newPassword\": \"admin1\"\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/user/me/change-password",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"me",
+								"change-password"
 							]
 						}
 					},
@@ -2617,7 +2729,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4NjI0NTYxLCJleHAiOjE3NTg3MTA5NjF9.yMK0uUndXyrgI7sqwRDXFB2NKFv82qAX-sLSr8NUSbFhqvP9eX-gxQOqiRmP1Z88OgNZ_10E14nF0sec0mP_Hg",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU5MTU4MzAxLCJleHAiOjE3NTkyNDQ3MDF9.PrV5VrkutbtASkZSk-jzOGF6PHMsI42uPukxZCYzpNYkJnuI3sbglosXTNhpvxAlwEJni44tsHz6FrG7GmBcUA",
 								"type": "text"
 							},
 							{
@@ -2628,7 +2740,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"userId\": 4,\r\n  \"tipo\": \"ADVERTENCIA\",\r\n  \"motivo\": \"LENGUAJE_OBSCENO\",\r\n  \"descripcion\": \"Uso de lenguaje obsceno durante la partida.\",\r\n  \"fechaFin\": \"2025-09-23T16:50:00+02:00\"\r\n}",
+							"raw": "{\r\n  \"userId\": 1,\r\n  \"tipo\": \"SUSPENSION_TEMPORAL\",\r\n  \"motivo\": \"CONDUCTA_ANTIDEPORTIVA\",\r\n  \"descripcion\": \"Conducta antideportiva hacia el resto de jugadores durante la partida.\",\r\n  \"fechaFin\": \"2025-09-29T17:50:00+02:00\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2705,14 +2817,1045 @@
 		},
 		{
 			"name": "Logros",
-			"item": []
+			"item": [
+				{
+					"name": "Listar Logros",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 200', ()=> pm.response.code===200);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4ODc1NDIzLCJleHAiOjE3NTg5NjE4MjN9.ulkkAOauFCrgcHBWDj9mEpe7jLlG_qnGQGm2SvrXr-pc3f6_Uyf9E5FVBNyy0U7pD4hQ2Hfpcq4HD91VzblSLw",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/logros",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"logros"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Otorgar logro por nombre",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('2xx', ()=> pm.response.code >=200 && pm.response.code <300);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4ODc1NDIzLCJleHAiOjE3NTg5NjE4MjN9.ulkkAOauFCrgcHBWDj9mEpe7jLlG_qnGQGm2SvrXr-pc3f6_Uyf9E5FVBNyy0U7pD4hQ2Hfpcq4HD91VzblSLw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userId",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "nombreLogro",
+									"value": "Creador de salas",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/logros/otorgar",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"logros",
+								"otorgar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logros Usuario - Listar del usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 200', ()=> pm.response.code===200);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4ODc1NDIzLCJleHAiOjE3NTg5NjE4MjN9.ulkkAOauFCrgcHBWDj9mEpe7jLlG_qnGQGm2SvrXr-pc3f6_Uyf9E5FVBNyy0U7pD4hQ2Hfpcq4HD91VzblSLw",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/logros/usuario/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"logros",
+								"usuario",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logros Usuario - Asignar por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('2xx', ()=> pm.response.code>=200 && pm.response.code<300);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4ODc1NDIzLCJleHAiOjE3NTg5NjE4MjN9.ulkkAOauFCrgcHBWDj9mEpe7jLlG_qnGQGm2SvrXr-pc3f6_Uyf9E5FVBNyy0U7pD4hQ2Hfpcq4HD91VzblSLw",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/logros/usuario/1/asignar/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"logros",
+								"usuario",
+								"1",
+								"asignar",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logros Usuario - Eliminar del usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('2xx', ()=> pm.response.code>=200 && pm.response.code<300);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJ1a3VAZ21haWwuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzU4ODc1NDIzLCJleHAiOjE3NTg5NjE4MjN9.ulkkAOauFCrgcHBWDj9mEpe7jLlG_qnGQGm2SvrXr-pc3f6_Uyf9E5FVBNyy0U7pD4hQ2Hfpcq4HD91VzblSLw",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/logros/usuario/1/eliminar/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"logros",
+								"usuario",
+								"1",
+								"eliminar",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Amigos",
+			"item": [
+				{
+					"name": "Amigos",
+					"item": [
+						{
+							"name": "Listar amigos",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "filtro",
+											"value": "TODOS",
+											"description": "TODOS|FAVORITOS|CONECTADOS|EN_PARTIDA|EN_TORNEO",
+											"type": "text"
+										},
+										{
+											"key": "orden",
+											"value": "NOMBRE_ASC",
+											"description": "NOMBRE_ASC|NOMBRE_DESC|ULTIMA_CONEXION_DESC|FAVORITOS_PRIMERO|POR_ESTADO",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/amigos",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"amigos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Enviar solicitud de amistad",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"destinatarioId\": 7,\n  \"mensaje\": \"¡Hola! Jugamos ayer, ¿te agrego?\"\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/amigos/solicitudes",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"amigos",
+										"solicitudes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Aceptar solicitud",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/amigos/solicitudes/:solicitudId/aceptar",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"amigos",
+										"solicitudes",
+										":solicitudId",
+										"aceptar"
+									],
+									"variable": [
+										{
+											"key": "solicitudId",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar amigo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx/204', () => pm.expect([200,202,204]).to.include(pm.response.code));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/amigos/:amigoId?eliminarHistorialChat=false",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"amigos",
+										":amigoId"
+									],
+									"query": [
+										{
+											"key": "eliminarHistorialChat",
+											"value": "false"
+										}
+									],
+									"variable": [
+										{
+											"key": "amigoId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Chat privado",
+					"item": [
+						{
+							"name": "Enviar mensaje",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"destinatarioId\": 2,\n  \"tipo\": \"TEXTO\",\n  \"contenido\": \"¡Buena partida!\",\n  \"duracionAudio\": null,\n  \"mensajeRespondidoId\": null\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/chat/enviar",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"chat",
+										"enviar"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Conversación (paginada)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "page",
+											"value": "0",
+											"type": "text"
+										},
+										{
+											"key": "size",
+											"value": "30",
+											"type": "text"
+										},
+										{
+											"key": "sort",
+											"value": "fechaEnvio, desc",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/chat/conversacion/:amigoId",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"chat",
+										"conversacion",
+										":amigoId"
+									],
+									"variable": [
+										{
+											"key": "amigoId",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Marcar mensajes como leídos",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/chat/marcar-leidos/:remitenteId",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"chat",
+										"marcar-leidos",
+										":remitenteId"
+									],
+									"variable": [
+										{
+											"key": "remitenteId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Contar no leídos",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/chat/no-leidos/count",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"chat",
+										"no-leidos",
+										"count"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar mensaje",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx/204', () => pm.expect([200,202,204]).to.include(pm.response.code));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "paraAmbos",
+											"value": "false",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/chat/mensaje/:mensajeId",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"chat",
+										"mensaje",
+										":mensajeId"
+									],
+									"variable": [
+										{
+											"key": "mensajeId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Presencia",
+					"item": [
+						{
+							"name": "Mi estado (me)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/presencia/me",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"presencia",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Estados de mis amigos",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/presencia/amigos",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"presencia",
+										"amigos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar mi estado",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"estado\": \"ONLINE\",\n  \"detalle\": \"En línea\"\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/presencia/estado",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"presencia",
+										"estado"
+									]
+								},
+								"description": "Estados válidos: ONLINE, EN_PARTIDA, EN_TORNEO, AUSENTE, NO_MOLESTAR, OFFLINE"
+							},
+							"response": []
+						},
+						{
+							"name": "Heartbeat",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/presencia/heartbeat",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"presencia",
+										"heartbeat"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Toggle No molestar",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "enabled",
+											"value": "FALSE",
+											"description": "TRUE | FALSE",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/presencia/no-molestar",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"presencia",
+										"no-molestar"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Transferencias",
+					"item": [
+						{
+							"name": "Límites de transferencia",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseURL}}/api/amigos/transferencias/limites",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"amigos",
+										"transferencias",
+										"limites"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Transferir fichas",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status 2xx', () => pm.expect(pm.response.code).to.be.within(200,299));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"destinatarioId\": 1,\n  \"cantidad\": 500,\n  \"mensaje\": \"¡Para tu próximo torneo!\",\n  \"esRegalo\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/amigos/transferencias",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"amigos",
+										"transferencias"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	],
 	"variable": [
 		{
 			"key": "baseURL",
-			"value": "",
-			"type": "default"
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
 		}
 	]
 }

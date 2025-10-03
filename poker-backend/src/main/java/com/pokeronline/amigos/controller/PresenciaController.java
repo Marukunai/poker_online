@@ -21,38 +21,46 @@ public class PresenciaController {
     private final PresenciaService presenciaService;
     private final UserService userService;
 
-    // === NUEVO: Mi estado actual (rápido)
+    // === Mi estado actual
     @GetMapping("/me")
     public ResponseEntity<EstadoPresencia> miEstado(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = userService.getUserIdFromUserDetails(userDetails);
         return ResponseEntity.ok(presenciaService.obtenerEstado(userId));
     }
 
-    // Estados de mis amigos (tu endpoint original, mantenemos ruta)
+    // Estados de mis amigos
     @GetMapping("/amigos")
     public ResponseEntity<List<EstadoPresencia>> estadosAmigos(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = userService.getUserIdFromUserDetails(userDetails);
         return ResponseEntity.ok(presenciaService.obtenerEstadosAmigos(userId));
     }
 
-    // Actualizar mi estado (tu endpoint original). Si prefieres, puedes duplicar con @PutMapping("/estado")
+    // Actualizar mi estado
     @PostMapping("/estado")
     public ResponseEntity<String> actualizarEstado(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody CambiarEstadoRequest req
     ) {
         Long userId = userService.getUserIdFromUserDetails(userDetails);
-        presenciaService.actualizarEstado(userId, req.getEstado(), req.getDetalle());
 
-        // Si en el futuro quieres admitir mesaId/torneoId aquí:
-        // var estado = presenciaService.obtenerEstado(userId);
-        // estado.setMesaId(req.getMesaId());
-        // estado.setTorneoId(req.getTorneoId());
+        // Si llegan campos extra, usa el wrapper avanzado; si no, el simple
+        if (req.getMesaId() != null || req.getTorneoId() != null || req.getAceptaInvitaciones() != null) {
+            presenciaService.setEstadoAvanzado(
+                    userId,
+                    req.getEstado(),
+                    req.getDetalle(),
+                    req.getMesaId(),
+                    req.getTorneoId(),
+                    req.getAceptaInvitaciones()
+            );
+        } else {
+            presenciaService.setEstado(userId, req.getEstado(), req.getDetalle());
+        }
 
         return ResponseEntity.ok("Estado actualizado");
     }
 
-    // Heartbeat (actividad) — tu endpoint original
+    // Heartbeat (actividad)
     @PostMapping("/heartbeat")
     public ResponseEntity<String> heartbeat(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = userService.getUserIdFromUserDetails(userDetails);
@@ -60,14 +68,14 @@ public class PresenciaController {
         return ResponseEntity.ok("OK");
     }
 
-    // === NUEVO: Toggle No Molestar rápido
+    // Toggle No Molestar
     @PostMapping("/no-molestar")
     public ResponseEntity<String> setNoMolestar(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam boolean enabled
     ) {
         Long userId = userService.getUserIdFromUserDetails(userDetails);
-        presenciaService.actualizarEstado(
+        presenciaService.setEstado(
                 userId,
                 enabled ? EstadoConexion.NO_MOLESTAR : EstadoConexion.ONLINE,
                 enabled ? "No molestar" : "En línea"
@@ -79,8 +87,10 @@ public class PresenciaController {
     public static class CambiarEstadoRequest {
         private EstadoConexion estado;
         private String detalle;
-        // Opcional si decides usarlos:
-        // private Long mesaId;
-        // private Long torneoId;
+
+        // Opcionales (si quieres usarlos con setEstadoAvanzado)
+        private Long mesaId;
+        private Long torneoId;
+        private Boolean aceptaInvitaciones;
     }
 }

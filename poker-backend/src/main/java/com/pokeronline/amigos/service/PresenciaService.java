@@ -7,10 +7,10 @@ import com.pokeronline.amigos.repository.EstadoPresenciaRepository;
 import com.pokeronline.model.User;
 import com.pokeronline.repository.UserRepository;
 import com.pokeronline.websocket.WebSocketService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -29,121 +29,173 @@ public class PresenciaService {
     private final UserRepository userRepository;
     private final EstadoPresenciaRepository estadoRepo;
 
-    /** Actualiza y PERSISTE el estado de un usuario */
+    /* ===================== ENTRADAS PÚBLICAS (todas con TX) ===================== */
+
+    /** Wrapper simple para (estado, detalle). */
     @Transactional
-    public void actualizarEstado(Long userId, EstadoConexion nuevoEstado, String detalle) {
+    public void setEstado(Long userId, EstadoConexion estado, String detalle) {
+        actualizarEstado(userId, estado, detalle);
+    }
+
+    /** Wrapper avanzado para setear mesa/torneo/aceptaInvitaciones además del estado. */
+    @Transactional
+    public void setEstadoAvanzado(Long userId,
+                                  EstadoConexion estado,
+                                  String detalle,
+                                  Long mesaId,
+                                  Long torneoId,
+                                  Boolean aceptaInvitaciones) {
         LocalDateTime ahora = LocalDateTime.now();
 
-        // 1) Cache
         EstadoPresencia previo = estadosActivos.get(userId);
-        EstadoPresencia actual = (previo != null ? previo : new EstadoPresencia());
-        actual.setUserId(userId);
-        actual.setEstado(nuevoEstado);
-        actual.setDetalleEstado(detalle);
-        actual.setMesaId(previo != null ? previo.getMesaId() : null);
-        actual.setTorneoId(previo != null ? previo.getTorneoId() : null);
-        actual.setAceptaInvitaciones(nuevoEstado != EstadoConexion.NO_MOLESTAR);
-        actual.setUltimaActividad(ahora);
-        estadosActivos.put(userId, actual);
+        EstadoPresencia cache = (previo != null ? previo : new EstadoPresencia());
+        cache.setEstado(estado);
+        cache.setDetalleEstado(detalle);
+        cache.setMesaId(mesaId);
+        cache.setTorneoId(torneoId);
+        if (aceptaInvitaciones != null) {
+            cache.setAceptaInvitaciones(aceptaInvitaciones);
+        } else if (previo == null) {
+            // default razonable cuando no existe cache aún
+            cache.setAceptaInvitaciones(estado != EstadoConexion.NO_MOLESTAR);
+        }
+        cache.setUltimaActividad(ahora);
+        estadosActivos.put(userId, cache);
 
-        // 2) BD (update → insert si no existe)
         int updated = estadoRepo.updateSnapshot(
-                userId, nuevoEstado, detalle, actual.getMesaId(), actual.getTorneoId(),
-                actual.getAceptaInvitaciones(), ahora
+                userId,
+                cache.getEstado(),
+                cache.getDetalleEstado(),
+                cache.getMesaId(),
+                cache.getTorneoId(),
+                cache.getAceptaInvitaciones(),
+                cache.getUltimaActividad()
         );
+
         if (updated == 0) {
             User refUser = userRepository.getReferenceById(userId);
-            EstadoPresencia entidad = EstadoPresencia.builder()
-                    .userId(userId)
-                    .user(refUser) // requerido por @MapsId
-                    .estado(nuevoEstado)
-                    .detalleEstado(detalle)
-                    .mesaId(actual.getMesaId())
-                    .torneoId(actual.getTorneoId())
-                    .aceptaInvitaciones(actual.getAceptaInvitaciones())
-                    .ultimaActividad(ahora)
-                    .build();
+            EstadoPresencia entidad = new EstadoPresencia();
+            entidad.setUser(refUser); // @MapsId: PK = user.id
+            entidad.setEstado(cache.getEstado());
+            entidad.setDetalleEstado(cache.getDetalleEstado());
+            entidad.setMesaId(cache.getMesaId());
+            entidad.setTorneoId(cache.getTorneoId());
+            entidad.setAceptaInvitaciones(cache.getAceptaInvitaciones());
+            entidad.setUltimaActividad(cache.getUltimaActividad());
             estadoRepo.save(entidad);
         }
 
-        // 3) Notificación si cambió el estado
-        if (previo == null || previo.getEstado() != nuevoEstado) {
-            notificarCambioEstadoAAmigos(userId, actual);
+        if (previo == null || previo.getEstado() != estado) {
+            notificarCambioEstadoAAmigos(userId, cache);
         }
     }
 
-    /** Heartbeat: solo toca últimaActividad; si estaba AUSENTE, vuelve a ONLINE. */
     @Transactional
-    public void actualizarActividad(Long userId) {
-        LocalDateTime ahora = LocalDateTime.now();
-        EstadoPresencia estado = estadosActivos.get(userId);
-        if (estado != null) {
-            estado.setUltimaActividad(ahora);
-        }
-        estadoRepo.touch(userId, ahora);
-        if (estado != null && estado.getEstado() == EstadoConexion.AUSENTE) {
-            actualizarEstado(userId, EstadoConexion.ONLINE, "En línea");
-        }
-    }
-
     public void conectar(Long userId) {
         actualizarEstado(userId, EstadoConexion.ONLINE, "En línea");
         notificarConexionAAmigos(userId);
     }
 
+    @Transactional
     public void desconectar(Long userId) {
         actualizarEstado(userId, EstadoConexion.OFFLINE, "Desconectado");
         estadosActivos.remove(userId);
         notificarDesconexionAAmigos(userId);
     }
 
+    /** Heartbeat: toca últimaActividad; si estaba AUSENTE, vuelve a ONLINE. */
+    @Transactional
+    public void actualizarActividad(Long userId) {
+        LocalDateTime ahora = LocalDateTime.now();
+        EstadoPresencia cache = estadosActivos.get(userId);
+        if (cache != null) cache.setUltimaActividad(ahora);
+
+        estadoRepo.touch(userId, ahora);
+
+        if (cache != null && cache.getEstado() == EstadoConexion.AUSENTE) {
+            actualizarEstado(userId, EstadoConexion.ONLINE, "En línea");
+        }
+    }
+
     @Transactional
     public void entrarAPartida(Long userId, Long mesaId, String nombreMesa) {
-        EstadoPresencia estado = estadosActivos.computeIfAbsent(
-                userId, k -> EstadoPresencia.builder().userId(userId).estado(EstadoConexion.ONLINE).build()
-        );
-        estado.setEstado(EstadoConexion.EN_PARTIDA);
-        estado.setDetalleEstado("Jugando en " + nombreMesa);
-        estado.setMesaId(mesaId);
-        estado.setUltimaActividad(LocalDateTime.now());
+        EstadoPresencia cache = estadosActivos.computeIfAbsent(userId, k -> {
+            EstadoPresencia ep = new EstadoPresencia();
+            ep.setEstado(EstadoConexion.ONLINE);
+            ep.setAceptaInvitaciones(true);
+            return ep;
+        });
+
+        cache.setEstado(EstadoConexion.EN_PARTIDA);
+        cache.setDetalleEstado("Jugando en " + nombreMesa);
+        cache.setMesaId(mesaId);
+        cache.setUltimaActividad(LocalDateTime.now());
 
         int updated = estadoRepo.updateSnapshot(
-                userId, estado.getEstado(), estado.getDetalleEstado(),
-                estado.getMesaId(), estado.getTorneoId(),
-                estado.getAceptaInvitaciones(), estado.getUltimaActividad()
+                userId,
+                cache.getEstado(),
+                cache.getDetalleEstado(),
+                cache.getMesaId(),
+                cache.getTorneoId(),
+                cache.getAceptaInvitaciones(),
+                cache.getUltimaActividad()
         );
         if (updated == 0) {
             User refUser = userRepository.getReferenceById(userId);
-            estado.setUser(refUser);
-            estadoRepo.save(estado);
+            EstadoPresencia entidad = new EstadoPresencia();
+            entidad.setUser(refUser); // @MapsId: PK = user.id
+            entidad.setEstado(cache.getEstado());
+            entidad.setDetalleEstado(cache.getDetalleEstado());
+            entidad.setMesaId(cache.getMesaId());
+            entidad.setTorneoId(cache.getTorneoId());
+            entidad.setAceptaInvitaciones(cache.getAceptaInvitaciones());
+            entidad.setUltimaActividad(cache.getUltimaActividad());
+            estadoRepo.save(entidad);
         }
 
-        notificarCambioEstadoAAmigos(userId, estado);
+        notificarCambioEstadoAAmigos(userId, cache);
     }
 
     @Transactional
     public void salirDePartida(Long userId) {
-        EstadoPresencia estado = estadosActivos.computeIfAbsent(
-                userId, k -> EstadoPresencia.builder().userId(userId).estado(EstadoConexion.ONLINE).build()
-        );
-        estado.setEstado(EstadoConexion.ONLINE);
-        estado.setDetalleEstado("En línea");
-        estado.setMesaId(null);
-        estado.setUltimaActividad(LocalDateTime.now());
+        EstadoPresencia cache = estadosActivos.computeIfAbsent(userId, k -> {
+            EstadoPresencia ep = new EstadoPresencia();
+            ep.setEstado(EstadoConexion.ONLINE);
+            ep.setAceptaInvitaciones(true);
+            return ep;
+        });
+
+        cache.setEstado(EstadoConexion.ONLINE);
+        cache.setDetalleEstado("En línea");
+        cache.setMesaId(null);
+        cache.setUltimaActividad(LocalDateTime.now());
 
         int updated = estadoRepo.updateSnapshot(
-                userId, estado.getEstado(), estado.getDetalleEstado(),
-                null, estado.getTorneoId(),
-                estado.getAceptaInvitaciones(), estado.getUltimaActividad()
+                userId,
+                cache.getEstado(),
+                cache.getDetalleEstado(),
+                null,
+                cache.getTorneoId(),
+                cache.getAceptaInvitaciones(),
+                cache.getUltimaActividad()
         );
         if (updated == 0) {
             User refUser = userRepository.getReferenceById(userId);
-            estado.setUser(refUser);
-            estadoRepo.save(estado);
+            EstadoPresencia entidad = new EstadoPresencia();
+            entidad.setUser(refUser);
+            entidad.setEstado(cache.getEstado());
+            entidad.setDetalleEstado(cache.getDetalleEstado());
+            entidad.setMesaId(null);
+            entidad.setTorneoId(cache.getTorneoId());
+            entidad.setAceptaInvitaciones(cache.getAceptaInvitaciones());
+            entidad.setUltimaActividad(cache.getUltimaActividad());
+            estadoRepo.save(entidad);
         }
 
-        notificarCambioEstadoAAmigos(userId, estado);
+        notificarCambioEstadoAAmigos(userId, cache);
     }
+
+    /* ============================ LECTURAS (sin TX) ============================ */
 
     /** Lee cache; si no está, intenta cargar de BD y cachear. */
     public EstadoPresencia obtenerEstado(Long userId) {
@@ -153,22 +205,80 @@ public class PresenciaService {
         return estadoRepo.findById(userId).map(db -> {
             estadosActivos.put(userId, db);
             return db;
-        }).orElseGet(() -> EstadoPresencia.builder()
-                .userId(userId)
-                .estado(EstadoConexion.OFFLINE)
-                .detalleEstado("Desconectado")
-                .build());
+        }).orElseGet(() -> {
+            EstadoPresencia ep = new EstadoPresencia();
+            ep.setEstado(EstadoConexion.OFFLINE);
+            ep.setDetalleEstado("Desconectado");
+            ep.setAceptaInvitaciones(true);
+            return ep;
+        });
     }
 
     public boolean estaConectado(Long userId) {
-        EstadoPresencia e = obtenerEstado(userId);
-        return e.getEstado() != EstadoConexion.OFFLINE;
+        return obtenerEstado(userId).getEstado() != EstadoConexion.OFFLINE;
     }
 
     public List<EstadoPresencia> obtenerEstadosAmigos(Long userId) {
         List<Long> amigosIds = amistadRepository.findAmigosIds(userId);
         return amigosIds.stream().map(this::obtenerEstado).collect(Collectors.toList());
     }
+
+    /* ============================= SCHEDULED (TX) ============================= */
+
+    /** Marca AUSENTE si lleva >10 min inactivo estando ONLINE (y persiste). */
+    @Transactional
+    @Scheduled(fixedRate = 600_000) // cada 10 min
+    public void detectarUsuariosInactivos() {
+        LocalDateTime umbral = LocalDateTime.now().minusMinutes(10);
+        estadosActivos.entrySet().stream()
+                .filter(e -> e.getValue().getEstado() == EstadoConexion.ONLINE
+                        && e.getValue().getUltimaActividad() != null
+                        && e.getValue().getUltimaActividad().isBefore(umbral))
+                .forEach(e -> actualizarEstado(e.getKey(), EstadoConexion.AUSENTE, "Ausente"));
+    }
+
+    /* ============================ Privados (sin TX) =========================== */
+
+    /** ÚNICO sitio que escribe cache + BD. Siempre se llama desde un Transactional. */
+    private void actualizarEstado(Long userId, EstadoConexion nuevoEstado, String detalle) {
+        LocalDateTime ahora = LocalDateTime.now();
+
+        // 1) Cache (objeto NO gestionado por JPA)
+        EstadoPresencia previo = estadosActivos.get(userId);
+        EstadoPresencia cache = (previo != null ? previo : new EstadoPresencia());
+        cache.setEstado(nuevoEstado);
+        cache.setDetalleEstado(detalle);
+        cache.setMesaId(previo != null ? previo.getMesaId() : null);
+        cache.setTorneoId(previo != null ? previo.getTorneoId() : null);
+        cache.setAceptaInvitaciones(nuevoEstado != EstadoConexion.NO_MOLESTAR);
+        cache.setUltimaActividad(ahora);
+        estadosActivos.put(userId, cache);
+
+        // 2) BD (UPDATE; si no existe -> INSERT usando @MapsId)
+        int updated = estadoRepo.updateSnapshot(
+                userId, nuevoEstado, detalle, cache.getMesaId(), cache.getTorneoId(),
+                cache.getAceptaInvitaciones(), ahora
+        );
+        if (updated == 0) {
+            User refUser = userRepository.getReferenceById(userId);
+            EstadoPresencia entidad = new EstadoPresencia();
+            entidad.setUser(refUser); // clave con @MapsId
+            entidad.setEstado(nuevoEstado);
+            entidad.setDetalleEstado(detalle);
+            entidad.setMesaId(cache.getMesaId());
+            entidad.setTorneoId(cache.getTorneoId());
+            entidad.setAceptaInvitaciones(cache.getAceptaInvitaciones());
+            entidad.setUltimaActividad(ahora);
+            estadoRepo.save(entidad);
+        }
+
+        // 3) Notificación si cambia el estado
+        if (previo == null || previo.getEstado() != nuevoEstado) {
+            notificarCambioEstadoAAmigos(userId, cache);
+        }
+    }
+
+    /* ============================== Notificaciones ============================ */
 
     private void notificarCambioEstadoAAmigos(Long userId, EstadoPresencia estado) {
         List<Long> amigosIds = amistadRepository.findAmigosIds(userId);
@@ -227,7 +337,6 @@ public class PresenciaService {
     }
 
     private boolean debeNotificar(Long userId, Long amigoId) {
-        // Chequea flags por amistad (notificaciones activas)
         return amistadRepository.findByUsuarios(userId, amigoId)
                 .map(a -> a.getUsuario1().getId().equals(amigoId)
                         ? a.getNotificacionesActivas1()
@@ -236,7 +345,6 @@ public class PresenciaService {
     }
 
     private boolean debeNotificarConexion(Long userId, Long amigoId) {
-        // Respeta configuración de privacidad del usuario
         return configRepository.findByUserId(userId)
                 .map(ConfiguracionPrivacidad::getNotificarConexion)
                 .orElse(true) && debeNotificar(userId, amigoId);
@@ -244,16 +352,5 @@ public class PresenciaService {
 
     private String obtenerUsername(Long userId) {
         return userRepository.findById(userId).map(User::getUsername).orElse("Usuario");
-    }
-
-    /** Marca AUSENTE si lleva >5 min inactivo estando ONLINE (y persiste). */
-    @Scheduled(fixedRate = 300_000) // 5 min
-    public void detectarUsuariosInactivos() {
-        LocalDateTime umbral = LocalDateTime.now().minusMinutes(10);
-        estadosActivos.entrySet().stream()
-                .filter(e -> e.getValue().getEstado() == EstadoConexion.ONLINE
-                        && e.getValue().getUltimaActividad() != null
-                        && e.getValue().getUltimaActividad().isBefore(umbral))
-                .forEach(e -> actualizarEstado(e.getKey(), EstadoConexion.AUSENTE, "Ausente"));
     }
 }
