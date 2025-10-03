@@ -7,22 +7,18 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-        name = "estado_presencia",
-        indexes = {
-                @Index(name = "idx_estado_presencia_estado", columnList = "estado"),
-                @Index(name = "idx_estado_presencia_ultima_actividad", columnList = "ultima_actividad")
-        }
-)
+@Table(name = "estado_presencia", indexes = {
+        @Index(name = "idx_estado_presencia_estado", columnList = "estado"),
+        @Index(name = "idx_estado_presencia_ultima_actividad", columnList = "ultima_actividad")
+})
 @Getter @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class EstadoPresencia {
 
-    // Primary Key compartida con User (1:1)
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id", insertable = false, updatable = false)
     private Long userId;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
@@ -35,7 +31,7 @@ public class EstadoPresencia {
     @Builder.Default
     private EstadoConexion estado = EstadoConexion.OFFLINE;
 
-    private String detalleEstado;  // "Jugando en Mesa 12 / Torneo X"
+    private String detalleEstado;
 
     @Column(name = "ultima_actividad", nullable = false)
     @Builder.Default

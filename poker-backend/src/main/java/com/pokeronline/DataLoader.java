@@ -377,22 +377,20 @@ public class DataLoader {
                               LocalDateTime ultimaActividad) {
 
         estadoPresenciaRepository.findById(user.getId()).orElseGet(() -> {
-            // Aseguramos que 'user' sea una entidad gestionada real (no proxy)
+            // Trae el User gestionado en *esta* sesión/tx
             User managed = userRepository.findById(user.getId())
                     .orElseThrow(() -> new IllegalStateException("User no existe: " + user.getId()));
 
-            EstadoPresencia ep = EstadoPresencia.builder()
-                    // NO setear userId: @MapsId copiará la PK desde 'user'
-                    .user(managed)
-                    .estado(estado != null ? estado : EstadoConexion.OFFLINE)
-                    .detalleEstado(detalle)
-                    .mesaId(mesaId)
-                    .torneoId(null)
-                    .aceptaInvitaciones(aceptaInvitaciones)
-                    .ultimaActividad(ultimaActividad != null ? ultimaActividad : LocalDateTime.now())
-                    .build();
+            EstadoPresencia ep = new EstadoPresencia();
+            ep.setUser(managed); // <-- usa el 'managed', no el parámetro original
+            ep.setEstado(estado != null ? estado : EstadoConexion.OFFLINE);
+            ep.setDetalleEstado(detalle);
+            ep.setMesaId(mesaId);
+            ep.setTorneoId(null);
+            ep.setAceptaInvitaciones(aceptaInvitaciones);
+            ep.setUltimaActividad(ultimaActividad != null ? ultimaActividad : LocalDateTime.now());
 
-            return estadoPresenciaRepository.save(ep);
+            return estadoPresenciaRepository.save(ep); // no setees ep.setUserId(...)
         });
     }
 }
